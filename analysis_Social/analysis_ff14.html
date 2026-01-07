@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交竞品拆解: Final Fantasy XIV</title>
+    <style>
+        :root {
+            --primary-bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --accent-color: #9b59b6;
+            --accent-secondary: #3498db;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .game-logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-color);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 { margin: 0; font-size: 2.5em; color: var(--text-main); }
+        .subtitle { color: var(--text-secondary); font-size: 1.1em; margin-top: 10px; }
+        
+        .tag-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .tag-model { background: #e8f8f5; color: var(--accent-color); border: 1px solid var(--accent-color); }
+        .tag-type { background: #eaf2f8; color: var(--accent-secondary); border: 1px solid var(--accent-secondary); }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            margin-bottom: 30px;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.4em;
+        }
+
+        h3 {
+            color: var(--accent-secondary);
+            margin-top: 0;
+            font-size: 1.1em;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Chart Components */
+        .bar-group {
+            margin-bottom: 15px;
+        }
+        
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .bar-track {
+            height: 10px;
+            background: #f0f2f5;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--accent-color);
+            width: 0;
+            transition: width 1s ease-out;
+        }
+        
+        .icon-check { color: var(--accent-color); margin-right: 8px; }
+        .icon-cross { color: var(--danger-color); margin-right: 8px; }
+
+        /* Analysis Box */
+        .analysis-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 3px solid #ddd;
+        }
+        .analysis-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Persona Table */
+        .persona-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        .persona-table th {
+            text-align: left;
+            padding: 10px;
+            background: #f0f2f5;
+            color: #2c3e50;
+        }
+        .persona-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .focus-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        /* Takeaways */
+        .takeaway-section {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .takeaway-col {
+            flex: 1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+        
+        .col-do { background: #e8f8f5; border: 1px solid var(--accent-color); }
+        .col-dont { background: #fdedec; border: 1px solid var(--danger-color); }
+        
+        .col-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        ul { margin: 0; padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .takeaway-section {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation -->
+        <nav style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #7f8c8d; font-weight: bold; font-size: 0.9em;">
+                ← 返回竞品分析汇总 (Back to Index)
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="game-logo-placeholder">FF14</div>
+            <h1>Final Fantasy XIV</h1>
+            <div class="subtitle">MMO 中的 RPG 净土</div>
+            <div class="tag-container">
+                <span class="tag tag-model">情感连接</span><span class="tag tag-type">MMORPG</span>
+            </div>
+        </header>
+
+        <!-- 0. Context -->
+        <section style="margin-bottom: 30px; background: #fff8e1; padding: 20px; border-radius: 12px; border-left: 4px solid #f1c40f;">
+            <h3 style="color: #d35400; margin-top: 0; border: none;">🎯 为什么选择 Final Fantasy XIV 作为 Beagle 的参考？</h3>
+            <p style="margin: 0; color: #5d4037; font-size: 0.95em;">
+                Beagle 面临着与 Final Fantasy XIV 极其相似的挑战：<strong>MMO 必须充满戾气和竞争吗？FF14 创造了一个**“去功利化”**的乌托邦，证明了**情感和包容性**也能留住玩家。</strong>
+                <br><br>
+                本报告将沿着以下脉络展开：
+                <br>1. <strong>定性：</strong> 社交模型概览 (Model)；
+                <br>2. <strong>定量：</strong> 社交维度权重分析 (Dimensions)；
+                <br>3. <strong>落地：</strong> 核心系统与体验还原 (Systems)；
+                <br>4. <strong>评估：</strong> 压力模型 (Pressure)；
+                <br>5. <strong>画像：</strong> 用户分层 (Persona)；
+                <br>6. <strong>结论：</strong> 对 Beagle 的关键启示 (Takeaways)。
+            </p>
+        </section>
+
+        <!-- 1. Model Overview -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>1. 社交模型概览 (Model Overview)</h2>
+            <div class="grid-3" style="margin-bottom: 0; margin-top: 20px;">
+                <!-- Basic 3 -->
+                
+    <div>
+        <strong style="color: var(--text-secondary);">社交形态</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">同好会 (Communities)</div>
+        <p style="font-size: 0.9em; color: #666;">以RP(角色扮演)、装修、演奏等兴趣聚集。</p>
+    </div>
+    
+    <div>
+        <strong style="color: var(--text-secondary);">核心驱动</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">剧情与爱</div>
+        <p style="font-size: 0.9em; color: #666;">为了体验最终幻想的故事。</p>
+    </div>
+    
+    <div>
+        <strong style="color: var(--text-secondary);">社交门槛</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">极低</div>
+        <p style="font-size: 0.9em; color: #666;">豆芽(新手)是被全服呵护的国宝。</p>
+    </div>
+    
+                
+                <!-- Interaction Nature -->
+                <div>
+                    <strong style="color: var(--text-secondary);">交互性质 (合作 vs 竞争)</strong>
+                    <div style="margin-top: 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; color:#666; margin-bottom:4px;">
+                            <span>竞争</span>
+                            <strong style="color:var(--accent-color);">8/10 强合作</strong>
+                            <span>合作</span>
+                        </div>
+                        <div style="height:8px; background:#eee; border-radius:4px; position:relative;">
+                            <div style="width:100%; height:100%; background:linear-gradient(90deg, #eee 0%, #eee 20%, var(--accent-color) 90%); border-radius:4px;"></div>
+                            <div style="position:absolute; top:-3px; left:80%; width:14px; height:14px; background:#fff; border:2px solid var(--accent-color); border-radius:50%; transform:translateX(-50%);"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">副本必须合作，但氛围极度宽容。</p>
+                </div>
+
+                <!-- Social Necessity -->
+                <div>
+                    <strong style="color: var(--text-secondary);">社交必要性 (可选 vs 强制)</strong>
+                    <div style="margin-top: 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; color:#666; margin-bottom:4px;">
+                            <span>可选</span>
+                            <strong style="color:var(--warning-color);">6/10 适度</strong>
+                            <span>强制</span>
+                        </div>
+                        <div style="height:8px; background:#eee; border-radius:4px; position:relative;">
+                            <div style="width:100%; height:100%; background:linear-gradient(90deg, #eee 0%, var(--warning-color) 60%, #eee 100%); border-radius:4px;"></div>
+                            <div style="position:absolute; top:-3px; left:60%; width:14px; height:14px; background:#fff; border:2px solid var(--warning-color); border-radius:50%; transform:translateX(-50%);"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">主线剧情大部分必须组队副本，但有匹配和亲信战友。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Connector 1 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 为了实现这种“爱的乌托邦”的顶层设计，资源和注意力是如何在各个维度上分配的？
+        </div>
+
+        <!-- 2. Dimensions -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>2. 社交维度权重分析 (4 Dimensions & Weights)</h2>
+            <div class="grid-2" style="margin-bottom: 0;">
+                <!-- Who -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#3498db;">👥 社交对象 (Who)</h3>
+                        <span style="background:#d6eaf8; color:#2980b9; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">光之战士</span>
+                    </div>
+                    <!-- Fixed Categories: Stranger, Acquaintance, AI-NPC -->
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>生人社交</span>
+            <strong>50%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:50%; height:100%; background:#9b59b6; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">礼貌的路人</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>熟人社交</span>
+            <strong>40%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:40%; height:100%; background:#3498db; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.6">固定亲友团</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>AI-NPC</span>
+            <strong>10%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:10%; height:100%; background:#7f8c8d; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.4">亲信战友</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        FF14 的社区氛围是业界标杆。官方严格的**反骚扰/反歧视政策**造就了极度礼貌的路人环境。同时，**亲信战友**系统允许社恐玩家带NPC打本。
+                    </div>
+                </div>
+
+                <!-- Why -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#9b59b6;">🔥 社交动机 (Why)</h3>
+                        <span style="background:#f4ecf7; color:#8e44ad; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">情感</span>
+                    </div>
+                    <!-- Fixed Categories: Efficiency, Content Unlock (Game), Content Unlock (Real), Emotional -->
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>情绪价值</span>
+            <strong>70%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:70%; height:100%; background:#e91e63; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">剧情/RP体验</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>效率提升</span>
+            <strong>30%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:30%; height:100%; background:#f1c40f; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.6">装备/外观获取</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>内容解锁（游戏内容）</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>内容解锁（现实生活）</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        装备迭代极快（版本更新就淘汰），且获取容易。因此**外观（幻化）**和**社交资产（房屋、RP店）**成为了更保值的追求。Why 不是为了变强，而是为了在这个世界生活。
+                    </div>
+                </div>
+
+                <!-- What -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#e67e22;">💬 社交内容 (What)</h3>
+                        <span style="background:#fcf3cf; color:#d35400; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">生活</span>
+                    </div>
+                    <!-- Fixed Categories: Real Life Share, Game UGC, Game Gameplay -->
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏玩法内容</span>
+            <strong>100%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:100%; height:100%; background:#e91e63; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">生活与战斗</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>玩家现实生活分享交流</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏内容的二创分享交流</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        战斗只是生活的一部分。大量的玩家上线是为了挂机聊天、去RP店（夜店/咖啡厅）扮演角色，或者打麻将。
+                    </div>
+                </div>
+
+                <!-- Carrier -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#16a085;">📱 社交载体 (Carrier)</h3>
+                        <span style="background:#e8f8f5; color:#16a085; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">公共空间</span>
+                    </div>
+                    <!-- Fixed Categories: In-Game IM, External Platform, Offline -->
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏内IM</span>
+            <strong>90%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:90%; height:100%; background:#9b59b6; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">主城/房屋站街</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏外部平台</span>
+            <strong>10%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:10%; height:100%; background:#3498db; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.6">排本/攻略</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>线下活动</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        海都站街（挂机展示外观）是核心文化。玩家自建的房屋（RP店）提供了无限的社交场景。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Connector 2 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 这些抽象的权重分配，具体是通过哪些系统机制强制落地的？
+        </div>
+
+        <!-- 3. Systems -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>3. 核心系统与体验还原 (Systems & UX)</h2>
+            <div class="grid-2">
+                
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #3498db; border-bottom: 2px solid #3498db; margin-bottom: 10px;">🎲 任务搜索器 (Duty Finder)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>随机练级：</strong> 高等级玩家排低级本有巨额奖励。</li><li><strong>豆芽加成：</strong> 队伍里有新手，全队奖励增加。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #3498db; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 完美解决了“老带新”的动力问题。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; margin-bottom: 10px;">🏡 房屋系统 (Housing)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>装修：</strong> 极高自由度的家具摆放，甚至利用BUG浮空。</li><li><strong>RP店：</strong> 玩家自营的酒吧、甚至洗浴中心。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #e91e63; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 支撑了庞大的 UGC 社交生态。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #f1c40f; border-bottom: 2px solid #f1c40f; margin-bottom: 10px;">🎰 金蝶游乐场 (Gold Saucer)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>小游戏：</strong> 打麻将、赛鸟、跳跳乐。</li><li><strong>无门槛：</strong> 任何等级都能参与的休闲社交。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #f1c40f; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 战斗之外的游乐园。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #9b59b6; border-bottom: 2px solid #9b59b6; margin-bottom: 10px;">👗 幻化 (Glamour)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>暖暖：</strong> 真正的满级是幻化。</li><li><strong>拍照：</strong> 强大的 Gpose 拍照系统。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #9b59b6; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 促进了分享和展示欲。
+        </div>
+    </div>
+    
+            </div>
+        </section>
+
+        <!-- Context Connector 3 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 当系统强制玩家进行高频互利时，如何防止社交压力爆表？
+        </div>
+
+        <!-- 4. Pressure & 5. Persona -->
+        <div class="grid-2">
+            <!-- 4. Pressure -->
+            <section class="card">
+                <h2>4. 压力模型 (Pressure Model)</h2>
+                
+                <div style="background: #f0f3f4; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; color: #555;">
+                    <strong style="display:block; margin-bottom:10px; color:#2c3e50;">🤔 什么是社交压力？ (What is Social Pressure?)</strong>
+                    <p style="margin:0 0 10px 0;">
+                        社交压力是玩家为了获得社交体验而必须付出的<strong>“心理成本”</strong>或<strong>“门槛”</strong>。作为设计师，我们通过调整这五个维度的参数，来筛选目标用户并塑造社交氛围。
+                    </p>
+                    <details>
+                        <summary style="cursor:pointer; color:#3498db; font-weight:bold;">点击查看维度定义 (Definitions)</summary>
+                        <ul style="margin-top:10px; padding-left:20px; line-height:1.6;">
+                            <li><strong>表现 (Performance):</strong> 对玩家操作水平/数值强度的要求。<i>(太菜了会被喷吗？)</i></li>
+                            <li><strong>义务 (Obligation):</strong> 对上线时间/频率/准点率的要求。<i>(不按时上线会坑队友吗？)</i></li>
+                            <li><strong>沟通 (Communication):</strong> 对语言交流/语音沟通的强制性。<i>(社恐能玩吗？)</i></li>
+                            <li><strong>惩罚 (Penalty):</strong> 社交互动失败后的挫败感/损失。<i>(灭团了会掉装备/掉经验吗？)</i></li>
+                            <li><strong>环境 (Environment):</strong> 社区整体的竞争性与戾气程度。<i>(新人会被歧视吗？)</i></li>
+                        </ul>
+                    </details>
+                </div>
+
+                <div class="chart-container">
+                    
+    <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;">
+        <svg width="400" height="320" viewBox="0 0 400 320">
+            <polygon points="200.0,130.0 219.021130326,143.819660113 211.755705046,166.180339887 188.244294954,166.180339887 180.978869674,143.819660113" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,110.0 238.042260652,137.639320225 223.511410092,182.360679775 176.488589908,182.360679775 161.957739348,137.639320225" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,90.0 257.063390978,131.458980338 235.267115138,198.541019662 164.732884862,198.541019662 142.936609022,131.458980338" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,70.0 276.084521304,125.27864045 247.022820183,214.72135955 152.977179817,214.72135955 123.915478696,125.27864045" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,50.0 295.10565163,119.098300563 258.778525229,230.901699437 141.221474771,230.901699437 104.89434837,119.098300563" fill="none" stroke="#ddd" stroke-width="1" />
+            <line x1="200" y1="150" x2="200.0" y2="50.0" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="295.10565163" y2="119.098300563" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="258.778525229" y2="230.901699437" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="141.221474771" y2="230.901699437" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="104.89434837" y2="119.098300563" stroke="#eee" stroke-width="1" />
+            <polygon points="200.0,100.0 238.042260652,137.639320225 217.633557569,174.270509831 176.488589908,182.360679775 190.489434837,146.909830056" fill="rgba(231, 76, 60, 0.2)" stroke="#e74c3c" stroke-width="2" />
+            <circle cx="200.0" cy="100.0" r="4" fill="#e74c3c" /><circle cx="238.042260652" cy="137.639320225" r="4" fill="#e74c3c" /><circle cx="217.633557569" cy="174.270509831" r="4" fill="#e74c3c" /><circle cx="176.488589908" cy="182.360679775" r="4" fill="#e74c3c" /><circle cx="190.489434837" cy="146.909830056" r="4" fill="#e74c3c" />
+            <text x="200.0" y="25.0" text-anchor="middle" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">表现 (Perf)</text><text x="318.882064537" y="111.372875703" text-anchor="start" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">义务 (Obli)</text><text x="273.473156537" y="251.127124297" text-anchor="start" dominant-baseline="hanging" font-size="12" fill="#7f8c8d">沟通 (Comm)</text><text x="126.526843463" y="251.127124297" text-anchor="end" dominant-baseline="hanging" font-size="12" fill="#7f8c8d">惩罚 (Penalty)</text><text x="81.1179354631" y="111.372875703" text-anchor="end" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">环境 (Env)</text>
+        </svg>
+    </div>
+    <div style="margin-top: 20px;">
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>社交压力</span>
+            <strong>20%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:20%; height:100%; background:#2ecc71; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">豆芽友好</div>
+    </div>
+    </div><div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-left: 3px solid #bdc3c7; color: #555; font-size: 0.95em;">
+        <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>表现 (Perf): 50/100</strong> - 两极分化：绝本/零式要求极高，但90%的日常内容（日随、剧情）几乎无门槛，甚至可以“躺”。</li>
+            <li><strong>义务 (Obli): 40/100</strong> - 固定队有上班压力，但散人玩家极其自由，随时退坑随时回坑，装备追赶容易。</li>
+            <li><strong>沟通 (Comm): 30/100</strong> - 豆芽标志（新手保护）让路人极其宽容。不想社交可以全程单机（亲信战友），想社交有海量的RP店。</li>
+            <li><strong>惩罚 (Pen): 40/100</strong> - 副本失败仅重来，无资产损失。最大的惩罚是“浪费队友时间”带来的内疚感（心理压力）。</li>
+            <li><strong>环境 (Env): 10/100</strong> - 官方严管下的温室。禁止DPS统计插件、禁止辱骂，造就了业界最友好的“宝宝巴士”环境。</li>
+        </ul>
+        </div>
+                </div>
+            </section>
+            
+            <!-- 5. Persona -->
+            <section class="card">
+                <h2>5. 用户画像 (Persona)</h2>
+                
+        <table class="persona-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">用户类型 (Type)</th>
+                    <th style="width: 15%;">占比 (Ratio)</th>
+                    <th style="width: 25%;">内容深度 (Content)</th>
+                    <th>画像特征 (Traits)</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr>
+                <td style="vertical-align: top;"><strong>PVX (RP/Glamour)</strong><span class="focus-badge">Core</span></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">60%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:60%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">100%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:100%; height:100%; background:#3498db; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">创造了海量的UGC内容（RP店、装修），游戏活力的源泉。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    RP玩家、装修党、拍照党，游戏的灵魂群体。
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="vertical-align: top;"><strong>PVE (Raider)</strong></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">30%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:30%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">80%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:80%; height:100%; background:#3498db; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">挑战副本机制极限，但非游戏唯一主流，门槛较高。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    零式/绝本玩家，追求高难挑战，通常有固定队。
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="vertical-align: top;"><strong>PVP (Crystalline)</strong></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">10%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:10%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">30%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:30%; height:100%; background:#3498db; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">受限于FF14的和平氛围，PVP缺乏生存土壤，仅为调剂。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    水晶冲突玩家，虽然改版后好玩了，但仍是小众。
+                </td>
+            </tr>
+            
+            </tbody>
+        </table>
+        
+            </section>
+        </div>
+
+        <!-- 6. Takeaways -->
+        <section class="card">
+            <h2>6. 对 Beagle 的关键启示 (Key Takeaways)</h2>
+            
+             <div style="margin-bottom: 25px; padding: 15px; background: #eafaf1; border-radius: 8px; border-left: 4px solid var(--accent-color);">
+                <strong style="color: var(--accent-color); display: block; margin-bottom: 10px; font-size: 1.1em;">核心设计原则 (Core Principles)</strong>
+                <ul>
+                    <li><strong>去功利化社交 (De-utilitarian Social)：</strong> 即使没有强力装备掉落，玩家也会为了“好看”、“好玩”或“陪伴”而聚在一起（如金碟游乐场、RP店）。</li>
+                    <li><strong>横向扩展：</strong> 在垂直数值之外，提供大量的横向追求（外观、坐骑、房屋、乐器），拓宽社交话题。</li>
+                </ul>
+            </div>
+
+            <div class="takeaway-section">
+                <div class="takeaway-col col-do">
+                    <div class="col-title" style="color: var(--accent-color);">
+                        <span class="icon-check">✔</span> 建议复用 (Copy)
+                    </div>
+                    <ul>
+                        <li><strong>导师系统 (Mentor System)：</strong> 通过特殊的图标和奖励（如双人坐骑），激励老玩家主动帮助“豆芽”（新玩家），营造温和的社区氛围。</li>
+                        <li><strong>随机任务 (Duty Roulette)：</strong> 用高额奖励驱使老玩家去排低级副本，解决新手排本难的问题。</li>
+                        <li><strong>房产与装修：</strong> 房屋是公会和个人的社交基地，装修本身也是一种极佳的展示型社交。</li>
+                    </ul>
+                </div>
+                <div class="takeaway-col col-dont">
+                    <div class="col-title" style="color: var(--danger-color);">
+                        <span class="icon-cross">✘</span> 需要警惕 (Avoid)
+                    </div>
+                    <ul>
+                        <li><strong>强制的主线门槛：</strong> FF14 必须跑完几百小时主线才能解锁最新内容的设定，对想和朋友一起玩的纯萌新极不友好。</li>
+                        <li><strong>复杂的战斗循环：</strong> 后期职业循环过于复杂，导致玩家精力全在监控技能CD上，无暇顾及社交互动。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

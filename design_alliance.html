@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beagle Alliance System Design: 3-Scheme Comparison</title>
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --card-bg: #1a1d24;
+            --text-main: #e0e0e0;
+            --text-sub: #a0a0a0;
+            
+            /* Scheme Colors */
+            --scheme-a-color: #4facfe; /* Blue (Justice/Community) */
+            --scheme-b-color: #f093fb; /* Pink (Social) */
+            --scheme-c-color: #ff5e62; /* Red (War) */
+            
+            --border-color: #2a2e36;
+            --tag-bg-opacity: 0.15;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1800px; /* Wider for 7 columns */
+            margin: 0 auto;
+        }
+
+        h1, h2, h3 { color: #fff; margin-bottom: 10px; }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, var(--scheme-a-color), var(--scheme-c-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--scheme-a-color);
+            padding-left: 15px;
+        }
+
+        .section-icon { font-size: 1.5em; margin-right: 10px; }
+
+        /* Principles Section */
+        .principles-box {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border-left: 4px solid #e74c3c;
+        }
+        .principles-list {
+            color: #ddd;
+            line-height: 1.8;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        /* Table Styling */
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            table-layout: fixed;
+        }
+
+        .matrix-table th, .matrix-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+            font-size: 0.9em;
+        }
+
+        .matrix-table th {
+            background-color: #252830;
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+        }
+
+        /* Column Widths (Total ~100%) */
+        .col-feature { width: 7%; color: #fff; font-weight: bold; }
+        .col-ref-justice { width: 10%; color: #aaa; background-color: #20232a; border-right: 1px solid #333; }
+        .col-ref-albion { width: 10%; color: #aaa; background-color: #20232a; border-right: 1px solid #333; }
+        .col-ref-cod { width: 10%; color: #aaa; background-color: #20232a; border-right: 2px solid #555; }
+        
+        .col-scheme-a { width: 21%; background-color: rgba(79, 172, 254, 0.05); border-left: 2px solid var(--scheme-a-color); }
+        .col-scheme-b { width: 21%; background-color: rgba(240, 147, 251, 0.05); border-left: 2px solid var(--scheme-b-color); }
+        .col-scheme-c { width: 21%; background-color: rgba(255, 94, 98, 0.05); border-left: 2px solid var(--scheme-c-color); }
+
+        /* Headers for Schemes */
+        th.col-scheme-a { color: var(--scheme-a-color); }
+        th.col-scheme-b { color: var(--scheme-b-color); }
+        th.col-scheme-c { color: var(--scheme-c-color); }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .tag-core { background-color: rgba(0, 255, 0, var(--tag-bg-opacity)); color: #00ff00; }
+        .tag-warn { background-color: rgba(255, 165, 0, var(--tag-bg-opacity)); color: #ffa500; }
+        .tag-danger { background-color: rgba(255, 0, 0, var(--tag-bg-opacity)); color: #ff4444; }
+        .tag-weak { background-color: rgba(128, 128, 128, var(--tag-bg-opacity)); color: #aaa; }
+
+        .desc-text { display: block; color: var(--text-main); word-wrap: break-word; }
+
+        /* Conclusion Section */
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .conclusion-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .conclusion-card.scheme-a { border-top: 4px solid var(--scheme-a-color); }
+        .conclusion-card.scheme-b { border-top: 4px solid var(--scheme-b-color); }
+        .conclusion-card.scheme-c { border-top: 4px solid var(--scheme-c-color); }
+
+        .card-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #fff; }
+        .quote-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            font-style: italic;
+            color: #fff;
+            position: relative;
+        }
+        .quote-box::before {
+            content: "“";
+            font-size: 2em;
+            position: absolute;
+            top: -10px;
+            left: 5px;
+            opacity: 0.3;
+        }
+
+        /* Reference Experience Section */
+        .ref-exp-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /* 3 Columns */
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .ref-card {
+            background-color: #20232a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .ref-card.albion { border-left: 4px solid #3498db; }
+        .ref-card.cod { border-left: 4px solid #e74c3c; }
+        .ref-card.justice { border-left: 4px solid #f1c40f; } /* Yellow */
+        
+        .ref-title { font-size: 1.3em; color: #fff; margin-bottom: 10px; font-weight:bold; }
+        .ref-subtitle { color: var(--text-sub); margin-bottom: 15px; font-style: italic; }
+        .ref-list { list-style: none; padding: 0; }
+        .ref-list li { margin-bottom: 8px; position: relative; padding-left: 15px; font-size: 0.95em; }
+        .ref-list li::before { content: "•"; color: var(--text-sub); position: absolute; left: 0; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Beagle Alliance Design Schemes</h1>
+        <p>Deep Dive: Context, Reference & Feature Matrix</p>
+    </div>
+
+    <!-- 1. Context & Design Strategy (Updated) -->
+    <div class="section-title">
+        <span class="section-icon">🏗️</span>
+        <h2>1. 上下文与设计策略 (Context & Design Strategy)</h2>
+    </div>
+    <div class="principles-box" style="border-left-color: #3498db;">
+        <h3 style="color:#fff; margin-top:0;">1.1 核心限制 (Constraints)</h3>
+        <p style="color:#ddd;">鉴于<strong>产能有限</strong>且社交框架尚未验证，我们无法直接照搬复杂的 SLG 系统。</p>
+        <ul class="principles-list">
+            <li><strong>不确定性</strong>: LBS + Social 模式需先验证，后扩展。</li>
+            <li><strong>策略</strong>: <strong>7日版本 MVP</strong> —— 只做最核心的社交连接。</li>
+        </ul>
+
+        <h3 style="color:#fff; margin-top:20px;">1.2 7日版本目标 (7-Day Goal)</h3>
+        <ul class="principles-list">
+            <li><strong>MVP</strong>: 只保留能让玩家<strong>"看到彼此"</strong>和<strong>"产生第一次互助"</strong>的功能。</li>
+            <li><strong>体验目标</strong>: 方便加入、感知活人、<strong>绝对无压力</strong> (无强制打卡)。</li>
+        </ul>
+
+        <h3 style="color:#fff; margin-top:20px;">1.3 方法论: 删减与聚焦 (Subtraction)</h3>
+        <p style="color:#ddd;">以成熟 SLG (RoK/CoD) 为基准，进行<strong>大刀阔斧的删减</strong>：</p>
+        <ul class="principles-list">
+            <li><span class="tag tag-danger">❌ 砍掉</span>: 复杂数值(科技/捐献)、复杂权限(官职)、强制地图玩法(铺路)。</li>
+            <li><span class="tag tag-core">✅ 保留</span>: 极简连接(聊天)、即时正反馈(红包/礼物)、低成本互助(一键帮助)。</li>
+        </ul>
+    </div>
+
+    <!-- 2. Core Principles -->
+    <div class="section-title">
+        <span class="section-icon">🛡️</span>
+        <h2>2. 核心设计原则 (Core Principles)</h2>
+    </div>
+    <div class="principles-box">
+        <ul class="principles-list">
+            <li><strong>人大于壳 (People > Structure)</strong>: 拒绝 SLG 式的绑架，联盟是人的容器，不应强行捆绑。</li>
+            <li><strong>去安全感 (No False Security)</strong>: 联盟不提供安全区/保护罩，别卖安全感。</li>
+            <li><strong>正反馈循环 (Positive Feedback)</strong>: 剔除负反馈(惩罚)，只保留正反馈(奖励/分红)。</li>
+        </ul>
+    </div>
+
+    <!-- 3. Reference Experience -->
+    <div class="section-title">
+        <span class="section-icon">⚓</span>
+        <h2>3. 竞品体验锚点 (Reference Experience)</h2>
+    </div>
+
+    <div class="ref-exp-grid">
+        <div class="ref-card justice">
+            <div class="ref-title">Justice Mobile (逆水寒)</div>
+            <div class="ref-subtitle">"帮派 (Community)"</div>
+            <p><strong>殊途同归</strong>的社交生活社区。</p>
+            <ul class="ref-list">
+                <li><strong>共荣</strong>: 打本拍装备，全员分红。</li>
+                <li><strong>热闹</strong>: 朋友圈、跳舞、答题。</li>
+                <li><strong>正向</strong>: 参与即有奖，无强制打卡。</li>
+            </ul>
+        </div>
+        <div class="ref-card albion">
+            <div class="ref-title">Albion Online</div>
+            <div class="ref-subtitle">"商会 (Chamber of Commerce)"</div>
+            <p>公会是提供庇护所的<strong>经济共同体</strong>。</p>
+            <ul class="ref-list">
+                <li><strong>互利</strong>: 交税换安全。</li>
+                <li><strong>松散</strong>: 无强制在线。</li>
+                <li><strong>低压</strong>: 契约关系。</li>
+            </ul>
+        </div>
+        <div class="ref-card cod">
+            <div class="ref-title">Call of Dragons</div>
+            <div class="ref-subtitle">"军队 (Military Unit)"</div>
+            <p>联盟是层级森严的<strong>军事组织</strong>。</p>
+            <ul class="ref-list">
+                <li><strong>服从</strong>: 打卡/捐献/集结。</li>
+                <li><strong>供养</strong>: 大佬养全盟。</li>
+                <li><strong>高压</strong>: 不活跃被踢。</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 4. Potential Experiences -->
+    <div class="section-title">
+        <span class="section-icon">⚖️</span>
+        <h2>4. Beagle 的三种可能体验 (Potential Experiences)</h2>
+    </div>
+    
+    <div class="conclusion-grid">
+        <div class="conclusion-card scheme-a">
+            <div class="card-title" style="color:var(--scheme-a-color)">Scheme A: 帮派 (Community)</div>
+            <p><strong>关键词</strong>: 共荣、分红、正反馈</p>
+            <p>参考逆水寒。通过利益（分红）绑定关系，比纯交税更具凝聚力，且无SLG的被踢压力。</p>
+            <div class="quote-box">
+                "兄弟们上线摸一下BOSS，打完爆了金装大家分钱，不来的亏死！"
+            </div>
+        </div>
+
+        <div class="conclusion-card scheme-b">
+            <div class="card-title" style="color:var(--scheme-b-color)">Scheme B: 俱乐部 (Social)</div>
+            <p><strong>关键词</strong>: 乐趣、热闹、休闲</p>
+            <p>更像传统的MMO公会。大家为了交朋友和开心聚在一起，气氛活跃且轻松。</p>
+            <div class="quote-box">
+                "上线吹吹水，顺手点个加速。哟，抢红包开出个变身玩具？哈哈，走，去主城变身摆拍！"
+            </div>
+        </div>
+
+        <div class="conclusion-card scheme-c">
+            <div class="card-title" style="color:var(--scheme-c-color)">Scheme C: 战争机器</div>
+            <p><strong>关键词</strong>: 荣耀、压迫、执行力</p>
+            <p>传统的SLG逻辑。公会即军队，强调绝对服从和高强度对抗。</p>
+            <div class="quote-box">
+                "半夜三点被电话叫醒上线守塔，不来就得被踢，太累了但真TM刺激。"
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Feature Matrix -->
+    <div class="section-title">
+        <span class="section-icon">🔢</span>
+        <h2>5. 全功能枚举与对比 (Feature Matrix)</h2>
+    </div>
+
+    <!-- 5.1 Management -->
+    <div class="section-title" style="font-size: 0.9em; border-left: 2px solid #666; margin-top: 30px;">
+        <span class="section-icon">🏛️</span>
+        <h3>5.1 基础管理 (Management)</h3>
+    </div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th class="col-feature">功能</th>
+                <th class="col-ref-justice">Ref: Justice</th>
+                <th class="col-ref-albion">Ref: Albion</th>
+                <th class="col-ref-cod">Ref: CoD</th>
+                <th class="col-scheme-a">Sch A: 帮派 (Community)</th>
+                <th class="col-scheme-b">Sch B: 俱乐部 (Social)</th>
+                <th class="col-scheme-c">Sch C: 战争机器 (War)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>创建门槛<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 筛选公会数量</span></td>
+                <td><span class="tag tag-core">标准门槛</span><br><span class="desc-text">需N名玩家响应签名，防止一人公会泛滥。</span></td>
+                <td><span class="tag tag-core">平民化</span><br><span class="desc-text">只需支付银币，任何人攒够钱即可创建。</span></td>
+                <td><span class="tag tag-danger">高门槛</span><br><span class="desc-text">需大量付费货币，确保只有大R/车头能建。</span></td>
+                <td><span class="tag tag-core">低门槛+签名</span><br><span class="desc-text">降低创建费用，但必须凑齐N人响应，强调“人”的聚集。</span></td>
+                <td><span class="tag tag-core">低门槛+签名</span><br><span class="desc-text">同上，侧重于让朋友容易聚在一起。</span></td>
+                <td><span class="tag tag-danger">高付费门槛</span><br><span class="desc-text">确保只有不仅有钱还有战力的大佬带队。</span></td>
+            </tr>
+            <tr>
+                <td>层级结构<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 确立权力结构</span></td>
+                <td><span class="tag tag-core">职能化</span><br><span class="desc-text">设有“大当家”和“宝贝”等具体职能岗。</span></td>
+                <td><span class="tag tag-core">高度自定义</span><br><span class="desc-text">可精细配置每个阶级对箱子、地皮的访问权限。</span></td>
+                <td><span class="tag tag-weak">R1-R5层级</span><br><span class="desc-text">严格的线性权力结构，R5拥有绝对生杀大权。</span></td>
+                <td><span class="tag tag-core">服务型R4</span><br><span class="desc-text">官员更多是服务者，负责发钱、组织活动，弱化官威。</span></td>
+                <td><span class="tag tag-weak">气氛组R4</span><br><span class="desc-text">官员负责活跃气氛、拉人，无实质特权。</span></td>
+                <td><span class="tag tag-danger">集权R5</span><br><span class="desc-text">绝对服从，下级必须执行上级指令。</span></td>
+            </tr>
+            <tr>
+                <td>入会审批<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 准入控制</span></td>
+                <td><span class="tag tag-core">混合制</span><br><span class="desc-text">可设战力门槛自动批准，也可人工审核。</span></td>
+                <td><span class="tag tag-core">人工/面试</span><br><span class="desc-text">为了防间谍，核心公会往往需要语音面试。</span></td>
+                <td><span class="tag tag-danger">战力硬卡</span><br><span class="desc-text">系统自动拒绝低于设定战力的申请，冷酷高效。</span></td>
+                <td><span class="tag tag-core">宽进宽出</span><br><span class="desc-text">不设战力卡，来了就是兄弟，走了也不记仇，保持流动性。</span></td>
+                <td><span class="tag tag-weak">人工审批</span><br><span class="desc-text">更看重活跃度和眼缘，而非数值强度。</span></td>
+                <td><span class="tag tag-danger">优胜劣汰</span><br><span class="desc-text">末位淘汰制，定期清理低战。</span></td>
+            </tr>
+            <tr>
+                <td>联盟等级<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 成长目标</span></td>
+                <td><span class="tag tag-core">活跃堆砌</span><br><span class="desc-text">靠成员日常活跃度积累升级，解锁建筑。</span></td>
+                <td><span class="tag tag-core">赛季积分</span><br><span class="desc-text">根据赛季表现（领土/击杀）决定段位和奖励。</span></td>
+                <td><span class="tag tag-core">捐献升级</span><br><span class="desc-text">靠成员每日捐献资源/科技升级，卡人数上限。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及等级成长。</span></td>
+                <td><span class="tag tag-core">✅ 核心解锁</span><br><span class="desc-text">升级<strong>解锁人数上限</strong>及核心功能，保持简单清晰。</span></td>
+                <td><span class="tag tag-core">✅ 捐献升级</span><br><span class="desc-text">靠捐献资源升级，严格控制人数上限。</span></td>
+            </tr>
+            <tr>
+                <td>公告系统<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 离线触达</span></td>
+                <td><span class="tag tag-core">互动社区</span><br><span class="desc-text">类似朋友圈动态，支持点赞评论。</span></td>
+                <td><span class="tag tag-weak">登录弹窗</span><br><span class="desc-text">上线时显示今日重点消息（MOTD）。</span></td>
+                <td><span class="tag tag-danger">邮件/推送</span><br><span class="desc-text">全员邮件强提醒，确保命令触达。</span></td>
+                <td><span class="tag tag-core">高光时刻</span><br><span class="desc-text">展示分红记录/掉落高光，像朋友圈一样运作。</span></td>
+                <td><span class="tag tag-weak">留言板</span><br><span class="desc-text">简单的文字留言，不做强提醒。</span></td>
+                <td><span class="tag tag-danger">强弹窗</span><br><span class="desc-text">必须点击确认才能关闭，确保执行。</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 5.2 Economy -->
+    <div class="section-title" style="font-size: 0.9em; border-left: 2px solid #666; margin-top: 30px;">
+        <span class="section-icon">💰</span>
+        <h3>5.2 经济体系 (Economy)</h3>
+    </div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th class="col-feature">功能</th>
+                <th class="col-ref-justice">Ref: Justice</th>
+                <th class="col-ref-albion">Ref: Albion</th>
+                <th class="col-ref-cod">Ref: CoD</th>
+                <th class="col-scheme-a">Sch A: 帮派 (Community)</th>
+                <th class="col-scheme-b">Sch B: 俱乐部 (Social)</th>
+                <th class="col-scheme-c">Sch C: 战争机器 (War)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>税收系统<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 公会生计</span></td>
+                <td><span class="tag tag-core">拍卖分红</span><br><span class="desc-text">无税，反而是公会赚钱分给个人。</span></td>
+                <td><span class="tag tag-core">自动抽税</span><br><span class="desc-text">捡钱时系统自动扣除N%归入公会账户。</span></td>
+                <td><span class="tag tag-weak">资源产出</span><br><span class="desc-text">靠占领地图资源点产出公会资源，不抽个人。</span></td>
+                <td><span class="tag tag-core">✅ 拍卖分红</span><br><span class="desc-text">核心正反馈。不抽税，只发钱。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及复杂税收。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+            </tr>
+            <tr>
+                <td>公会资金<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 公共资产</span></td>
+                <td><span class="tag tag-core">建筑维护</span><br><span class="desc-text">用于升级帮会建筑和发放每周奖励。</span></td>
+                <td><span class="tag tag-core">战略储备</span><br><span class="desc-text">用于购买装备补损（Re-gear）或发工资。</span></td>
+                <td><span class="tag tag-core">领土扩张</span><br><span class="desc-text">主要用于建造旗帜扩张领土。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及资金池。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+                <td><span class="tag tag-core">✅ 战略储备</span><br><span class="desc-text">用于建造要塞或宣战，核心战争资源。</span></td>
+            </tr>
+            <tr>
+                <td>仓库/物资<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 资源归集</span></td>
+                <td><span class="tag tag-core">积分兑换</span><br><span class="desc-text">捐装备获积分，积分换别人捐的装备。</span></td>
+                <td><span class="tag tag-core">物理共享</span><br><span class="desc-text">放置在领地的箱子，权限内成员可自由存取。</span></td>
+                <td><span class="tag tag-weak">资源银行</span><br><span class="desc-text">成员存储资源，但这通常是不可取出的。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及物资管理。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+            </tr>
+            <tr>
+                <td>礼物系统<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 社交润滑</span></td>
+                <td><span class="tag tag-core">拼手气红包</span><br><span class="desc-text">发金币红包，大家抢，活跃气氛。</span></td>
+                <td><span class="tag tag-weak">无系统支持</span><br><span class="desc-text">通常靠玩家直接交易。</span></td>
+                <td><span class="tag tag-core">付费宝箱</span><br><span class="desc-text">一人充值，全盟领箱子，核心的“大腿抱得爽”体验。</span></td>
+                <td><span class="tag tag-core">口令红包</span><br><span class="desc-text">活跃/付费触发，输入口令抢，兼顾活跃与付费分享。</span></td>
+                <td><span class="tag tag-core">✅ 战利品共享</span><br><span class="desc-text">继承SLG设计，一人付费/打怪，全员获得宝箱，最直接的“带飞”体验。</span></td>
+                <td><span class="tag tag-core">✅ 付费宝箱</span><br><span class="desc-text">一人充值全盟领箱子，核心留存手段。</span></td>
+            </tr>
+            <tr>
+                <td>联盟商店<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 积分消耗</span></td>
+                <td><span class="tag tag-core">数值/外观</span><br><span class="desc-text">消耗帮贡兑换强化石、时装。</span></td>
+                <td><span class="tag tag-weak">无</span><br><span class="desc-text">一切走市场经济。</span></td>
+                <td><span class="tag tag-weak">加速/护盾</span><br><span class="desc-text">消耗个人贡献兑换战争必需品（加速、迁城）。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及商店兑换。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 4.3 Social -->
+    <div class="section-title" style="font-size: 0.9em; border-left: 2px solid #666; margin-top: 30px;">
+        <span class="section-icon">🤝</span>
+        <h3>4.3 社交与成长 (Social & Growth)</h3>
+    </div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th class="col-feature">功能</th>
+                <th class="col-ref-justice">Ref: Justice</th>
+                <th class="col-ref-albion">Ref: Albion</th>
+                <th class="col-ref-cod">Ref: CoD</th>
+                <th class="col-scheme-a">Sch A: 帮派 (Community)</th>
+                <th class="col-scheme-b">Sch B: 俱乐部 (Social)</th>
+                <th class="col-scheme-c">Sch C: 战争机器 (War)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>一键帮助<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 在线率心跳</span></td>
+                <td><span class="tag tag-core">师徒/助战</span><br><span class="desc-text">带本/传功。</span></td>
+                <td><span class="tag tag-weak">无系统帮助</span><br><span class="desc-text">实体互助。</span></td>
+                <td><span class="tag tag-core">加速握手</span><br><span class="desc-text">减时间。</span></td>
+                <td><span class="tag tag-core">生产/探索助力</span><br><span class="desc-text">帮点一下增加产量/缩短时间。</span></td>
+                <td><span class="tag tag-core">✅ 建造加速</span><br><span class="desc-text">继承SLG设计，为盟友加速建造/升级，最简单的“举手之劳”社交。</span></td>
+                <td><span class="tag tag-core">✅ 加速握手</span><br><span class="desc-text">减少建筑/科技时间，强制社交点。</span></td>
+            </tr>
+            <tr>
+                <td>公会科技<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 数值成长</span></td>
+                <td><span class="tag tag-core">帮会技能</span><br><span class="desc-text">加人物属性。</span></td>
+                <td><span class="tag tag-weak">无公会科技</span><br><span class="desc-text">靠个人。</span></td>
+                <td><span class="tag tag-core">全员捐献</span><br><span class="desc-text">加全员Buff。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及科技树。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">减少复杂度，7日版本移除。</span></td>
+                <td><span class="tag tag-core">✅ 全员捐献</span><br><span class="desc-text">消耗资源换取全员Buff，必须做的数值坑。</span></td>
+            </tr>
+            <tr>
+                <td>聊天频道<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 实时沟通</span></td>
+                <td><span class="tag tag-core">语音/频道</span><br><span class="desc-text">内置语音。</span></td>
+                <td><span class="tag tag-weak">简陋频道</span><br><span class="desc-text">用Discord。</span></td>
+                <td><span class="tag tag-weak">多级频道</span><br><span class="desc-text">刷屏严重。</span></td>
+                <td><span class="tag tag-core">即时通讯</span><br><span class="desc-text">集成语音，方便指挥/吹水。</span></td>
+                <td><span class="tag tag-core">水群/扩列</span><br><span class="desc-text">鼓励吹水。</span></td>
+                <td><span class="tag tag-danger">静默/指挥</span><br><span class="desc-text">战时禁言。</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 4.4 War -->
+    <div class="section-title" style="font-size: 0.9em; border-left: 2px solid #666; margin-top: 30px;">
+        <span class="section-icon">🚩</span>
+        <h3>4.4 领土与战争 (Territory & War)</h3>
+    </div>
+    <table class="matrix-table">
+        <thead>
+            <tr>
+                <th class="col-feature">功能</th>
+                <th class="col-ref-justice">Ref: Justice</th>
+                <th class="col-ref-albion">Ref: Albion</th>
+                <th class="col-ref-cod">Ref: CoD</th>
+                <th class="col-scheme-a">Sch A: 帮派 (Community)</th>
+                <th class="col-scheme-b">Sch B: 俱乐部 (Social)</th>
+                <th class="col-scheme-c">Sch C: 战争机器 (War)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>领土机制<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 地盘宣称</span></td>
+                <td><span class="tag tag-weak">副本/位面</span><br><span class="desc-text">领土争夺在独立副本中进行，不占大世界。</span></td>
+                <td><span class="tag tag-core">放置地堡</span><br><span class="desc-text">在大世界放置地堡作为安全屋，可被攻击。</span></td>
+                <td><span class="tag tag-danger">旗帜接壤</span><br><span class="desc-text">必须通过插旗帜一步步接壤扩张，连成一片。</span></td>
+                <td><span class="tag tag-core">POI占领</span><br><span class="desc-text">占领现实地标（如咖啡馆）获利，<strong>无安全区</strong>，强调地缘争夺。</span></td>
+                <td><span class="tag tag-weak">公会大厅</span><br><span class="desc-text">纯3D室内场景，大家进去聚会。</span></td>
+                <td><span class="tag tag-danger">接壤铺路</span><br><span class="desc-text">必须画地盘，还要时刻盯着防偷袭。</span></td>
+            </tr>
+            <tr>
+                <td>战争集结<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 团队战斗</span></td>
+                <td><span class="tag tag-core">帮战副本</span><br><span class="desc-text">定时的排位赛，双方进副本互推。</span></td>
+                <td><span class="tag tag-core">野外群殴</span><br><span class="desc-text">几十上百人在野外遭遇战，无系统辅助。</span></td>
+                <td><span class="tag tag-core">车头带队</span><br><span class="desc-text">一人发起集结，其他人把兵塞进去，由发起者控制行走。</span></td>
+                <td><span class="tag tag-core">PVE集结</span><br><span class="desc-text">集结打世界BOSS分钱，<strong>而非强制PVP</strong>。</span></td>
+                <td><span class="tag tag-weak">副本车队</span><br><span class="desc-text">传统的组队打本。</span></td>
+                <td><span class="tag tag-danger">攻城集结</span><br><span class="desc-text">集结撞击敌方城防，极度消耗时间。</span></td>
+            </tr>
+            <tr>
+                <td>守护兽<br><span class="desc-text" style="font-size:0.8em; color:#888; font-style:italic;">目的: 顶级PVE</span></td>
+                <td><span class="tag tag-core">定时喂养</span><br><span class="desc-text">每天定时刷出来，大家一起打，掉奖励。</span></td>
+                <td><span class="tag tag-weak">抢世界BOSS</span><br><span class="desc-text">野外刷新，谁抢到归谁。</span></td>
+                <td><span class="tag tag-core">捕捉/召唤</span><br><span class="desc-text">打败地图上的魔兽，战时召唤出来帮忙打架。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+                <td><span class="tag tag-weak">❌ 暂不开发</span><br><span class="desc-text">7日版本暂不涉及。</span></td>
+                <td><span class="tag tag-danger">攻城兽</span><br><span class="desc-text">专门用来拆别人家的。</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 6. Recommendation -->
+    <div class="section-title">
+        <span class="section-icon">📝</span>
+        <h2>6. 最终建议 (Final Recommendation)</h2>
+    </div>
+    <div class="context-box" style="border-left: 4px solid #2ecc71; background: #1a1d24; color: #e0e0e0; padding: 20px; border-radius: 4px; border-top: 1px solid #333; border-right: 1px solid #333; border-bottom: 1px solid #333;">
+        <h3 style="color: #2ecc71; margin-top:0;">决策结论: 方案 B (俱乐部) + SLG 社交核</h3>
+        <p>在7日版本中，我们应坚定选择 <strong>[方案 B: 俱乐部 (Social)]</strong> 作为核心骨架，并融合 SLG 的优秀社交设计。</p>
+        
+        <h4 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; margin-top: 20px;">1. 逻辑推导 (The Logic)</h4>
+        <ul style="line-height: 1.8;">
+            <li>
+                <span class="tag tag-danger">Why not C (战争)?</span>
+                <span style="color: #aaa;"> <strong>压力过大</strong>。7日版本的用户大多是被“宝可梦皮”吸引来的泛用户，过早引入 SLG 的高压战争和强制打卡会导致大面积流失。</span>
+            </li>
+            <li>
+                <span class="tag tag-warn">Why not A (帮派)?</span>
+                <span style="color: #aaa;"> <strong>条件未备</strong>。方案 A 的核心是“分红”，这需要成熟的交易行和经济循环支撑。在7日版本经济系统尚未成型时，分红会变成空头支票。</span>
+            </li>
+            <li>
+                <span class="tag tag-core">Why B (俱乐部)?</span>
+                <span style="color: #aaa;"> <strong>直觉契合</strong>。LBS 的第一直觉是“同城交友”，方案 B 的低门槛、重氛围、轻数值最符合这一预期。先让大家聚在一起“开心”，而不是“打工”。</span>
+            </li>
+        </ul>
+
+        <h4 style="color: #fff; border-bottom: 1px solid #444; padding-bottom: 5px; margin-top: 20px;">2. 执行策略 (Action Plan)</h4>
+        <ul>
+            <li style="margin-bottom: 8px;">
+                <strong>定调 (Base) —— 贯彻 [人大于壳]</strong>:<br>
+                <span style="color: #aaa;">联盟是<strong>服务于人的容器</strong>，而非管理人的枷锁。去数值化、去压力化，不搞强制捆绑。</span>
+            </li>
+            <li style="margin-bottom: 8px;">
+                <strong>融合 (Inject) —— 建立 [正反馈循环]</strong>:<br>
+                <span style="color: #aaa;">引入 <span class="tag tag-core">礼物共享</span> 和 <span class="tag tag-core">一键帮助</span>。剔除一切负反馈(如惩罚)，只保留“一人付费/活跃，全员受益”的<strong>纯粹正反馈</strong>。</span>
+            </li>
+            <li style="margin-bottom: 8px;">
+                <strong>删减 (Cut) —— 坚持 [去安全感]</strong>:<br>
+                <span style="color: #aaa;">坚决砍掉“联盟科技/税收/仓库”。不提供系统级的数值庇护(虚假安全感)，迫使玩家回归到<strong>人与人的直接连接</strong>中。</span>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

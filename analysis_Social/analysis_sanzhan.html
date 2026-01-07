@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社交竞品拆解: 三国志·战略版 (Three Kingdoms Tactics)</title>
+    <style>
+        :root {
+            --primary-bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --accent-color: #c0392b; /* San Zhan Red */
+            --accent-secondary: #2c3e50;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .game-logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-color);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 32px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 { margin: 0; font-size: 2.5em; color: var(--text-main); }
+        .subtitle { color: var(--text-secondary); font-size: 1.1em; margin-top: 10px; }
+        
+        .tag-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .tag {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .tag-model { background: #fdedec; color: var(--accent-color); border: 1px solid var(--accent-color); }
+        .tag-type { background: #eaf2f8; color: var(--accent-secondary); border: 1px solid var(--accent-secondary); }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            margin-bottom: 30px;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-top: 0;
+            color: var(--text-main);
+            font-size: 1.4em;
+        }
+
+        h3 {
+            color: var(--accent-secondary);
+            margin-top: 0;
+            font-size: 1.1em;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Chart Components */
+        .bar-group {
+            margin-bottom: 15px;
+        }
+        
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .bar-track {
+            height: 10px;
+            background: #f0f2f5;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: var(--accent-color);
+            width: 0;
+            transition: width 1s ease-out;
+        }
+        
+        .icon-check { color: #27ae60; margin-right: 8px; }
+        .icon-cross { color: var(--danger-color); margin-right: 8px; }
+
+        /* Analysis Box */
+        .analysis-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #666;
+            border-left: 3px solid #ddd;
+        }
+        .analysis-title {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Persona Table */
+        .persona-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        .persona-table th {
+            text-align: left;
+            padding: 10px;
+            background: #f0f2f5;
+            color: #2c3e50;
+        }
+        .persona-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .focus-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+
+        /* Takeaways */
+        .takeaway-section {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .takeaway-col {
+            flex: 1;
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+        
+        .col-do { background: #e8f8f5; border: 1px solid #27ae60; }
+        .col-dont { background: #fdedec; border: 1px solid var(--danger-color); }
+        
+        .col-title {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        ul { margin: 0; padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .takeaway-section {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Navigation -->
+        <nav style="margin-bottom: 20px;">
+            <a href="social_analysis_index.html" style="text-decoration: none; color: #7f8c8d; font-weight: bold; font-size: 0.9em;">
+                ← 返回竞品分析汇总 (Back to Index)
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="game-logo-placeholder">三</div>
+            <h1>三国志·战略版 (San Mou)</h1>
+            <div class="subtitle">地缘驱动的赛季制 SLG</div>
+            <div class="tag-container">
+                <span class="tag tag-model">赛季制重置</span><span class="tag tag-type">Geopolitics SLG</span>
+            </div>
+        </header>
+
+        <!-- 0. Context -->
+        <section style="margin-bottom: 30px; background: #fff8e1; padding: 20px; border-radius: 12px; border-left: 4px solid #f1c40f;">
+            <h3 style="color: #d35400; margin-top: 0; border: none;">🎯 为什么选择 "三谋" 作为 Beagle 的参考？</h3>
+            <p style="margin: 0; color: #5d4037; font-size: 0.95em;">
+                Beagle 的 SLG 方案面临两个核心难题：**"数值碾压导致环境死寂"** 和 **"大R与平民的生态断层"**。
+                <br>
+                三谋（以《三国志·战略版》为代表）通过 **"铺路机制"**（地缘阻隔）和 **"体力限制"** 给出了教科书级的解答：大R再强也需要平民铺路，平民再弱也能成为战略支点。
+                <br><br>
+                本报告将沿着以下脉络展开：
+                <br>1. <strong>定性：</strong> 社交模型概览 (Model)；
+                <br>2. <strong>定量：</strong> 社交维度权重分析 (Dimensions)；
+                <br>3. <strong>落地：</strong> 核心系统与体验还原 (Systems)；
+                <br>4. <strong>评估：</strong> 压力模型 (Pressure)；
+                <br>5. <strong>画像：</strong> 用户分层 (Persona)；
+                <br>6. <strong>结论：</strong> 对 Beagle 的关键启示 (Takeaways)。
+            </p>
+        </section>
+
+        <!-- 1. Model Overview -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>1. 社交模型概览 (Model Overview)</h2>
+            <div class="grid-3" style="margin-bottom: 0; margin-top: 20px;">
+                <!-- Basic 3 -->
+                
+    <div>
+        <strong style="color: var(--text-secondary);">社交形态</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">军队式管理</div>
+        <p style="font-size: 0.9em; color: #666;">同盟即国家，严格执行考勤与指令。</p>
+    </div>
+    
+    <div>
+        <strong style="color: var(--text-secondary);">核心驱动</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">征服 (Conquest)</div>
+        <p style="font-size: 0.9em; color: #666;">攻占洛阳，赛季结算奖励。</p>
+    </div>
+    
+    <div>
+        <strong style="color: var(--text-secondary);">社交门槛</strong>
+        <div style="font-size: 1.1em; font-weight: bold; margin-top: 5px;">服从</div>
+        <p style="font-size: 0.9em; color: #666;">需要无条件执行盟主/指挥的铺路与攻城指令。</p>
+    </div>
+    
+                
+                <!-- Interaction Nature -->
+                <div>
+                    <strong style="color: var(--text-secondary);">交互性质 (合作 vs 竞争)</strong>
+                    <div style="margin-top: 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; color:#666; margin-bottom:4px;">
+                            <span>竞争</span>
+                            <strong style="color:var(--accent-color);">10/10 绝对绑定</strong>
+                            <span>合作</span>
+                        </div>
+                        <div style="height:8px; background:#eee; border-radius:4px; position:relative;">
+                            <div style="width:100%; height:100%; background:linear-gradient(90deg, #eee 0%, #eee 5%, var(--accent-color) 95%); border-radius:4px;"></div>
+                            <div style="position:absolute; top:-3px; left:95%; width:14px; height:14px; background:#fff; border:2px solid var(--accent-color); border-radius:50%; transform:translateX(-50%);"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">没有同盟，你连高级地都打不了，更别说攻城。</p>
+                </div>
+
+                <!-- Social Necessity -->
+                <div>
+                    <strong style="color: var(--text-secondary);">社交必要性 (可选 vs 强制)</strong>
+                    <div style="margin-top: 8px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.8em; color:#666; margin-bottom:4px;">
+                            <span>可选</span>
+                            <strong style="color:var(--warning-color);">10/10 强制</strong>
+                            <span>强制</span>
+                        </div>
+                        <div style="height:8px; background:#eee; border-radius:4px; position:relative;">
+                            <div style="width:100%; height:100%; background:linear-gradient(90deg, #eee 0%, var(--warning-color) 100%, #eee 100%); border-radius:4px;"></div>
+                            <div style="position:absolute; top:-3px; left:100%; width:14px; height:14px; background:#fff; border:2px solid var(--warning-color); border-radius:50%; transform:translateX(-50%);"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85em; color: #666; margin-top: 8px;">散人毫无游戏体验，必须加入同盟。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Connector 1 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 这种“军队式”的社交结构，是如何分配玩家精力的？
+        </div>
+
+        <!-- 2. Dimensions -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>2. 社交维度权重分析 (4 Dimensions & Weights)</h2>
+            <div class="grid-2" style="margin-bottom: 0;">
+                <!-- Who -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#3498db;">👥 社交对象 (Who)</h3>
+                        <span style="background:#d6eaf8; color:#2980b9; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">战友/敌军</span>
+                    </div>
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>熟人社交 (同盟)</span>
+            <strong>90%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:90%; height:100%; background:#d35400; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">盟友即战友，需长期协作</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>生人社交 (外交/敌对)</span>
+            <strong>10%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:10%; height:100%; background:#f1c40f; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.6">管理层负责外交，底层只管打</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>AI-NPC</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        社交圈子极度封闭。玩家的社交关系完全绑定在“同盟”这个利益共同体上。跨同盟的交流主要体现为谩骂（世界频道）或勾心斗角（私聊）。
+                    </div>
+                </div>
+
+                <!-- Why -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#9b59b6;">🔥 社交动机 (Why)</h3>
+                        <span style="background:#f4ecf7; color:#8e44ad; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">利益+荣誉</span>
+                    </div>
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>效率提升 (资源加成)</span>
+            <strong>30%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:30%; height:100%; background:#f1c40f; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">同盟占城带来的资源Buff</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>内容解锁 (游戏内容)</span>
+            <strong>70%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:70%; height:100%; background:#8e44ad; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">不进盟无法攻城，无法参与赛季结算</div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>内容解锁 (现实生活)</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>情绪价值</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">工具人属性较强</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        前期靠利益驱动（资源加成），中期靠内容驱动（攻城开关）。情感连接相对较弱，更多是基于利益的“同事关系”。
+                    </div>
+                </div>
+
+                <!-- What -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#e67e22;">💬 社交内容 (What)</h3>
+                        <span style="background:#fcf3cf; color:#d35400; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">执行指令</span>
+                    </div>
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏玩法内容 (铺路/攻城)</span>
+            <strong>90%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:90%; height:100%; background:#c0392b; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">听指挥指哪打哪</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>现实生活分享交流</span>
+            <strong>10%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:10%; height:100%; background:#f39c12; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">微信群红包/吹牛</div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏二创分享交流</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        社交内容极度工具化。聊天频道里全是坐标分享、战报展示和指挥法令。真正的“闲聊”被挤压到了微信群。
+                    </div>
+                </div>
+
+                <!-- Carrier -->
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3 style="border:none; margin:0; padding:0; color:#16a085;">📱 社交载体 (Carrier)</h3>
+                        <span style="background:#e8f8f5; color:#16a085; font-size:0.75em; padding:2px 8px; border-radius:10px; font-weight:bold;">微信群+邮件</span>
+                    </div>
+                    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏内IM (邮件/法令)</span>
+            <strong>30%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:30%; height:100%; background:#d35400; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">全盟邮件是指挥的核心</div>
+    </div>
+    
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>游戏外部平台 (微信/QQ)</span>
+            <strong>70%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:70%; height:100%; background:#27ae60; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; ">必须加群，否则会被踢</div>
+    </div>
+
+    <div style="margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; font-size:0.85em; margin-bottom:4px;">
+            <span>线下活动</span>
+            <strong>0%</strong>
+        </div>
+        <div style="height:6px; background:#eee; border-radius:3px;"><div style="width:0%; height:100%; background:#bdc3c7; border-radius:3px;"></div></div>
+        <div style="font-size:0.8em; color:#999; margin-top:2px; opacity:0.2">无</div>
+    </div>
+    
+                    <div class="analysis-box">
+                        <span class="analysis-title">🧐 逻辑与权衡：</span>
+                        为了保证高强度的动员能力，社交载体必然溢出到 IM 软件。游戏内邮件只负责“通知”，微信群负责“动员”和“追责”。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Connector 2 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 是什么样的系统机制，支撑了这种“金字塔”式的权力结构？
+        </div>
+
+        <!-- 3. Systems -->
+        <section class="card" style="margin-bottom: 30px;">
+            <h2>3. 核心系统与体验还原 (Systems & UX)</h2>
+            <div class="grid-2">
+                
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #c0392b; border-bottom: 2px solid #c0392b; margin-bottom: 10px;">🗺️ 连地铺路 (Tile Connection)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>地缘阻隔：</strong> 你只能攻打与你（或盟友）领地相邻的地块。</li><li><strong>铺路：</strong> 为了打一个远处的城，必须一格格打过去。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #c0392b; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 赋予了低战力玩家（铺路党）极高的战略价值，大R也离不开他们。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #27ae60; border-bottom: 2px solid #27ae60; margin-bottom: 10px;">⚡ 体力限制 (Stamina)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>行动消耗：</strong> 每次出征消耗体力，体力无法购买。</li><li><strong>战力稀释：</strong> 大R再强，体力也是有限的，无法一人灭全服。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #27ae60; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 强制要求“人海战术”，保护了平民玩家的生存空间。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #000000; border-bottom: 2px solid #000000; margin-bottom: 10px;">🔄 赛季重置 (Seasonal Reset)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>清零：</strong> 每2-3个月，领地、资源、等级全清零，只保留武将卡。</li><li><strong>新剧本：</strong> 每个赛季有新地图、新规则（如水战、火攻）。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #000000; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 解决了SLG后期死服的问题，给失败者翻盘的希望。
+        </div>
+    </div>
+    
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h3 style="color: #e74c3c; border-bottom: 2px solid #e74c3c; margin-bottom: 10px;">🏰 攻城打卡 (Siege Schedule)</h3>
+        <div style="margin-bottom:15px; font-size:0.9em; line-height:1.5;">
+            <strong style="display:block; margin-bottom:5px;">运行逻辑：</strong>
+            <ul style="margin:0; padding-left:18px; color:#555;">
+                <li><strong>定点集结：</strong> 管理员定好时间（通常晚上8-9点），全员必须在线。</li><li><strong>器械拆墙：</strong> 只有主力不够，必须有大量攻城器械（低战负责）拆耐久。</li>
+            </ul>
+        </div>
+        <div style="background:#fff; padding:10px; border-left:3px solid #e74c3c; font-size:0.9em; color:#666;">
+            <strong>体验还原：</strong> 
+            <br>• 极强的集体仪式感，也是主要的流失点（上班感太重）。
+        </div>
+    </div>
+    
+            </div>
+        </section>
+
+        <!-- Context Connector 3 -->
+        <div style="margin: -20px 0 20px 0; text-align: center; color: #7f8c8d; font-size: 0.9em; font-style: italic;">
+            ⬇ 这种高压环境，对玩家的心理素质提出了什么要求？
+        </div>
+
+        <!-- 4. Pressure & 5. Persona -->
+        <div class="grid-2">
+            <!-- 4. Pressure -->
+            <section class="card">
+                <h2>4. 压力模型 (Pressure Model)</h2>
+                
+                <div style="background: #f0f3f4; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em; color: #555;">
+                    <strong style="display:block; margin-bottom:10px; color:#2c3e50;">🤔 什么是社交压力？</strong>
+                    <p style="margin:0 0 10px 0;">
+                        三谋的压力主要来自于 **"义务 (Obligation)"**。游戏玩成了上班，不打卡就会被踢。
+                    </p>
+                </div>
+
+                <div class="chart-container">
+                    
+    <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 20px;">
+        <svg width="400" height="320" viewBox="0 0 400 320">
+            <polygon points="200.0,130.0 219.021130326,143.819660113 211.755705046,166.180339887 188.244294954,166.180339887 180.978869674,143.819660113" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,110.0 238.042260652,137.639320225 223.511410092,182.360679775 176.488589908,182.360679775 161.957739348,137.639320225" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,90.0 257.063390978,131.458980338 235.267115138,198.541019662 164.732884862,198.541019662 142.936609022,131.458980338" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,70.0 276.084521304,125.27864045 247.022820183,214.72135955 152.977179817,214.72135955 123.915478696,125.27864045" fill="none" stroke="#ddd" stroke-width="1" /><polygon points="200.0,50.0 295.10565163,119.098300563 258.778525229,230.901699437 141.221474771,230.901699437 104.89434837,119.098300563" fill="none" stroke="#ddd" stroke-width="1" />
+            <line x1="200" y1="150" x2="200.0" y2="50.0" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="295.10565163" y2="119.098300563" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="258.778525229" y2="230.901699437" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="141.221474771" y2="230.901699437" stroke="#eee" stroke-width="1" /><line x1="200" y1="150" x2="104.89434837" y2="119.098300563" stroke="#eee" stroke-width="1" />
+            <!-- Data Points: Perf 50, Obli 100, Comm 80, Pen 60, Env 80 -->
+            <polygon points="200.0,100.0 295.1,119.1 247.0,214.7 164.7,198.5 123.9,125.3" fill="rgba(192, 57, 43, 0.2)" stroke="#c0392b" stroke-width="2" />
+            
+            <text x="200.0" y="25.0" text-anchor="middle" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">表现 (Perf)</text><text x="318.882064537" y="111.372875703" text-anchor="start" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">义务 (Obli)</text><text x="273.473156537" y="251.127124297" text-anchor="start" dominant-baseline="hanging" font-size="12" fill="#7f8c8d">沟通 (Comm)</text><text x="126.526843463" y="251.127124297" text-anchor="end" dominant-baseline="hanging" font-size="12" fill="#7f8c8d">惩罚 (Penalty)</text><text x="81.1179354631" y="111.372875703" text-anchor="end" dominant-baseline="baseline" font-size="12" fill="#7f8c8d">环境 (Env)</text>
+        </svg>
+    </div>
+    
+    <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-left: 3px solid #bdc3c7; color: #555; font-size: 0.95em;">
+        <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+            <li><strong>表现 (Perf): 50/100</strong> - 只要跟着大部队走，带上攻城器械（低战）也是贡献，不要求单挑无敌。</li>
+            <li><strong>义务 (Obli): 100/100</strong> - 核心压力源。每晚准时上线攻城，长期缺勤会被清理出盟。</li>
+            <li><strong>沟通 (Comm): 80/100</strong> - 必须看群消息，必须执行法令。不看邮件的人玩不下去。</li>
+            <li><strong>惩罚 (Pen): 60/100</strong> - 资源和兵力损失，但不会永久损失资产（武将卡还在）。</li>
+            <li><strong>环境 (Env): 80/100</strong> - 尔虞我诈，007间谍满天飞。</li>
+        </ul>
+    </div>
+                </div>
+            </section>
+            
+            <!-- 5. Persona -->
+            <section class="card">
+                <h2>5. 用户画像 (Persona)</h2>
+                
+        <table class="persona-table">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">用户类型 (Type)</th>
+                    <th style="width: 15%;">占比 (Ratio)</th>
+                    <th style="width: 25%;">内容深度 (Content)</th>
+                    <th>画像特征 (Traits)</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+            <tr>
+                <td style="vertical-align: top;"><strong>PVP (Whale)</strong><span class="focus-badge">Core</span></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">5%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:5%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">100%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:100%; height:100%; background:#c0392b; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">尖刀突击，驻守推进。体验所有战斗内容。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    满红大佬，享受“一夫当关”的快感，但需要平民铺路。
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="vertical-align: top;"><strong>PVE (Paver)</strong><span class="focus-badge">Core</span></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">60%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:60%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">80%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:80%; height:100%; background:#c0392b; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">铺路、拆迁、炮灰。参与除顶级单挑外的所有活动。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    肝帝，虽然打不过大佬，但是可以用体力和器械恶心死对面。同盟基石。
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="vertical-align: top;"><strong>SLG (Manager)</strong></td>
+                <td style="vertical-align: top;">
+                    <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">5%</div>
+                    <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:5%; height:100%; background:#95a5a6; border-radius:2px;"></div>
+                    </div>
+                </td>
+                <td style="vertical-align: top;">
+                     <div style="font-weight:bold; font-size:1.1em; color:#2c3e50;">90%</div>
+                     <div style="width:100%; height:4px; background:#eee; margin-top:5px; border-radius:2px;">
+                        <div style="width:90%; height:100%; background:#c0392b; border-radius:2px;"></div>
+                    </div>
+                     <div style="font-size:0.85em; color:#7f8c8d; margin-top:5px; line-height:1.4;">战略制定、人员动员、外交。</div>
+                </td>
+                <td style="vertical-align: top; font-size: 0.9em; line-height:1.5; color:#555;">
+                    用爱发电，为了权力和荣誉感。是同盟的灵魂。
+                </td>
+            </tr>
+            
+            </tbody>
+        </table>
+        
+            </section>
+        </div>
+
+        <!-- 6. Takeaways -->
+        <section class="card">
+            <h2>6. 对 Beagle 的关键启示 (Key Takeaways)</h2>
+            
+             <div style="margin-bottom: 25px; padding: 15px; background: #eafaf1; border-radius: 8px; border-left: 4px solid var(--accent-color);">
+                <strong style="color: var(--accent-color); display: block; margin-bottom: 10px; font-size: 1.1em;">核心设计原则 (Core Principles)</strong>
+                <ul>
+                    <li><strong>生态位互补：</strong> 必须让不花钱的活跃玩家（平民）找到存在感（铺路/拆迁）。如果游戏只需要大R就能玩转，生态必崩。</li>
+                    <li><strong>体力即人权：</strong> 限制大R的行动次数，强制他们依赖集体。</li>
+                </ul>
+            </div>
+
+            <div class="takeaway-section">
+                <div class="takeaway-col col-do">
+                    <div class="col-title" style="color: #27ae60;">
+                        <span class="icon-check">✔</span> 建议复用 (Copy)
+                    </div>
+                    <ul>
+                        <li><strong>铺路/连地机制：</strong> 在 Beagle 的 LBS 地图中，可以复用“必须一步步探索/占领”的概念，增加低战玩家的战略价值。</li>
+                        <li><strong>赛季制重置：</strong> 考虑到 Beagle 也是数值成长游戏，定期重置（或部分重置）是解决后期膨胀的唯一解。</li>
+                    </ul>
+                </div>
+                <div class="takeaway-col col-dont">
+                    <div class="col-title" style="color: var(--danger-color);">
+                        <span class="icon-cross">✘</span> 需要警惕 (Avoid)
+                    </div>
+                    <ul>
+                        <li><strong>上班式打卡：</strong> Beagle 还是定位偏休闲（CP2），绝对不能引入“每晚8点强制攻城”这种高压机制。</li>
+                        <li><strong>过度复杂的同盟管理：</strong> 减少对“职业管理人员”的依赖，让系统自动处理部分管理职能。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beagle 社交竞品分析汇总</title>
+    <style>
+        :root {
+            --primary-bg: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-sec: #7f8c8d;
+            --accent-color: #3498db;
+            
+            /* Category Colors */
+            --color-mmo: #e74c3c;
+            --color-slg: #f39c12;
+            --color-unique: #9b59b6;
+            --color-idle: #2ecc71;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            padding: 40px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { text-align: center; margin-bottom: 20px; color: var(--text-main); }
+        .subtitle {
+            text-align: center;
+            color: var(--text-sec);
+            max-width: 800px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+        
+        /* Summary Section */
+        .summary-section {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+        .summary-section h2 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .summary-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .summary-text { width: 100%; }
+        .summary-chart { width: 100%; display: flex; justify-content: center; align-items: center; }
+        
+        /* Chart Styles */
+        .chart-container {
+            width: 100%;
+            max-width: 100%;
+            aspect-ratio: 1.25;
+            position: relative;
+            border: 1px solid #eee;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+        .chart-svg { width: 100%; height: 100%; overflow: visible; }
+        .axis-label { font-size: 12px; fill: #7f8c8d; }
+        .point-label { font-size: 10px; fill: #2c3e50; font-weight: bold; }
+        .zone-label { font-size: 12px; fill: #27ae60; font-weight: bold; }
+        
+        /* Legend */
+        .legend { display: flex; gap: 15px; margin-top: 15px; justify-content: center; font-size: 0.9em; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        
+        /* Grid */
+        .category-title {
+            margin: 30px 0 15px;
+            font-size: 1.2em;
+            color: var(--text-sec);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+            border-left: 5px solid transparent;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .card h2 { margin: 0 0 10px 0; font-size: 1.2em; display: flex; justify-content: space-between; align-items: center; }
+        .card-meta { margin-bottom: 10px; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            margin-right: 5px;
+            background: #f0f2f5;
+            color: #555;
+        }
+        .card p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+        
+        /* Categories Colors */
+        .cat-unique { border-left-color: var(--color-unique); }
+        .cat-mmo { border-left-color: var(--color-mmo); }
+        .cat-slg { border-left-color: var(--color-slg); }
+        .cat-idle { border-left-color: var(--color-idle); }
+        
+        /* Primary Reference Cards (Pokemon GO & Albion) */
+        .card.primary-ref {
+            background: linear-gradient(to right, #ffffff, #f9f9f9);
+            border-left: 5px solid #27ae60 !important;
+        }
+        .card.primary-ref h2 { color: #27ae60; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Beagle 社交竞品分析汇总</h1>
+        <p class="subtitle">
+            基于 <strong>“用户至上，生态驱动”</strong> 的设计哲学。<br>
+            探索 MMO 与 SLG 的边界，为不同画像（PVX/PVE/PVP/SLG）的玩家构建共存繁荣的社交生态。
+        </p>
+        
+        <!-- Analysis Summary & Chart -->
+        <div class="summary-section">
+            <h2>🔎 竞品生态格局分析</h2>
+            <div class="summary-content">
+                <div class="summary-text">
+                    <h3>1. 市场现状：两极分化 (Polarization)</h3>
+                    <p>基于 <strong>社交必要性 (Necessity)</strong> 与 <strong>社交偏向 (Orientation)</strong> 两个维度，当前市场呈现出明显的断层：</p>
+                    <ul>
+                        <li><strong>右侧红海 (High Necessity - 强制社交):</strong>
+                            <ul>
+                                <li><strong>生存焦虑 (Survival Pressure):</strong> 以 <em>EVE, ROK (万国觉醒), Albion</em> 为代表。社交遵循“黑暗森林法则”，不结盟即被掠夺。</li>
+                                <li><strong>上班打卡 (Job-like Pressure):</strong> 以 <em>WoW, Lost Ark</em> 为代表。团本进度强绑定，一人犯错全团买单（连坐机制），社交异化为高压工作。</li>
+                            </ul>
+                        </li>
+                        <li><strong>左侧逃逸 (Low Necessity - 社交降级):</strong>
+                            <ul>
+                                <li><strong>孤岛体验 (Solitary):</strong> 以 <em>逆水寒(AI版), AFK Journey, 燕云十六声</em> 为代表。为给玩家减负，将社交退化为“可选项”甚至由 AI 接管，丧失了人与人的真实连接。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    
+                    <h3>2. Beagle 生态位 (The Beagle Zone)</h3>
+                    <p><strong>核心定位：</strong>在“单机自闭”与“高压上班”之间，开辟<strong>“高必要性、低生存压力”</strong>的第三条道路。</p>
+                    <ul>
+                        <li><strong>社交必要性 (Necessity):</strong> <span style="color:#27ae60; font-weight:bold;">坚决处于中轴线以右</span>。不同于 <em>燕云</em> 的锦上添花，Beagle 强调玩家间的<strong>强依赖</strong>。参考 <em>Albion</em> 的设计，这种依赖应建立在<strong>“经济共生与分工”</strong>之上，而非 <em>ROK</em> 式的生存恐吓。</li>
+                        <li><strong>竞争与协作 (Orientation):</strong> <span style="color:#27ae60; font-weight:bold;">锚定于 CoD 与 Pokemon GO 之间</span>。
+                            <ul>
+                                <li><strong>上限 (Cap):</strong> 止步于 <em>Call of Dragons (万龙觉醒)</em>。引入 GVE (巨兽战) 带来的集体荣耀感，但避免过度残酷的 PVP 掠夺。</li>
+                                <li><strong>下限 (Base):</strong> 扎根于 <em>Pokemon GO</em>。保留 LBS 带来的邂逅惊喜与纯粹互助（点亮地图/资源交换）。</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="summary-chart">
+                    <div class="chart-container">
+                        <svg class="chart-svg" viewBox="-40 -40 880 720">
+                            <!-- Grid -->
+                            <line x1="0" y1="320" x2="800" y2="320" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                            <line x1="400" y1="0" x2="400" y2="640" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                            <rect x="0" y="0" width="800" height="640" fill="none" stroke="#eee" stroke-width="1"/>
+                            
+                            <!-- Axis Labels -->
+                            <text x="400" y="670" text-anchor="middle" class="axis-label" font-size="16">社交必要性 (Social Necessity) →</text>
+                            <text x="-20" y="320" text-anchor="middle" transform="rotate(-90, -20, 320)" class="axis-label" font-size="16">← 社交偏向 (Competition vs Cooperation) →</text>
+                            <text x="400" y="690" text-anchor="middle" font-size="12" fill="#999">(左：可选/锦上添花 — 右：强制/生存压力)</text>
+                            <text x="-35" y="320" text-anchor="middle" transform="rotate(-90, -35, 320)" font-size="12" fill="#999">(上：竞争/对抗 — 下：协作/共赢)</text>
+                            
+                            <!-- Quadrant Labels -->
+                            <text x="780" y="30" text-anchor="end" font-size="14" fill="#e74c3c" font-weight="bold" opacity="0.5">强制竞争 (Dark Forest)</text>
+                            <text x="20" y="610" text-anchor="start" font-size="14" fill="#2ecc71" font-weight="bold" opacity="0.5">单机/弱交互</text>
+                            <text x="20" y="30" text-anchor="start" font-size="14" fill="#9b59b6" font-weight="bold" opacity="0.5">休闲竞技</text>
+                            <text x="780" y="610" text-anchor="end" font-size="14" fill="#3498db" font-weight="bold" opacity="0.5">强制协作 (Raid/Attendance)</text>
+
+                            <!-- Beagle Opportunity Zone -->
+                            <!-- X: > Center(400) to Albion(740) -> Range 410-740 -->
+                            <!-- Y: From CoD(150) to Pre-PokemonGO(500) -> Range 150-500 -->
+                            <rect x="410" y="150" width="330" height="350" fill="rgba(39, 174, 96, 0.15)" stroke="#27ae60" stroke-width="1" stroke-dasharray="4" rx="10"/>
+                            <text x="575" y="325" text-anchor="middle" class="zone-label" fill="#27ae60" font-size="20" font-weight="bold">Beagle Zone</text>
+                            <text x="575" y="350" text-anchor="middle" fill="#27ae60" font-size="12" opacity="0.8">必要性偏高 | 竞争协作均衡</text>
+
+                            <!-- Data Points -->
+                            
+                            <!-- High Necessity + Competition (Top Right) -->
+                            <!-- EVE -->
+                            <circle cx="780" cy="50" r="5" fill="#e74c3c" opacity="0.8"><title>EVE</title></circle>
+                            <text x="774" y="54" text-anchor="end" class="point-label" font-size="14">EVE</text>
+                            <!-- ROK -->
+                            <circle cx="760" cy="100" r="5" fill="#f39c12" opacity="0.8"><title>ROK</title></circle>
+                            <text x="754" y="104" text-anchor="end" class="point-label" font-size="14">ROK</text>
+                            <!-- Albion -->
+                            <circle cx="740" cy="80" r="5" fill="#e74c3c" opacity="0.8"><title>Albion</title></circle>
+                            <text x="734" y="84" text-anchor="end" class="point-label" font-size="14">Albion</text>
+                            <!-- CoD -->
+                            <circle cx="720" cy="150" r="5" fill="#f39c12" opacity="0.8"><title>CoD</title></circle>
+                            <text x="714" y="154" text-anchor="end" class="point-label" font-size="14">CoD</text>
+
+                            <!-- High Necessity + Cooperation (Bottom Right) -->
+                            <!-- WoW -->
+                            <circle cx="750" cy="550" r="5" fill="#e74c3c" opacity="0.8"><title>WoW</title></circle>
+                            <text x="744" y="554" text-anchor="end" class="point-label" font-size="14">WoW</text>
+                            <!-- Lost Ark -->
+                            <circle cx="720" cy="580" r="5" fill="#e74c3c" opacity="0.8"><title>Lost Ark</title></circle>
+                            <text x="714" y="584" text-anchor="end" class="point-label" font-size="14">Lost Ark</text>
+
+                            <!-- Mid Necessity + Mixed/Coop (Center/Bottom) -->
+                            <!-- Diablo (Mid-High, Coop) -->
+                            <circle cx="600" cy="500" r="5" fill="#e74c3c" opacity="0.8"><title>Diablo</title></circle>
+                            <text x="594" y="504" text-anchor="end" class="point-label" font-size="14">Diablo</text>
+                            <!-- PokeMMO (Mid, Mixed) -->
+                            <circle cx="500" cy="320" r="5" fill="#9b59b6" opacity="0.8"><title>PokeMMO</title></circle>
+                            <text x="500" y="310" text-anchor="middle" class="point-label" font-size="14">PokeMMO</text>
+                            <!-- Pokemon GO (Mid, Coop) -->
+                            <circle cx="450" cy="550" r="5" fill="#9b59b6" opacity="0.8"><title>Pokemon GO</title></circle>
+                            <text x="450" y="565" text-anchor="middle" class="point-label" font-size="14">Pokemon GO</text>
+
+                            <!-- Low Necessity (Left) -->
+                            <!-- Justice (AI, Low Necessity, Coop) -->
+                            <circle cx="150" cy="580" r="5" fill="#e74c3c" opacity="0.8"><title>Justice</title></circle>
+                            <text x="156" y="580" text-anchor="start" class="point-label" font-size="14">Justice</text>
+                            <!-- AFK Journey (Low, Solo/Parallel) -->
+                            <circle cx="100" cy="500" r="5" fill="#2ecc71" opacity="0.8"><title>AFK Journey</title></circle>
+                            <text x="106" y="500" text-anchor="start" class="point-label" font-size="14">AFK Journey</text>
+                            <!-- Yanyun (Low-Mid, Solo/Hybrid) -->
+                            <circle cx="280" cy="450" r="5" fill="#9b59b6" opacity="0.8"><title>Yanyun</title></circle>
+                            <text x="286" y="450" text-anchor="start" class="point-label" font-size="14">Yanyun</text>
+                            <!-- Sky (Low Necessity, High Coop) -->
+                            <circle cx="220" cy="600" r="5" fill="#9b59b6" opacity="0.8"><title>Sky</title></circle>
+                            <text x="220" y="615" text-anchor="middle" class="point-label" font-size="14">Sky</text>
+
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="dot" style="background:var(--color-mmo)"></div>MMO</div>
+                <div class="legend-item"><div class="dot" style="background:var(--color-slg)"></div>SLG</div>
+                <div class="legend-item"><div class="dot" style="background:var(--color-unique)"></div>Unique/LBS</div>
+                <div class="legend-item"><div class="dot" style="background:var(--color-idle)"></div>Idle</div>
+            </div>
+        </div>
+
+        <!-- 1. Pokemon Category -->
+        <div class="category-title">Pokemon 类 (Pokemon-like)</div>
+        <div class="grid">
+            <a href="analysis_pokemongo.html" class="card primary-ref">
+                <h2>Pokemon GO <span style="font-size:0.6em; color:#27ae60;">★ 主要参考</span></h2>
+                <div class="card-meta"><span class="tag">LBS</span><span class="tag">Unique</span></div>
+                <p>Beagle 的精神原型。解决了“社恐”与“强交互”的矛盾，证明了LBS社交的可行性。</p>
+            </a>
+
+            <a href="analysis_pokemmo.html" class="card cat-unique">
+                <h2>PokeMMO</h2>
+                <div class="card-meta"><span class="tag">Fan MMO</span><span class="tag">经济驱动</span></div>
+                <p>展示了如何通过经济系统将单机 RPG 转化为 MMO，对 Beagle 的资源循环有重要参考。</p>
+            </a>
+        </div>
+
+        <!-- 2. MMO Category -->
+        <div class="category-title">MMORPG (多人在线角色扮演)</div>
+        <div class="grid">
+            <a href="analysis_wow.html" class="card cat-mmo">
+                <h2>World of Warcraft</h2>
+                <div class="card-meta"><span class="tag">标杆</span><span class="tag">高压协作</span></div>
+                <p>教科书般的副本社交设计，但其高门槛是 Beagle 需要规避的。</p>
+            </a>
+            <a href="analysis_lost_ark.html" class="card cat-mmo">
+                <h2>Lost Ark</h2>
+                <div class="card-meta"><span class="tag">ARPG</span><span class="tag">连坐机制</span></div>
+                <p>极致的配合要求带来了极致的社交压力，反面教材。</p>
+            </a>
+            <a href="analysis_justice.html" class="card cat-mmo">
+                <h2>逆水寒 (Justice)</h2>
+                <div class="card-meta"><span class="tag">AI社交</span><span class="tag">殊途同归</span></div>
+                <p>AI 队友与减负设计，为 Beagle 的单人体验提供了解决方案。</p>
+            </a>
+            <a href="analysis_albion.html" class="card cat-mmo primary-ref">
+                <h2>Albion Online <span style="font-size:0.6em; color:#27ae60;">★ 主要参考</span></h2>
+                <div class="card-meta"><span class="tag">Sandbox</span><span class="tag">全物品掉落</span></div>
+                <p>经济驱动社交的典范，风险与收益的平衡。</p>
+            </a>
+            <a href="analysis_eve.html" class="card cat-mmo">
+                <h2>EVE Online</h2>
+                <div class="card-meta"><span class="tag">Sandbox</span><span class="tag">社会模拟</span></div>
+                <p>黑暗森林法则下的社交博弈，适合 Beagle 后期的高级生态参考。</p>
+            </a>
+            <a href="analysis_diablo_immortal.html" class="card cat-mmo">
+                <h2>Diablo Immortal</h2>
+                <div class="card-meta"><span class="tag">P2W</span><span class="tag">阵营循环</span></div>
+                <p>阵营战的循环机制值得借鉴，但强制组队体验极差。</p>
+            </a>
+        </div>
+
+        <!-- 3. SLG Category -->
+        <div class="category-title">SLG (策略与战争)</div>
+        <div class="grid">
+            <a href="analysis_rok.html" class="card cat-slg">
+                <h2>万国觉醒 (ROK)</h2>
+                <div class="card-meta"><span class="tag">GVG</span><span class="tag">地缘政治</span></div>
+                <p>基于地图控制权的强社交，虽然残酷但粘性极高。</p>
+            </a>
+            <a href="analysis_call_of_dragons.html" class="card cat-slg">
+                <h2>万龙觉醒 (CoD)</h2>
+                <div class="card-meta"><span class="tag">GVE</span><span class="tag">巨兽团战</span></div>
+                <p>在 SLG 中引入 MMO 式的 PVE 团战，平衡了竞争与合作。</p>
+            </a>
+            <a href="analysis_sanzhan.html" class="card cat-slg">
+                <h2>三国志·战略版 (Three Kingdoms Tactics)</h2>
+                <div class="card-meta"><span class="tag">地缘政治</span><span class="tag">赛季制</span></div>
+                <p>通过铺路机制和体力限制解决数值碾压问题，为Beagle的SLG方案提供关键参考。</p>
+            </a>
+            <a href="analysis_sanmou.html" class="card cat-slg">
+                <h2>三国：谋定天下 (San Mou)</h2>
+                <div class="card-meta"><span class="tag">职业体系</span><span class="tag">减负</span></div>
+                <p>引入 RPG 式的职业分工（司仓/天工等）与自动铺路，解决了 SLG 的肝度与同质化痛点。</p>
+            </a>
+        </div>
+
+        <!-- 4. Unique/Idle Category -->
+        <div class="category-title">Unique & Idle (创新与放置)</div>
+        <div class="grid">
+            <a href="analysis_afk_journey.html" class="card cat-idle">
+                <h2>AFK Journey</h2>
+                <div class="card-meta"><span class="tag">Idle</span><span class="tag">大世界</span></div>
+                <p>放置游戏的社交化尝试，"可见不可触"的轻度社交。</p>
+            </a>
+            <a href="analysis_yanyun.html" class="card cat-unique">
+                <h2>燕云十六声</h2>
+                <div class="card-meta"><span class="tag">Hybrid</span><span class="tag">位面隔离</span></div>
+                <p>单机沉浸感与多人社交的割裂尝试，反面参考。</p>
+            </a>
+            <a href="analysis_sky.html" class="card cat-unique">
+                <h2>光遇 (Sky)</h2>
+                <div class="card-meta"><span class="tag">Social Adventure</span><span class="tag">利他主义</span></div>
+                <p>无语言的温暖社交，通过互助与仪式感建立深度情感连接。</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
