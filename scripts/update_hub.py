@@ -264,10 +264,20 @@ def format_date(timestamp):
     return dt.strftime("%Y-%m-%d")
 
 def main():
-    cards_html = ""
+    # Pre-calculate mtime for sorting
+    doc_list = []
     for doc in DOCUMENTS:
         mtime = get_last_modified(doc)
-        date_str = format_date(mtime)
+        doc_data = doc.copy()
+        doc_data['mtime'] = mtime
+        doc_list.append(doc_data)
+
+    # Sort by mtime descending (newest first)
+    doc_list.sort(key=lambda x: x['mtime'], reverse=True)
+
+    cards_html = ""
+    for doc in doc_list:
+        date_str = format_date(doc['mtime'])
         
         # Manually constructing string to avoid encoding issues in mixed environment
         # But using format is safer for placeholders
@@ -289,7 +299,7 @@ def main():
     with io.open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         f.write(final_html)
     
-    print("Successfully generated {} with updated timestamps.".format(OUTPUT_FILE))
+    print("Successfully generated {} with updated timestamps and sorted order.".format(OUTPUT_FILE))
 
 if __name__ == "__main__":
     main()
