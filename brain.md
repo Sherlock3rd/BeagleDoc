@@ -193,6 +193,37 @@
 *   **版本管理 (Versioning):**
     *   生成的资源文件（图片）应保留版本号（v1, v2...），以便在风格尝试失败时能迅速回滚（如本次从 v9/v10/v11 回滚至 v8）。
 
+### 6.3 Beagle Doc 2.0 格式标准 (Format Standard - Based on Map Gameplay Design)
+**目前最满意的文档格式范本**，后续 CP 文档请严格参照此标准执行：
+
+1.  **排版风格 (Layout & Typography)**:
+    *   **基调**: **"Comic Script" (美式漫符风格) + 火柴人 (Stick Figures)**。核心是 HTML + Tailwind CSS + Google Fonts ('Patrick Hand')。
+    *   **字体**: 全文强制使用手写体 `font-family: 'Patrick Hand', cursive;`，营造轻松、非正式的草图感，降低阅读压力。
+    *   **配色方案 (Palette)**:
+        *   **Primary**: `#2c3e50` (深蓝灰) - 用于标题 H1-H2、边框、表格表头。
+        *   **Accent**: `#3498db` (亮蓝) - 用于 H3、链接、强调色。
+        *   **Paper**: `#fdfbf7` (米白) - 全局背景色，模拟纸张质感。
+        *   **Highlight**: `#fff3e0` (淡橙) - 用于 Blockquote 和重点卡片背景。
+
+2.  **核心组件元素 (UI Elements)**:
+    *   **卡片式容器 (.benchmark-card)**:
+        *   **特征**: 使用 **不规则圆角** (`border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px`) 模拟手绘边框。
+        *   **交互**: 悬停时 **仅保留阴影加深**，严禁使用上浮或旋转（保持稳重感）。
+    *   **规则/定义框 (.rule-box / .def-box)**:
+        *   使用 CSS 伪元素 `::before` 在左上角添加倾斜的 **"RULE"** (黑底白字) 或 **"DEF"** 标签，通过视觉强分类提升可读性。
+    *   **漫画风格表格**:
+        *   宽间距 (`padding: 12px`)，表头深色背景，边框粗实线 (`2px solid #333`)。
+
+3.  **示意图绘制规范 (Diagram Style)**:
+    *   **风格**: **XKCD / Hand-drawn Style**。拒绝标准商业图表的冷硬感。
+    *   **关键要素**: 必须包含 **火柴人 (Stick Figures)** 表达角色行为，增强情境感和趣味性。
+    *   **Mermaid 规范**:
+        *   **配色**: 使用 `classDef` 定义柔和色块（如 `fill:#fff3e0,stroke:#f39c12`）。
+        *   **线条**: 尽量使用圆角连线。
+    *   **占位符机制**:
+        *   在 Markdown 源码中统一使用 HTML 注释占位：`<!-- SPECTRUM_VISUALIZATION_NAME -->`。
+        *   后续通过 Python 脚本 (`generate_design_html.py`) 自动注入或替换为 SVG/Canvas。
+
 ## 7. 🆕 设计共识 (Design Consensus) - 2026-01-06 Updated
 
 ### 7.1 核心概念 (Terminology)
