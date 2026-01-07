@@ -96,7 +96,24 @@
 
 ---
 
-## 4. 📝 开发策略与原则 (Strategy & Principles) - 2025-12-23 Updated
+## 4. 📝 开发策略与原则 (Strategy & Principles) - 2026-01-07 Updated
+
+### 📜 文档维护规范 (Documentation Rules)
+为确保项目文档的有序性和可访问性，所有团队成员需遵守以下规范：
+
+1.  **单点入口 (Hub First)**:
+    *   所有已发布/确定的设计文档（HTML格式）**必须**收录到根目录的 `index.html` (Beagle 社交设计策划案合集) 中。
+    *   `index.html` 是对外展示的唯一官方入口，需保持更新。
+
+2.  **双重索引 (Dual Indexing)**:
+    *   除了更新 `index.html`，还需同步更新根目录的 `PUBLISHED_DOCS.md` 表格，方便开发者快速查找源码。
+
+3.  **发布流程 (Publish Flow)**:
+    *   草稿在 `/docs` 下编辑 -> 确认定稿 -> 使用脚本生成/移动 HTML 到 `/publish` -> 更新 `index.html` 和 `PUBLISHED_DOCS.md` -> 提交 Git。
+
+4.  **风格统一 (Style)**:
+    *   对外发布的 HTML 文档应保持统一的“漫画手绘风格” (Tailwind + Patrick Hand 字体)，维护 Beagle 项目轻松愉快的基调。
+
 
 ### 3.1 联盟设计的确定原则 (Determination Principles)
 *   **锚点策略 (Anchor Strategy)**: 采用 **"三方案对比法"** (CP1/CP2/CP3)。CP3 (战争机器) 必须保留作为 SLG 玩家的硬核心理锚点，通过强烈对比突显 CP2 (俱乐部) 的"无压力"优势。

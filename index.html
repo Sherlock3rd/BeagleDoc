@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beagle社交设计策划案合集</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #fdfbf7;
+            --text-color: #333;
+            --border-color: #333;
+            --comic-font: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        body {
+            font-family: 'Patrick Hand', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 2px;
+            border: 3px solid #333;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.8);
+        }
+
+        h1 {
+            font-family: var(--comic-font);
+            border-bottom: 4px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 3.5em !important;
+            text-align: center;
+        }
+
+        .author-tag {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .doc-card {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 25px;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 8px 8px 0px rgba(0,0,0,1);
+            background-color: #fffef0;
+            z-index: 10;
+        }
+
+        .doc-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        .doc-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+            border-top: 2px dashed #ccc;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-jump {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 20px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 3px 3px 0px rgba(0,0,0,1);
+            transition: all 0.1s;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .btn-jump:hover {
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0px rgba(0,0,0,1);
+            background: #2980b9;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 2px solid #333;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            background: #ffeaa7;
+            transform: rotate(-2deg);
+        }
+
+        .footer-note {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎨 Beagle 社交设计策划案合集</h1>
+    <div class="author-tag">Designed by <span style="font-weight:bold; color:#e74c3c;">Charlie</span> 🦊</div>
+
+    <div class="grid-container">
+        
+        <!-- Document Card 1 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">🗺️ Beagle 地图玩法设计</div>
+                <p class="text-gray-600">包含 PVP/PVE 核心循环、CP1/CP2/CP3 玩法分层及演进路线规划。</p>
+            </div>
+            <div>
+                <a href="publish/beagle_map_gameplay_design.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Core</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 2 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">🏗️ 方案二详细设计</div>
+                <p class="text-gray-600">新老玩家分流机制、地图区域划分及服务器合并规则详解。</p>
+            </div>
+            <div>
+                <a href="publish/scheme2_detailed_design.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Tech</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 3 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">📊 社交分析报告总览</div>
+                <p class="text-gray-600">深度拆解 ROK、逆水寒等竞品社交系统，提供设计参考依据。</p>
+            </div>
+            <div>
+                <a href="publish/Beagle_Social_Analysis_Report.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Analysis</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 4 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">🎈 轻度社交设计</div>
+                <p class="text-gray-600">针对泛用户的非数值社交互动模块，增强游戏氛围与留存。</p>
+            </div>
+            <div>
+                <a href="publish/light_social_design.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Casual</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 5 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">🛡️ 联盟系统设计</div>
+                <p class="text-gray-600">联盟组织架构、管理权限、福利体系及核心功能完整设计。</p>
+            </div>
+            <div>
+                <a href="publish/design_alliance.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">System</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 6 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">📝 CP 内容规划</div>
+                <p class="text-gray-600">Content Provider 相关的内容生产、审核与分发机制定义。</p>
+            </div>
+            <div>
+                <a href="publish/beagle_cp.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Content</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Card 7 -->
+        <div class="doc-card">
+            <div>
+                <div class="doc-title">🌿 分支设计规范</div>
+                <p class="text-gray-600">文档版本控制、分支管理流程及协作规范说明。</p>
+            </div>
+            <div>
+                <a href="publish/branching_design_spec.html" class="btn-jump">🚀 进入文档</a>
+                <div class="doc-meta">
+                    <span>📅 更新: 2026-01-07</span>
+                    <span class="badge">Meta</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-note">
+        <p>💡 本文档合集由 Git 自动托管维护，新增文档请同步更新至 <a href="https://github.com/Sherlock3rd/BeagleDoc/blob/master/PUBLISHED_DOCS.md" style="color:blue;">PUBLISHED_DOCS.md</a></p>
+    </div>
+</div>
+
+</body>
+</html>
