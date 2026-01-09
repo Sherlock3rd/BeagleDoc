@@ -14,6 +14,7 @@
 | **轻度社交设计** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/light_social_design.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/light_social_design.html) | 针对非硬核玩家的社交互动模块设计 |
 | **联盟系统设计** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/design_alliance.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/design_alliance.html) | 联盟结构、管理权限及核心功能的详细设计文档 |
 | **合线方案CP** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/branching_design_spec.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/branching_design_spec.html) | 关于文档分支管理与版本控制的规范说明 |
+| **PVP 地块玩法详细设计** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/pvp_tile_detailed_design.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/pvp_tile_detailed_design.html) | 定义了 7日版本的 PVP 地块分级体系、搜打拿核心循环与地图落位原则 |
 
 ---
 
