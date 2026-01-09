@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PVP Tile Gameplay Detailed Design</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #fdfbf7;
+            --text-color: #333;
+            --border-color: #333;
+            --comic-font: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 2px;
+            border: 2px solid #333;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Benchmark Cards & Visual Scenes - COMIC STYLE */
+        .benchmark-card, .scene-container {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        .benchmark-card:hover, .scene-container:hover {
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+        }
+        
+        /* Typography */
+        h1 {
+            font-family: var(--comic-font);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 3.5em !important;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: var(--comic-font);
+            margin-top: 40px;
+            color: var(--primary-color);
+            border-left: 8px solid var(--accent-color);
+            padding-left: 15px;
+            font-size: 2.8em !important;
+        }
+
+        h3 {
+            font-family: var(--comic-font);
+            color: var(--accent-color);
+            margin-top: 30px;
+            font-size: 2.2em !important;
+        }
+
+        h4 {
+            font-family: var(--comic-font);
+            color: #444;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.6em !important;
+        }
+
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 20px; }
+        li { margin-bottom: 10px; font-size: 1.1em; }
+
+        /* Tables - Comic Style */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border: 2px solid #333;
+            border-radius: 4px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        th, td {
+            border-bottom: 2px solid #333;
+            border-right: 2px solid #333;
+            padding: 10px 15px;
+            text-align: left;
+            font-family: var(--comic-font);
+        }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th {
+            background-color: #e2e8f0;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        /* Custom Boxes */
+        blockquote {
+            background-color: #fff3e0;
+            border-left: 5px solid #333;
+            border: 2px solid #333;
+            border-left-width: 8px;
+            margin: 20px 0;
+            padding: 15px;
+            color: #444;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            font-family: var(--comic-font);
+            font-size: 1.3em;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background-color: #e3f2fd;
+            border: 2px solid #333;
+            border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+            font-family: var(--comic-font);
+            border: 1px solid #333;
+            margin-right: 5px;
+        }
+        .tag-risk-low { background: #d4edda; color: #155724; }
+        .tag-risk-mid { background: #fff3cd; color: #856404; }
+        .tag-risk-high { background: #f8d7da; color: #721c24; }
+
+        /* --- VISUAL SCENES (SVG HAND-DRAWN STYLE) --- */
+        .visual-scene {
+            position: relative;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 30px auto; /* Center the container */
+            font-family: var(--comic-font);
+            /* Removed flex to let SVG fill naturally with aspect-ratio */
+            width: 100%;
+            max-width: 800px; /* Limit max width to prevent oversized images */
+        }
+
+        /* SVG Styles */
+        svg {
+            display: block; /* Removes bottom space */
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sketch-line {
+            fill: none;
+            stroke: #333;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .sketch-fill {
+            fill: #fff;
+            stroke: #333;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .sketch-text {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 16px;
+            fill: #333;
+            text-anchor: middle;
+        }
+
+        .sketch-title {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 20px;
+            font-weight: bold;
+            fill: #333;
+            text-anchor: middle;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes wiggle {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-1deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes pulse-red {
+            0% { fill: #ffebee; }
+            50% { fill: #ffcdd2; }
+            100% { fill: #ffebee; }
+        }
+
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-2px, 2px) rotate(-5deg); }
+            50% { transform: translate(2px, -2px) rotate(5deg); }
+            75% { transform: translate(-2px, -2px) rotate(-5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        @keyframes dash {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes shine {
+            0% { opacity: 0.5; stroke-width: 2; }
+            50% { opacity: 1; stroke-width: 4; }
+            100% { opacity: 0.5; stroke-width: 2; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0); }
+        }
+
+        .anim-wiggle { animation: wiggle 3s infinite ease-in-out; transform-box: fill-box; transform-origin: center; }
+        .anim-pulse { animation: pulse-red 2s infinite ease-in-out; }
+        .anim-shake { animation: shake 0.2s infinite; transform-box: fill-box; transform-origin: center; }
+        .anim-dash { animation: dash 1s infinite; }
+        .anim-shine { animation: shine 1.5s infinite; }
+        .anim-float { animation: float 2s infinite ease-in-out; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>⚔️ PVP 地块玩法详细设计方案</h1>
+    <div style="text-align: center; margin-bottom: 40px; font-family: var(--comic-font); color: #666;">
+        <p><strong>Status:</strong> Draft | <strong>Version:</strong> 1.0 (7-Day Plan Focus)</p>
+        <p><strong>Related:</strong> <a href="beagle_map_gameplay_design.html" style="color: var(--accent-color);">Beagle Map Gameplay Design</a></p>
+    </div>
+
+    <h2>1. 设计理念 (Design Philosophy)</h2>
+    <div class="highlight-box">
+        <p>基于 <strong>"用户至上，生态驱动"</strong> 的核心哲学，PVP 玩法不应成为阻碍非 PVP 玩家体验的壁垒，而应成为一种<strong>可选择的进阶体验</strong>。</p>
+        
+        <h3>核心循环 (Core Loop): 搜 · 打 · 拿 (Search - Fight - Take)</h3>
+        <p>摒弃传统的 "搜打撤 (Search-Fight-Evacuate)" 模式。玩家的目标是<strong>搜寻</strong>稀有目标，在<strong>对抗</strong>中生存，并成功<strong>夺取</strong>战利品。</p>
+        <p><strong>规则核心：</strong>一旦夺取成功（完成捕捉或开启引导），物品即刻归属玩家，<strong>无需撤离</strong>。</p>
+
+        <p>本方案的核心逻辑是 <strong>"渐进 (Progression)"</strong>：</p>
+        <ol>
+            <li><strong>整体渐进 (Overall Progression)</strong>: 不同的 PVP 地块承担不同的 <strong>风险-回报</strong> 等级。</li>
+            <li><strong>地图渐进 (Map Progression)</strong>: 通过地理位置的差异化投放，自然筛选目标用户，避免"强制PVP"。</li>
+        </ol>
+    </div>
+
+    <h2>2. 地块分级体系 (Tile Leveling System)</h2>
+
+    <!-- Level 1 Card -->
+    <div class="benchmark-card">
+        <h3>🛡️ Level 1: 狩猎旷野 (The Safari Wilds)</h3>
+        <div style="margin-bottom: 15px;">
+            <span class="tag tag-risk-low">Low Risk</span>
+            <span class="tag" style="background:#e0f7fa;">常驻玩法 (Always On)</span>
+        </div>
+        
+        <!-- L1 Visual Scene (SVG Hand-drawn) -->
+        <div class="visual-scene" style="aspect-ratio: 600/250;">
+            <svg viewBox="0 0 600 250">
+                <defs>
+                    <g id="stick-figure-l1">
+                        <circle cx="0" cy="-20" r="10" class="sketch-line" />
+                        <path d="M0,-10 L0,20 M0,5 L-15,15 M0,5 L15,15 M0,20 L-10,40 M0,20 L10,40" class="sketch-line" />
+                    </g>
+                    <g id="bush">
+                         <path d="M-20,10 Q-30,-10 -15,-20 Q-5,-30 10,-20 Q25,-30 35,-10 Q45,10 30,20 Q15,30 0,20 Q-10,30 -20,10" class="sketch-fill" style="fill:#e6ee9c;" />
+                    </g>
+                </defs>
+                
+                <!-- ZONE 1: Safe Road (Left) -->
+                <rect x="0" y="0" width="200" height="250" style="fill:#e1f5fe; opacity:0.3;" />
+                <text x="100" y="30" class="sketch-title" style="fill:#0277bd;">SAFE ZONE</text>
+                
+                <g transform="translate(80, 150)">
+                    <g class="anim-dash">
+                        <use href="#stick-figure-l1" />
+                        <text x="0" y="60" class="sketch-text">Entering...</text>
+                    </g>
+                </g>
+
+                <!-- Boundary Line -->
+                <line x1="200" y1="20" x2="200" y2="230" class="sketch-line" style="stroke-dasharray: 10,5; stroke-width: 2;" />
+                <g transform="translate(200, 120)">
+                    <rect x="-40" y="-15" width="80" height="30" rx="5" class="sketch-fill" style="fill:#ffcdd2;" />
+                    <text x="0" y="5" class="sketch-text" style="font-size:12px; font-weight:bold;">PVP LINE</text>
+                </g>
+
+                <!-- ZONE 2: Wilds (Right) -->
+                <rect x="200" y="0" width="400" height="250" style="fill:#fff9c4; opacity:0.3;" />
+                <text x="400" y="30" class="sketch-title" style="fill:#fbc02d;">THE WILDS (RISK)</text>
+
+                <!-- Player Catching (Distracted) -->
+                <g transform="translate(350, 150)">
+                    <g class="anim-wiggle">
+                        <use href="#stick-figure-l1" />
+                        <use href="#bush" x="30" y="10" />
+                        <text x="40" y="0" style="font-size: 20px;">🐶</text>
+                        <text x="0" y="60" class="sketch-text">Catching!</text>
+                    </g>
+                </g>
+
+                <!-- Player Stalking (PVP Threat) -->
+                <g transform="translate(500, 150)">
+                    <g class="anim-float">
+                        <use href="#stick-figure-l1" />
+                        <!-- Sword -->
+                        <path d="M10,5 L30,-15" class="sketch-line" style="stroke:#c62828; stroke-width:3;" />
+                        <text x="0" y="-35" style="font-size: 24px;">👀</text>
+                        <text x="0" y="60" class="sketch-text" style="fill:#c62828;">Hunting Player</text>
+                    </g>
+                </g>
+
+                <!-- Danger Arrow -->
+                <path d="M480,130 Q450,110 400,130" class="sketch-line anim-wiggle" style="stroke:#c62828; stroke-dasharray:5,5; marker-end: url(#arrow-l1);" />
+            </svg>
+        </div>
+
+        <blockquote>"这里有外面见不到的稀有比宝，前提是你能从猎人们的包围中把它们<strong>抢到手</strong>。"</blockquote>
+
+        <div class="def-box">
+            <h4>Core Definition</h4>
+            <ul>
+                <li><strong>定位 (Role):</strong> 泛用户入口，非安全区，核心驱动力是<strong>捕捉特殊比宝</strong>。</li>
+                <li><strong>开启规则 (Rules):</strong> <strong>常驻 (Always On)</strong>。全天候开放，无时段限制，资源独立刷新。</li>
+                <li><strong>风险等级 (Risk):</strong> <strong>Low Risk</strong> (无掉落 / 仅耐久损耗 / 快速复活)。</li>
+            </ul>
+        </div>
+
+        <div class="def-box">
+            <h4>Gameplay Benefits</h4>
+            <ul>
+                <li><strong>PVP 收益:</strong> 击败竞争对手，确保捕猎环境。</li>
+                <li><strong>核心收益 (Special Beagle):</strong> <strong>"特殊比宝捕捉"</strong>。
+                    <ul>
+                        <li><strong>独占生态:</strong> 刷新地图其他地方没有的特殊比宝（异色、特殊词条）。</li>
+                        <li><strong>隔离型机制:</strong> 保留相对独立的采集点，驱动 PVX 玩家进入。</li>
+                    </ul>
+                </li>
+                <li><strong>日活接入 (Daily):</strong> "前往旷野捕捉/观察" 与 "完成一次 PVP 战斗" 列为每日活跃任务。</li>
+            </ul>
+        </div>
+
+        <h4>地图落位原则</h4>
+        <p><strong>傍路而不挡路 (Near, not On)</strong>：设计为吸附在主干道两侧的 <strong>"口袋区" (Pocket Zones)</strong>。</p>
+    </div>
+
+    <!-- Level 2 Card -->
+    <div class="benchmark-card" style="border-color: #c0392b;">
+        <h3 style="color: #c0392b;">⚔️ Level 2: 幻装派对 (The Masquerade)</h3>
+        <div style="margin-bottom: 15px;">
+            <span class="tag tag-risk-mid">Mid Risk</span>
+            <span class="tag" style="background:#ffebee;">限时活动 (Timed Event)</span>
+        </div>
+
+        <!-- L2 Visual Scene (SVG Hand-drawn) -->
+        <div class="visual-scene" style="aspect-ratio: 600/250;">
+            <svg viewBox="0 0 600 250">
+                <defs>
+                    <g id="stick-figure-l2">
+                        <circle cx="0" cy="-20" r="10" class="sketch-line" />
+                        <path d="M0,-10 L0,20 M0,5 L-15,15 M0,5 L15,15 M0,20 L-10,40 M0,20 L10,40" class="sketch-line" />
+                    </g>
+                    <g id="sword">
+                        <path d="M-10,0 L20,-20 M-5,-5 L-10,10" class="sketch-line" style="stroke: #c62828;" />
+                    </g>
+                </defs>
+
+                <!-- Background Zone (Red Alert) -->
+                <rect x="0" y="0" width="600" height="250" class="sketch-line anim-pulse" style="fill: #ffebee; stroke: none;" />
+                <text x="300" y="30" class="sketch-title" style="fill: #c62828; font-size: 24px;">EVENT ZONE: 12:00 UTC</text>
+                
+                <!-- Central Hill -->
+                <path d="M100,250 Q300,180 500,250" class="sketch-fill" style="fill: #fff;" />
+
+                <!-- THE CHEST (Focal Point) -->
+                <g transform="translate(300, 200) scale(1.5)">
+                    <g class="anim-float">
+                        <rect x="-20" y="-15" width="40" height="30" class="sketch-fill" style="fill: #ffd54f; stroke-width:2;" />
+                        <path d="M-20,0 L20,0 M-5,-5 L-5,5 M5,-5 L5,5" class="sketch-line" style="stroke-width:2;" />
+                        <!-- Shine Effect -->
+                        <g class="anim-shine">
+                            <line x1="-30" y1="-30" x2="-10" y2="-10" class="sketch-line" style="stroke:#fdd835;" />
+                            <line x1="30" y1="-30" x2="10" y2="-10" class="sketch-line" style="stroke:#fdd835;" />
+                            <line x1="0" y1="-40" x2="0" y2="-20" class="sketch-line" style="stroke:#fdd835;" />
+                        </g>
+                    </g>
+                </g>
+                <text x="300" y="150" class="sketch-title" style="fill: #f57f17; font-size: 22px;">THE GRAND PRIZE</text>
+
+                <!-- Player A (Rushing) -->
+                <g transform="translate(150, 230)">
+                    <g class="anim-dash">
+                        <use href="#stick-figure-l2" />
+                        <text x="0" y="-40" class="sketch-text">Mine!</text>
+                    </g>
+                </g>
+
+                <!-- Player B vs C (Fighting) -->
+                <g transform="translate(450, 230)">
+                    <g class="anim-shake">
+                        <use href="#stick-figure-l2" />
+                        <path d="M10,10 L30,-10" class="sketch-line" style="stroke: #333;" />
+                    </g>
+                </g>
+                <g transform="translate(500, 230) scale(-1, 1)">
+                    <g class="anim-shake">
+                        <use href="#stick-figure-l2" />
+                        <path d="M10,10 L30,-10" class="sketch-line" style="stroke: #333;" />
+                    </g>
+                </g>
+                <text x="475" y="180" class="sketch-text" style="fill:#c62828;">Get away!</text>
+
+                <!-- Background Beagle (Faded/Ignored) -->
+                <g transform="translate(50, 100)" style="opacity: 0.4;">
+                     <text x="0" y="0" style="font-size: 30px;">🐶</text>
+                     <text x="0" y="20" class="sketch-text" style="font-size: 12px;">(Ignored)</text>
+                </g>
+            </svg>
+        </div>
+
+        <blockquote>"今晚的主角只能有一个。穿上最闪亮的衣服，去抢那个限定头套！"</blockquote>
+
+        <div class="def-box">
+            <h4>Core Definition</h4>
+            <ul>
+                <li><strong>定位 (Role):</strong> 进阶 PVP，强调<strong>趣味性</strong>与<strong>外观展示</strong>。</li>
+                <li><strong>基础状态 (Inheritance):</strong> <strong>完全继承 L1 玩法</strong>。非活动期间表现与 L1 一致。</li>
+                <li><strong>风险等级 (Risk):</strong> <strong>Mid Risk</strong> (战败可能丢失本次获得的活动积分/道具)。</li>
+            </ul>
+        </div>
+
+        <div class="rule-box">
+            <h4>Opening Rules</h4>
+            <ul>
+                <li><strong>时间窗口 (Time):</strong> 每日固定于 <strong>UTC 12:00</strong> 开启 (减少玩家长时间在线负担)。</li>
+                <li><strong>预告广播 (Broadcast):</strong> 活动开始前 <strong>5分钟</strong> 全服广播。</li>
+            </ul>
+        </div>
+
+        <div class="def-box">
+            <h4>Gameplay: King of the Hill (30s Challenge)</h4>
+            <ul>
+                <li><strong>随机生成 (Spawn):</strong> 区域内随机坐标刷新【幻装宝箱】，<strong>小地图</strong>高亮显示。</li>
+                <li><strong>夺取规则 (The Take):</strong> 找到宝箱的玩家需保持 <strong>30秒 持续引导 (Channeling)</strong> 才能开启。
+                    <ul>
+                        <li><strong>打断机制 (Interrupt):</strong> 引导期间受到<strong>任何伤害</strong>或<strong>移动</strong>均会打断进度。</li>
+                        <li><strong>无敌状态 (None):</strong> 开启过程中<strong>无</strong>无敌保护，需队友掩护。</li>
+                    </ul>
+                </li>
+                <li><strong>奖励 (Reward):</strong> 引导完成后，<strong>限时外观 (Cosmetics)</strong> 直接进入背包，<strong>无需撤离</strong>。</li>
+            </ul>
+        </div>
+
+        <h4>地图落位原则</h4>
+        <p><strong>深巷分支 (Deep Branch)</strong>：放置在地图的末端分支或独立区域。</p>
+    </div>
+
+    <div class="def-box" style="border-left: 5px solid #ff9800; background-color: #fff3e0;">
+        <h4>🤔 待讨论：L2 地块规模与生成逻辑 (TBD: L2 Scale & Spawn Logic)</h4>
+        <p>关于 L2 地块的大小与数量关系，目前有三种提案 (CPs)，需对比决策：</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+            <tr style="background: #ffe0b2;">
+                <th style="padding: 8px; border: 1px solid #ffcc80;">方案 (Proposal)</th>
+                <th style="padding: 8px; border: 1px solid #ffcc80;">描述 (Description)</th>
+                <th style="padding: 8px; border: 1px solid #ffcc80;">优点 (Pros)</th>
+                <th style="padding: 8px; border: 1px solid #ffcc80;">缺点 (Cons)</th>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 1: 巨型单一地块</strong><br>(Unique Large Tile)</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">全服仅 1 个 L2，且面积显著大于 L1 (e.g. 2x2 or 4x4)。</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• 容纳更多玩家混战<br>• 战场纵深大，战术空间足</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• 开发成本高 (需特殊地图尺寸)<br>• 性能压力大 (同屏人数多)</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 2: 标准单一地块</strong><br>(Unique Standard Tile)</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">全服仅 1 个 L2，但面积与 L1 相同 (1x1)。<br><strong>(推荐: 7日版本验证首选)</strong></td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• <strong>Scope 可控</strong> (无需新尺寸)<br>• 战斗密度极高 (绞肉机体验)</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• 过于拥挤，体验可能混乱<br>• 策略性降低，偏向纯数值/乱斗</td>
+            </tr>
+            <tr>
+                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 3: 轮换升级地块</strong><br>(Rotating Upgrade)</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">L1 和 L2 一样大。每日随机选一个 L1 升级为 L2。</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• 每日新鲜感 (争夺点变化)<br>• 避免特定位置被垄断</td>
+                <td style="padding: 8px; border: 1px solid #ffcc80;">• 玩家认知成本高 (需找路)<br>• 地图逻辑复杂 (动态切换)</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>3. 地图拓扑结构示意 (Map Topology)</h2>
+    <p>游戏世界由一条东西向的<strong>主干道 (Main Road)</strong> 和多条南北向的<strong>支路 (Branch Roads)</strong> 组成。L1 地块如气泡般附着在主干道上，而 L2 地块则位于某条支路的深处。</p>
+    
+    <div class="visual-scene" style="aspect-ratio: 800/300;">
+        <svg viewBox="0 0 800 300">
+            <defs>
+                <marker id="arrow-l1" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L0,6 L9,3 z" fill="#c62828" />
+                </marker>
+                <g id="stick-figure-top">
+                    <circle cx="0" cy="-20" r="10" class="sketch-line" />
+                    <path d="M0,-10 L0,20 M0,5 L-15,15 M0,5 L15,15 M0,20 L-10,40 M0,20 L10,40" class="sketch-line" />
+                </g>
+            </defs>
+
+            <!-- Main Road -->
+            <path d="M50,150 Q200,140 400,150 T750,150" class="sketch-fill" style="fill:none; stroke-width: 40; stroke:#e1f5fe;" />
+            <path d="M50,130 Q200,120 400,130 T750,130" class="sketch-line" />
+            <path d="M50,170 Q200,160 400,170 T750,170" class="sketch-line" />
+            <text x="120" y="155" class="sketch-text" style="fill:#0277bd; font-weight:bold;">MAIN HIGHWAY (SAFE)</text>
+            
+            <!-- Player on Main Road -->
+            <g transform="translate(300, 160) scale(0.8)">
+                <g class="anim-wiggle">
+                    <use href="#stick-figure-top" />
+                    <text x="0" y="-35" class="sketch-text">You</text>
+                </g>
+            </g>
+
+            <!-- L1 Pockets attached to Main Road -->
+            <g transform="translate(250, 110)">
+                <circle r="30" class="sketch-fill" style="fill:#fff9c4;" />
+                <text x="0" y="5" class="sketch-text">L1</text>
+            </g>
+            <g transform="translate(450, 190)">
+                <circle r="30" class="sketch-fill" style="fill:#fff9c4;" />
+                <text x="0" y="5" class="sketch-text">L1</text>
+            </g>
+            
+            <!-- Branch Road (Deep) -->
+            <path d="M600,170 Q590,220 600,280" class="sketch-fill" style="fill:none; stroke-width: 30; stroke:#ffebee;" />
+            <path d="M585,170 Q575,220 585,280" class="sketch-line" />
+            <path d="M615,170 Q605,220 615,280" class="sketch-line" />
+            
+            <!-- L2 at end of branch -->
+            <g transform="translate(600, 250)">
+                <rect x="-40" y="-30" width="80" height="60" rx="10" class="sketch-fill" style="fill:#ffcdd2;" />
+                <text x="0" y="0" class="sketch-title">L2</text>
+                <text x="0" y="20" class="sketch-text" style="font-size: 12px;">(Danger)</text>
+            </g>
+        </svg>
+    </div>
+
+    <h2>4. 玩法与生态循环 (Daily Rhythm)</h2>
+    <p>玩家全天均可自由选择进入 L1 或 L2 进行游玩。但在<strong>特定时间段 (Event Time)</strong>，L2 的高额奖励会驱动全服玩家向该区域聚集。</p>
+
+    <div class="visual-scene" style="aspect-ratio: 800/300;">
+        <svg viewBox="0 0 800 300">
+            <defs>
+                <g id="stick-figure-journey">
+                    <circle cx="0" cy="-20" r="10" class="sketch-line" />
+                    <path d="M0,-10 L0,20 M0,5 L-15,15 M0,5 L15,15 M0,20 L-10,40 M0,20 L10,40" class="sketch-line" />
+                </g>
+                <g id="mini-chest">
+                    <rect x="-10" y="-8" width="20" height="16" class="sketch-fill" style="fill: #ffd54f;" />
+                </g>
+            </defs>
+            
+            <!-- Separator -->
+            <line x1="400" y1="20" x2="400" y2="280" class="sketch-line" style="stroke-dasharray: 5,5;" />
+            
+            <!-- SCENE 1: Normal Hours -->
+            <text x="200" y="40" class="sketch-title">NORMAL HOURS (22 Hours)</text>
+            <text x="200" y="70" class="sketch-text" style="font-size: 14px;">"Play Anywhere"</text>
+            
+            <!-- L1 Area -->
+            <g transform="translate(100, 150)">
+                <circle r="60" class="sketch-fill" style="fill: #e1f5fe;" />
+                <text x="0" y="80" class="sketch-text">L1 Area</text>
+                <!-- Scattered Players -->
+                <g transform="translate(-20, -10) scale(0.6)"><g class="anim-wiggle"><use href="#stick-figure-journey" /></g></g>
+                <g transform="translate(20, 10) scale(0.6)"><g class="anim-wiggle"><use href="#stick-figure-journey" /></g></g>
+            </g>
+            
+            <!-- L2 Area -->
+            <g transform="translate(300, 150)">
+                <rect x="-50" y="-50" width="100" height="100" class="sketch-fill" style="fill: #ffebee;" />
+                <text x="0" y="80" class="sketch-text">L2 Area</text>
+                <!-- Few Players -->
+                <g transform="translate(0, 0) scale(0.6)"><g class="anim-wiggle"><use href="#stick-figure-journey" /></g></g>
+            </g>
+
+            <!-- SCENE 2: Event Hours -->
+            <text x="600" y="40" class="sketch-title anim-pulse" style="fill: #c62828;">EVENT HOURS (2 Hours)</text>
+            <text x="600" y="70" class="sketch-text" style="font-size: 14px; fill: #c62828;">"Rush to L2"</text>
+            
+            <!-- L1 Area (Empty) -->
+            <g transform="translate(500, 150)">
+                <circle r="40" class="sketch-fill" style="fill: #e1f5fe; opacity: 0.5;" />
+                <text x="0" y="60" class="sketch-text" style="fill:#999;">L1 (Quiet)</text>
+            </g>
+
+            <!-- L2 Area (CROWDED) -->
+            <g transform="translate(700, 150)">
+                <rect x="-60" y="-60" width="120" height="120" class="sketch-fill anim-pulse" style="fill: #ffcdd2; stroke: #c62828; stroke-width: 3;" />
+                <text x="0" y="90" class="sketch-text" style="font-weight:bold; fill: #c62828;">L2 (HOT!)</text>
+                
+                <!-- The Chest -->
+                <g transform="scale(1.5)"><use href="#mini-chest" x="0" y="-20" class="anim-float" /></g>
+                
+                <!-- CROWD -->
+                <g transform="translate(-30, 20) scale(0.6)"><g class="anim-shake"><use href="#stick-figure-journey" /></g></g>
+                <g transform="translate(30, 20) scale(0.6)"><g class="anim-shake"><use href="#stick-figure-journey" /></g></g>
+                <g transform="translate(0, 40) scale(0.6)"><g class="anim-shake"><use href="#stick-figure-journey" /></g></g>
+                <g transform="translate(-40, -10) scale(0.6)"><g class="anim-shake"><use href="#stick-figure-journey" /></g></g>
+                <g transform="translate(40, -10) scale(0.6)"><g class="anim-shake"><use href="#stick-figure-journey" /></g></g>
+            </g>
+            
+            <!-- Arrow Flow -->
+            <path d="M540,150 L630,150" class="sketch-line anim-dash" style="marker-end: url(#arrow-l1); stroke-width: 4; stroke: #c62828;" />
+
+        </svg>
+    </div>
+
+    <h2>5. 详细配置对比 (Detailed Configuration)</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>属性</th>
+                <th>Level 1: 狩猎旷野 (Safari)</th>
+                <th>Level 2: 幻装派对 (Masquerade)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>地块标识</strong></td>
+                <td>黄色爪印标识 (Beagle Zone)</td>
+                <td>平时: 同L1 / 活动时: 红色面具标识</td>
+            </tr>
+            <tr>
+                <td><strong>进入警告</strong></td>
+                <td>弱提示 ("即将进入非安全捕猎区")</td>
+                <td>活动期间: <strong>强弹窗</strong> ("限时活动正在进行")</td>
+            </tr>
+            <tr>
+                <td><strong>战斗机制</strong></td>
+                <td>击败倒地，快速复活，无损失</td>
+                <td><strong>平时同L1</strong>。活动期间可能增加复活冷却</td>
+            </tr>
+            <tr>
+                <td><strong>核心产出</strong></td>
+                <td><strong>隔离型比宝</strong>、荣誉、日活点数</td>
+                <td><strong>平时同L1</strong> + <strong>活动宝箱 (限时外观)</strong></td>
+            </tr>
+            <tr>
+                <td><strong>刷新规则</strong></td>
+                <td><strong>常驻 (Always On)</strong></td>
+                <td><strong>UTC 12:00</strong> 固定开启，前5分钟广播</td>
+            </tr>
+            <tr>
+                <td><strong>社交模式</strong></td>
+                <td>联盟对抗 + 散人混战</td>
+                <td>联盟有组织的对抗 (抢夺宝箱)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="rule-box" style="background-color: #fff3e0;">
+        <h4>🚧 7日版本待办 (7-Day Plan To-Dos)</h4>
+        <ul>
+            <li>[ ] <strong>机制实现</strong>: L1 比宝获取逻辑、日活接入（含 PVP 战斗任务）；L2 限时广播与宝箱生成。</li>
+            <li>[ ] <strong>地图编辑</strong>: 规划 L1 口袋区与 L2 分支区。</li>
+            <li>[ ] <strong>奖励配置</strong>: 配置 L2 的限时外观奖励池。</li>
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+</script>
+</body>
+</html>

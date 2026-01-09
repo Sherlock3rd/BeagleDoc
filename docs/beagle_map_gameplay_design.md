@@ -3,7 +3,7 @@
 > **Status:** Draft  
 > **Author:** Assistant  
 > **Date:** 2026-01-05  
-> **Related Docs:** light_social_design.md
+> **Related Docs:** [light_social_design.md](light_social_design.md), [pvp_tile_detailed_design.md](pvp_tile_detailed_design.md)
 
 ---
 
