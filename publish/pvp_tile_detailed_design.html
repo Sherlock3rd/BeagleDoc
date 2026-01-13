@@ -393,6 +393,7 @@
         <div style="margin-bottom: 15px;">
             <span class="tag tag-risk-mid">Mid Risk</span>
             <span class="tag" style="background:#ffebee;">限时活动 (Timed Event)</span>
+            <span class="tag" style="background:#e3f2fd;">动态生成 (Dynamic)</span>
         </div>
 
         <!-- L2 Visual Scene (SVG Hand-drawn) -->
@@ -476,7 +477,13 @@
             <h4>Opening Rules</h4>
             <ul>
                 <li><strong>时间窗口 (Time):</strong> 每日固定于 <strong>UTC 12:00</strong> 开启 (减少玩家长时间在线负担)。</li>
-                <li><strong>预告广播 (Broadcast):</strong> 活动开始前 <strong>5分钟</strong> 全服广播。</li>
+                <li><strong>动态生成 (Dynamic Spawn):</strong> 每日从符合当前大地图推进节奏的 L1 地块中，<strong>随机抽取一个</strong>升级为 L2。
+                    <ul>
+                        <li><strong>灵活性 (Flexibility):</strong> 地块大小与 L1 保持一致，但通过活动机制聚焦热度。</li>
+                        <li><strong>新鲜感 (Freshness):</strong> 每日战场位置变化，避免特定点位被长期垄断。</li>
+                    </ul>
+                </li>
+                <li><strong>预告广播 (Broadcast):</strong> 活动开始前 <strong>5分钟</strong> 全服广播，并在地图上高亮今日的 L2 区域。</li>
             </ul>
         </div>
 
@@ -495,43 +502,13 @@
         </div>
 
         <h4>地图落位原则</h4>
-        <p><strong>深巷分支 (Deep Branch)</strong>：放置在地图的末端分支或独立区域。</p>
+        <p><strong>动态热点 (Dynamic Hotspot)</strong>：不固定位置，而是基于全服进度选择前沿的 L1 地块进行升级。</p>
     </div>
 
-    <div class="def-box" style="border-left: 5px solid #ff9800; background-color: #fff3e0;">
-        <h4>🤔 待讨论：L2 地块规模与生成逻辑 (TBD: L2 Scale & Spawn Logic)</h4>
-        <p>关于 L2 地块的大小与数量关系，目前有三种提案 (CPs)，需对比决策：</p>
-        
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
-            <tr style="background: #ffe0b2;">
-                <th style="padding: 8px; border: 1px solid #ffcc80;">方案 (Proposal)</th>
-                <th style="padding: 8px; border: 1px solid #ffcc80;">描述 (Description)</th>
-                <th style="padding: 8px; border: 1px solid #ffcc80;">优点 (Pros)</th>
-                <th style="padding: 8px; border: 1px solid #ffcc80;">缺点 (Cons)</th>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 1: 巨型单一地块</strong><br>(Unique Large Tile)</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">全服仅 1 个 L2，且面积显著大于 L1 (e.g. 2x2 or 4x4)。</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• 容纳更多玩家混战<br>• 战场纵深大，战术空间足</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• 开发成本高 (需特殊地图尺寸)<br>• 性能压力大 (同屏人数多)</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 2: 标准单一地块</strong><br>(Unique Standard Tile)</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">全服仅 1 个 L2，但面积与 L1 相同 (1x1)。<br><strong>(推荐: 7日版本验证首选)</strong></td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• <strong>Scope 可控</strong> (无需新尺寸)<br>• 战斗密度极高 (绞肉机体验)</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• 过于拥挤，体验可能混乱<br>• 策略性降低，偏向纯数值/乱斗</td>
-            </tr>
-            <tr>
-                <td style="padding: 8px; border: 1px solid #ffcc80;"><strong>CP 3: 轮换升级地块</strong><br>(Rotating Upgrade)</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">L1 和 L2 一样大。每日随机选一个 L1 升级为 L2。</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• 每日新鲜感 (争夺点变化)<br>• 避免特定位置被垄断</td>
-                <td style="padding: 8px; border: 1px solid #ffcc80;">• 玩家认知成本高 (需找路)<br>• 地图逻辑复杂 (动态切换)</td>
-            </tr>
-        </table>
-    </div>
+    <!-- TBD Section Removed as per request -->
 
     <h2>3. 地图拓扑结构示意 (Map Topology)</h2>
-    <p>游戏世界由一条东西向的<strong>主干道 (Main Road)</strong> 和多条南北向的<strong>支路 (Branch Roads)</strong> 组成。L1 地块如气泡般附着在主干道上，而 L2 地块则位于某条支路的深处。</p>
+    <p>游戏世界由主干道串联起多个 L1 口袋区。系统每日选择其中一个升级为 L2 活动区。</p>
     
     <div class="visual-scene" style="aspect-ratio: 800/300;">
         <svg viewBox="0 0 800 300">
@@ -549,37 +526,33 @@
             <path d="M50,150 Q200,140 400,150 T750,150" class="sketch-fill" style="fill:none; stroke-width: 40; stroke:#e1f5fe;" />
             <path d="M50,130 Q200,120 400,130 T750,130" class="sketch-line" />
             <path d="M50,170 Q200,160 400,170 T750,170" class="sketch-line" />
-            <text x="120" y="155" class="sketch-text" style="fill:#0277bd; font-weight:bold;">MAIN HIGHWAY (SAFE)</text>
+            <text x="120" y="155" class="sketch-text" style="fill:#0277bd; font-weight:bold;">MAIN HIGHWAY</text>
+
+            <!-- L1 Pockets -->
+            <!-- Pocket 1 -->
+            <g transform="translate(250, 110)">
+                <circle r="40" class="sketch-fill" style="fill:#fff9c4;" />
+                <text x="0" y="5" class="sketch-text">L1</text>
+            </g>
             
-            <!-- Player on Main Road -->
-            <g transform="translate(300, 160) scale(0.8)">
-                <g class="anim-wiggle">
-                    <use href="#stick-figure-top" />
-                    <text x="0" y="-35" class="sketch-text">You</text>
-                </g>
+            <!-- Pocket 2 (Today's L2) -->
+            <g transform="translate(450, 190)">
+                <circle r="40" class="sketch-fill anim-pulse" style="fill:#ffcdd2; stroke:#c62828; stroke-width:3;" />
+                <text x="0" y="0" class="sketch-title" style="fill:#c62828;">L2</text>
+                <text x="0" y="20" class="sketch-text" style="font-size:12px; fill:#c62828;">(Today)</text>
+            </g>
+            
+            <!-- Pocket 3 -->
+            <g transform="translate(650, 110)">
+                <circle r="40" class="sketch-fill" style="fill:#fff9c4;" />
+                <text x="0" y="5" class="sketch-text">L1</text>
+                <text x="0" y="25" class="sketch-text" style="font-size:12px; fill:#999;">(Tomorrow?)</text>
             </g>
 
-            <!-- L1 Pockets attached to Main Road -->
-            <g transform="translate(250, 110)">
-                <circle r="30" class="sketch-fill" style="fill:#fff9c4;" />
-                <text x="0" y="5" class="sketch-text">L1</text>
-            </g>
-            <g transform="translate(450, 190)">
-                <circle r="30" class="sketch-fill" style="fill:#fff9c4;" />
-                <text x="0" y="5" class="sketch-text">L1</text>
-            </g>
-            
-            <!-- Branch Road (Deep) -->
-            <path d="M600,170 Q590,220 600,280" class="sketch-fill" style="fill:none; stroke-width: 30; stroke:#ffebee;" />
-            <path d="M585,170 Q575,220 585,280" class="sketch-line" />
-            <path d="M615,170 Q605,220 615,280" class="sketch-line" />
-            
-            <!-- L2 at end of branch -->
-            <g transform="translate(600, 250)">
-                <rect x="-40" y="-30" width="80" height="60" rx="10" class="sketch-fill" style="fill:#ffcdd2;" />
-                <text x="0" y="0" class="sketch-title">L2</text>
-                <text x="0" y="20" class="sketch-text" style="font-size: 12px;">(Danger)</text>
-            </g>
+            <!-- Arrow Indicator -->
+            <path d="M380,150 Q410,170 420,170" class="sketch-line" style="marker-end: url(#arrow-l1); stroke-dasharray: 5,5;" />
+            <text x="350" y="140" class="sketch-text" style="fill:#c62828;">Event Spawn!</text>
+
         </svg>
     </div>
 
