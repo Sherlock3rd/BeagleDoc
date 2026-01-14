@@ -88,6 +88,7 @@
     *   [Albion Online 分析](analysis_Social/analysis_albion.html): 经济驱动社交的标杆。
     *   [Pokemon GO](analysis_Social/analysis_pokemongo.html): LBS 社交与弱连接设计的基石（异步同地、低门槛）。
 *   **⚔️ [PVP 地块玩法详细设计 (PVP Tile Detailed Design)](publish/pvp_tile_detailed_design.html)**: 定义了 7日版本的 PVP 地块分级体系与地图落位原则。
+*   **🏘️ [城镇布局与迁城系统设计 (Town Layout & Relocation)](docs/town_relocation_design.html)**: 详细定义了城镇的双层结构（建筑区+迁城区）以及玩家迁入/迁出的完整交互流程。
 
 ### 核心模块
 1.  **经济循环**: 生产者 (PVX/PVE) -> 交易行 -> 消费者 (PVP/SLG)。

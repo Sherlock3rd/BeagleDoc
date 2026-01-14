@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>城镇布局与迁城系统设计</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #fdfbf7;
+            --text-color: #333;
+            --border-color: #333;
+            --comic-font: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 2px;
+            border: 2px solid #333;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Benchmark Cards & Visual Scenes - COMIC STYLE */
+        .benchmark-card, .scene-container, .visual-scene, .figure {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+            font-family: var(--comic-font);
+        }
+        .benchmark-card:hover, .scene-container:hover, .visual-scene:hover, .figure:hover {
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+        }
+        
+        /* Typography */
+        h1 {
+            font-family: var(--comic-font);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 3.5em !important;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: var(--comic-font);
+            margin-top: 40px;
+            color: var(--primary-color);
+            border-left: 8px solid var(--accent-color);
+            padding-left: 15px;
+            font-size: 2.8em !important;
+        }
+
+        h3 {
+            font-family: var(--comic-font);
+            color: var(--accent-color);
+            margin-top: 30px;
+            font-size: 2.2em !important;
+        }
+
+        h4 {
+            font-family: var(--comic-font);
+            color: #444;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.6em !important;
+        }
+
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 20px; }
+        li { margin-bottom: 10px; font-size: 1.1em; }
+
+        /* Tables - Comic Style */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border: 2px solid #333;
+            border-radius: 4px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        th, td {
+            border-bottom: 2px solid #333;
+            border-right: 2px solid #333;
+            padding: 10px 15px;
+            text-align: left;
+            font-family: var(--comic-font);
+        }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th {
+            background-color: #e2e8f0;
+            color: #333;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        /* Custom Boxes */
+        blockquote {
+            background-color: #fff3e0;
+            border-left: 5px solid #333;
+            border: 2px solid #333;
+            border-left-width: 8px;
+            margin: 20px 0;
+            padding: 15px;
+            color: #444;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            font-family: var(--comic-font);
+            font-size: 1.3em;
+            font-style: italic;
+        }
+
+        .highlight-box {
+            background-color: #e3f2fd;
+            border: 2px solid #333;
+            border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .tag, .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+            font-family: var(--comic-font);
+            border: 1px solid #333;
+            margin-right: 5px;
+        }
+        .tag-risk-low, .badge-confirmed { background: #d4edda; color: #155724; }
+        .tag-risk-mid, .badge-pending { background: #fff3cd; color: #856404; }
+        .tag-risk-high, .badge-deprecated { background: #f8d7da; color: #721c24; }
+
+        /* Image Handling */
+        .figure img, .visual-scene img {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-bottom: 2px solid #333;
+        }
+        .figure-caption {
+            padding: 12px;
+            background-color: #fff;
+            color: #333;
+            font-size: 1.1em;
+            text-align: center;
+            font-family: var(--comic-font);
+            font-weight: bold;
+        }
+
+        /* 待办事项 */
+        .task-list-item { list-style-type: none; }
+        .task-list-item-checkbox { margin: 0 0.2em 0.25em -1.6em; vertical-align: middle; }
+
+        /* 分隔线 */
+        hr {
+            height: 3px;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #333;
+            border: 0;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏘️ 城镇布局与迁城系统设计 (Town Layout & Relocation)</h1>
+
+        <h2 id="section1">1. 明确背景 (Context & Definitions)</h2>
+        <p>在设计迁城系统前，我们需要明确以下核心概念，这决定了城镇的空间形态与玩家的行为逻辑。</p>
+        
+        <div class="figure">
+            <img src="../docs/assets/city_relation.png" alt="全局车位关系示意图">
+            <div class="figure-caption">Figure 3: Global Spots Relationship</div>
+        </div>
+
+        <ul>
+            <li><strong>营地即车位 (Camp is Slot)</strong>: 游戏内不存在独立的"停车场"和"居住区"之分。玩家的<strong>营地展开后就是车位</strong>，收起后就是车辆。</li>
+            <li><strong>空间关系 (Spatial Relation)</strong>: 
+                <ul>
+                    <li><strong>城镇 (Town)</strong>: 拥有安全区保护、NPC 功能设施以及<strong>规划整齐的营地基座</strong>。</li>
+                    <li><strong>野外 (Wilderness)</strong>: 自由驾驶区域，车位分散且无序，存在 PVP 风险。</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2 id="section2">2. 设计目的 (Design Purpose)</h2>
+        <ul>
+            <li><strong>验证核心循环 (Core Loop Verification)</strong>: 在 7 日版本中，跑通 "野外采集 -> 回城补给/社交 -> 再次出城" 的完整闭环。</li>
+            <li><strong>统一迁城体验 (Unified Experience)</strong>: 确立"全域抢占"的游戏规则，验证玩家对资源（车位）竞争的接受度与行为模式。</li>
+            <li><strong>空间与社交 (Space & Social)</strong>: 通过城镇的布局设计，自然引导玩家汇聚，产生交互（如围观他人营地、交易、组队）。</li>
+        </ul>
+
+        <h2 id="section3">3. 城市设计 (City Design)</h2>
+        <p>城镇从中心向外依次分为三层同心结构，通过骨干路网串联。</p>
+
+        <div class="figure">
+            <img src="../docs/assets/city_camp.png" alt="城镇内部空间结构示意图">
+            <div class="figure-caption">Figure 1: Town Internal Structure</div>
+        </div>
+        
+        <h3 id="section3-1">3.1 核心层：建筑区 (Building Zone)</h3>
+        <ul>
+            <li><strong>位置</strong>: 城镇正中心。</li>
+            <li><strong>形态</strong>: <strong>不规则圆形布局</strong> (Irregular Circle)。虽然整体是圆的，但建筑边缘和广场边界会有自然的起伏和错落。</li>
+            <li><strong>功能</strong>: 视觉地标与 NPC 交互中心（市政厅、交易所、工坊）。</li>
+            <li><strong>路网关系</strong>: 被一条闭合的 <strong>"内环路 (Inner Ring Road)"</strong> 包围。所有从城门延伸进来的主干道均汇聚于此。</li>
+        </ul>
+
+        <h3 id="section3-2">3.2 中间层：迁城区 (Relocation Zone)</h3>
+        <ul>
+            <li><strong>位置</strong>: 位于"内环路"与"外城边界"之间的环形/矩形区域。</li>
+            <li><strong>构成</strong>: 由多个 <strong>不规则圆形街区 (Organic Round Blocks)</strong> 组成。
+                <ul>
+                    <li><strong>车位形态</strong>: 车位不再是单纯的停车线，而是 <strong>"营地基座 (Camp Base)"</strong>。
+                        <ul>
+                            <li><strong>正圆基础</strong>: 每个基座以正圆为基础形状。</li>
+                            <li><strong>自然变化</strong>: 在正圆范围内，根据地形或植被做些许不规则的边缘裁切或突起，显得更自然。</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><strong>车位与路的关系</strong>:
+                <ul>
+                    <li><strong>临街直达</strong>: 每个车位必须至少有一边紧邻道路。</li>
+                    <li><strong>无死角</strong>: 严禁设计需要穿过 A 车位才能到达 B 车位的布局。</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3 id="section3-3">3.3 外围层：边界与城墙 (Boundary & Walls)</h3>
+        <ul>
+            <li><strong>当前版本</strong>: 表现为非实体的视觉边界（如栅栏）或自然地形边界，设有 2-4 个出入口。</li>
+            <li><strong>未来扩展</strong>: 预留 <strong>"外环路"</strong> 或 <strong>"城墙基座带"</strong> (约 2-3 个车位宽度)，以便未来直接升起实体城墙而不挤压现有车位。</li>
+        </ul>
+
+        <h2 id="section4">4. 迁城机制 (Relocation Mechanism)</h2>
+        <p>针对 7 日版本，我们采用<strong>方案 C：全域抢占模式 (Global Scramble Model)</strong>。</p>
+
+        <h3 id="section4-1">4.1 迁城流程 (Relocation Process)</h3>
+        <div class="figure">
+            <img src="../docs/assets/city_relocate.png" alt="迁城流程示意图">
+            <div class="figure-caption">Figure 2: Relocation Process Comic Strip</div>
+        </div>
+        
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Step</th>
+                    <th>Stage</th>
+                    <th>Action & Feedback</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1</strong></td>
+                    <td><strong>Pack Up</strong></td>
+                    <td>
+                        <ul>
+                            <li><strong>Action</strong>: 收起营地。</li>
+                            <li><strong>Visual</strong>: 营地折叠 -> <strong>卡车形态</strong>。</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>2</strong></td>
+                    <td><strong>Travel</strong></td>
+                    <td>
+                        <ul>
+                            <li><strong>Action</strong>: 驾驶卡车穿越野外。</li>
+                            <li><strong>Gameplay</strong>: 物理驾驶，躲避野怪/劫掠者。</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>3</strong></td>
+                    <td><strong>Search</strong></td>
+                    <td>
+                        <ul>
+                            <li><strong>Action</strong>: 寻找空闲基座 (详见 4.2)。</li>
+                            <li><strong>Visual</strong>: HUD 显示 <strong>VACANT (绿)</strong> / <strong>OCCUPIED (红)</strong>。</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>4</strong></td>
+                    <td><strong>Deploy</strong></td>
+                    <td>
+                        <ul>
+                            <li><strong>Action</strong>: 驶入基座，点击 <strong>【DEPLOY】</strong>。</li>
+                            <li><strong>Visual</strong>: 车辆展开 -> <strong>营地形态</strong> (开启护盾)。</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 id="section4-2">4.2 核心系统：寻找最近车位 (Find Nearest Spot System)</h3>
+        <p>为了解决"抢车位"可能带来的挫败感，系统提供一套智能导航辅助功能。</p>
+
+        <!-- Logic Diagram (Schematic Map) -->
+        <div class="visual-scene" style="height: 420px; background-color: #f8f9fa; position: relative;">
+            <!-- Background Grid -->
+            <div style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(#bdc3c7 1px, transparent 1px); background-size: 20px 20px; opacity: 0.4;"></div>
+            
+            <!-- Server Logic (Top) -->
+            <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: white; border: 2px solid #333; padding: 8px 20px; border-radius: 12px; z-index: 10; text-align: center; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);">
+                <strong>☁️ SERVER CLOUD</strong><br>
+                <span style="font-size: 0.8em; color: #666; font-family: monospace;">SELECT * FROM spots <br>WHERE dist < 500m AND status = 'VACANT'</span>
+            </div>
+
+            <!-- Map Area -->
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                
+                <!-- SVG Layer for connections -->
+                <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 1;">
+                    <defs>
+                        <marker id="arrow-grey" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#95a5a6" />
+                        </marker>
+                        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#2ecc71" />
+                        </marker>
+                    </defs>
+                    
+                    <!-- Request Line -->
+                    <path d="M 200 250 Q 300 150 450 80" fill="none" stroke="#95a5a6" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-grey)" />
+                    <text x="260" y="160" fill="#7f8c8d" font-size="12" font-weight="bold">1. Request</text>
+
+                    <!-- Navigation Line -->
+                    <path d="M 200 250 L 600 300" stroke="#2ecc71" stroke-width="4" fill="none" stroke-dasharray="12,6" marker-end="url(#arrow-green)" />
+                    <text x="400" y="270" fill="#27ae60" font-size="14" font-weight="bold" transform="rotate(7 400,270)">2. Path to Nearest</text>
+
+                    <!-- Reroute Line -->
+                    <path d="M 620 300 Q 700 250 750 150" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="4,4" opacity="0.6" />
+                    <text x="650" y="220" fill="#e74c3c" font-size="12" font-family: monospace>If Taken -> Reroute</text>
+                </svg>
+
+                <!-- Elements (Z-index > 1) -->
+                
+                <!-- Player -->
+                <div style="position: absolute; top: 250px; left: 200px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
+                    <div style="width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 24px solid #2c3e50; margin: 0 auto;"></div>
+                    <div style="background: #2c3e50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 5px;">YOU</div>
+                    <!-- Range Circle -->
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; border: 2px dashed #bdc3c7; border-radius: 50%; pointer-events: none;"></div>
+                    <div style="position: absolute; top: -140px; left: 0; width: 100px; color: #95a5a6; font-size: 12px;">Range: 500m</div>
+                </div>
+
+                <!-- Spot: Occupied -->
+                <div style="position: absolute; top: 200px; left: 350px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
+                    <div style="width: 30px; height: 30px; background: #e74c3c; border: 3px solid #333; border-radius: 50%; box-shadow: 2px 2px 0 rgba(0,0,0,0.1);"></div>
+                    <span style="color: #c0392b; font-size: 12px; font-weight: bold;">OCCUPIED</span>
+                </div>
+
+                <!-- Spot: Target (Nearest) -->
+                <div style="position: absolute; top: 300px; left: 600px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
+                    <div style="width: 40px; height: 40px; background: #2ecc71; border: 3px solid #333; border-radius: 50%; box-shadow: 0 0 15px #2ecc71;"></div>
+                    <div style="background: white; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 5px; font-weight: bold; color: #27ae60;">TARGET</div>
+                </div>
+
+                <!-- Spot: Vacant (Far) -->
+                <div style="position: absolute; top: 150px; left: 750px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
+                    <div style="width: 25px; height: 25px; background: #fff; border: 3px solid #95a5a6; border-radius: 50%;"></div>
+                    <span style="color: #7f8c8d; font-size: 12px;">Backup</span>
+                </div>
+
+            </div>
+        </div>
+        <div class="figure-caption">Figure 3: System Logic Visualization (Schematic)</div>
+
+        <div class="scene-container">
+            <h4>🧠 逻辑细节 (Logic Details)</h4>
+            <ul>
+                <li><strong>触发方式 (Trigger)</strong>: 
+                    <ul>
+                        <li><strong>主动触发</strong>: 玩家点击 HUD 上的雷达图标。</li>
+                        <li><strong>被动触发</strong>: 当玩家驶入城镇区域（Town Zone）时自动进行一次检索。</li>
+                    </ul>
+                </li>
+                <li><strong>筛选规则 (Filter Rules)</strong>:
+                    <ol>
+                        <li><strong>状态优先</strong>: 仅筛选 <code>Status == VACANT</code> 的基座。</li>
+                        <li><strong>距离优先</strong>: 在符合条件的集合中，返回 <code>Distance(Player, Spot)</code> 最小的一个。</li>
+                        <li><strong>负载均衡 (可选)</strong>: 若存在多个距离相近的空位，随机推荐一个，避免引导多名玩家涌向同一个车位。</li>
+                    </ol>
+                </li>
+                <li><strong>HUD 表现 (Visual Feedback)</strong>:
+                    <ul>
+                        <li><strong>导航线</strong>: 地面显示动态绿色光标指引路径。</li>
+                        <li><strong>全息牌</strong>: 目标车位上方悬浮巨大的 "P" 标志及剩余距离 (e.g., "150m")。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <h3 id="section4-3">4.3 方案细节与规则 (Scheme Rules)</h3>
+
+        <div class="benchmark-card">
+            <h4>🚦 状态切换逻辑 (State Transition)</h4>
+            <ul>
+                <li><strong>车辆形态 (Vehicle)</strong>: 移动模式，物理驾驶，可 PVP。</li>
+                <li><strong>交互判定 (Interaction)</strong>: 驶入基座范围 + 速度 < 5km/h -> HUD 显示 <strong>【DEPLOY】</strong>。</li>
+                <li><strong>营地形态 (Camp)</strong>: 部署后模型替换，开启安全区护盾（城镇内）及功能面板。</li>
+            </ul>
+        </div>
+
+        <div class="benchmark-card">
+            <h4>⚔️ 冲突处理 (Conflict Handling)</h4>
+            <ul>
+                <li><strong>并发抢占</strong>: 服务器以<strong>接收请求时间戳</strong>为准。
+                    <ul>
+                        <li><span class="tag tag-risk-low">Winner</span> 成功部署，获得车位。</li>
+                        <li><span class="tag tag-risk-high">Loser</span> 收到 "Deployment Failed" 提示，需重新寻找。</li>
+                    </ul>
+                </li>
+                <li><strong>PVP 限制</strong>: 战斗状态（Combat Tag）下禁止部署营地。</li>
+            </ul>
+        </div>
+
+        <h3 id="section4-4">4.4 存在的问题 (Known Issues)</h3>
+        <blockquote>
+            <p><strong>Note:</strong> 7日版本仅做核心循环验证。以下问题将在后续版本中通过"分线镜像"或"高级地契"系统解决。</p>
+        </blockquote>
+        <ul>
+            <li><strong>拥堵问题</strong>: 城镇车位有限，若玩家数量过多，可能出现无位可停的情况。临时解决方案：允许在城镇边缘的非安全区临时停靠。</li>
+            <li><strong>恶意占位</strong>: 可能存在小号长期占据黄金车位的情况。后续将引入"维护费"或"长期不活跃自动收起"机制。</li>
+        </ul>
+    </div>
+</body>
+</html>
