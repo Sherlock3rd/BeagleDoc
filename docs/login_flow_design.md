@@ -23,20 +23,19 @@ graph TD
     subgraph Stage3_Selection [3. 角色与服务器决策]
         RoleLobby -->|默认行为| QuickStart{是否存在<br>上次登录角色?}
         
-        QuickStart -- 是 --> ShowLastRole[展示上次角色信息]
+        QuickStart -- 是 (老玩家) --> ShowLastRole[展示上次角色信息]
         ShowLastRole -->|点击开始| EnterGameProcess[请求进入游戏]
         
-        ShowLastRole -->|点击切换服务器| ServerList[服务器列表]
-        ShowLastRole -->|点击切换角色| RoleList[当前服角色列表]
+        ShowLastRole -->|点击切换/返回| SelectExistingServer[选择已有服务器]
         
-        QuickStart -- 否 (新账号) --> ServerSelection[新玩家: 选择服务器]
+        QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 选择物理区域 Region]
         
-        %% 切换逻辑分支
-        ServerList -->|选择已有角色的服| RoleList
-        ServerList -->|选择新服| NewCharFlow[新角色创建流程]
+        %% Scheme 2 Selection Logic
+        SelectRegion -->|系统分配| EnterZone[分配至 Zone]
+        EnterZone --> NewCharFlow[新角色创建流程]
         
-        RoleList -->|选择指定角色| EnterGameProcess
-        RoleList -->|点击创建新角色| NewCharFlow
+        SelectExistingServer -->|选择服务器| SelectRegionOld[选择该服出生/复活区域]
+        SelectRegionOld -->|确认| EnterGameProcess
     end
 
     subgraph Stage4_Entry [4. 进入游戏]
@@ -76,11 +75,21 @@ graph TD
     *   **辅助按钮**: 【切换服务器】 (Switch Server)、【切换账号】 (Switch Account)。
 *   **新玩家**: 直接进入服务器选择/推荐界面。
 
-#### B. 切换服务器 (Switch Server)
-玩家点击【切换服务器】后打开列表，列表分为标签页：
-1.  **我的服务器 (My Servers)**: 列出所有我已创建过角色的服务器（显示角色简要信息）。
-2.  **推荐服务器 (Recommended)**: 适合新角色的服务器（如新开服、负载均衡服）。
-3.  **所有服务器 (All)**: 完整列表，支持搜索。
+#### B. 选服流程 (Server Selection - Scheme 2)
+> 参考文档: [Scheme 2 Detailed Design](scheme2_detailed_design.md)
+
+根据 **Scheme 2** 的世界架构，选服流程分为两种截然不同的场景：
+
+1.  **新玩家旅程 (New Journey)**:
+    *   **交互**: 展示平行四边形世界地图 (World Map)，地图被划分为 A/B/C/D 四个物理区域。
+    *   **逻辑**: 玩家选择物理区域 (Region)。
+    *   **结果**: 系统根据该区域的负载情况，自动将玩家分配至某个 Zone (如 Zone 1001 或 1001-A)。
+    *   **图示**: 仅展示地图与区域拥挤度，无传统服务器列表。
+
+2.  **老玩家回归 (Existing World)**:
+    *   **Step 1 选择服务器**: 在列表中选择已拥有角色的服务器 (Server)。
+    *   **Step 2 选择区域**: 进入该服务器的世界地图，选择出生/复活区域 (Region)。
+    *   **目的**: 允许老玩家定向回归特定服务器并选择战略位置。
 
 #### C. 切换登陆角色 (Switch Role)
 *   在选定服务器后，若该服有多个角色（通常通过合并服务器产生，或者游戏允许多角色），展示角色列表供选择。

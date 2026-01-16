@@ -153,8 +153,8 @@
             padding: 20px;
         }
         .ui-mockup {
-            width: 300px;
-            height: 533px; /* 9:16 aspect ratio */
+            width: 533px;
+            height: 300px; /* 16:9 aspect ratio (Landscape) */
             background-color: #fff;
             border: 2px solid #2c3e50;
             position: relative;
@@ -171,7 +171,7 @@
             background: #fdfdfd;
             position: relative;
             display: flex;
-            flex-direction: column;
+            flex-direction: row; /* Default to row for landscape */
             overflow: hidden;
         }
         .ui-top-bar {
@@ -184,6 +184,34 @@
             padding: 0 10px;
             font-size: 10px;
             color: #555;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        .ui-content {
+            margin-top: 24px; /* Space for top bar */
+            display: flex;
+            flex: 1;
+            width: 100%;
+        }
+        .ui-col-left {
+            flex: 1;
+            border-right: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .ui-col-right {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
         }
         .ui-mockup-label {
             text-align: center;
@@ -191,12 +219,12 @@
             font-size: 1em;
             color: #2c3e50;
             font-weight: bold;
-            width: 300px;
+            width: 533px;
         }
         
         /* Mockup Elements */
-        .m-header { background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: bold; }
-        .m-logo { font-size: 1.8em; font-weight: bold; color: #2c3e50; margin-top: 80px; text-align: center; letter-spacing: 2px; }
+        .m-header { background: #2c3e50; color: white; padding: 10px; text-align: center; font-weight: bold; width: 100%; }
+        .m-logo { font-size: 2em; font-weight: bold; color: #2c3e50; letter-spacing: 2px; }
         .m-btn { 
             background: #fff; 
             color: #2c3e50; 
@@ -318,16 +346,21 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen" style="justify-content: center; align-items: center;">
-                        <div class="m-logo">GAME LOGO</div>
-                        <div style="margin-top: 40px; font-size: 0.8em; color: #7f8c8d;">Checking Updates...</div>
-                        <div style="width: 70%; height: 4px; background: #ecf0f1; margin-top: 10px; border-radius: 2px;">
-                            <div style="width: 30%; height: 100%; background: #2ecc71;"></div>
+                    <div class="ui-content">
+                        <div class="ui-col-left">
+                            <div class="m-logo">GAME LOGO</div>
+                            <div style="margin-top: 10px; font-size: 0.8em; color: #95a5a6;">v1.2.0</div>
                         </div>
-                        <div style="margin-top: 5px; font-size: 0.7em; color: #95a5a6;">v1.2.0</div>
+                        <div class="ui-col-right" style="align-items: center;">
+                            <div style="font-size: 0.9em; color: #2c3e50; font-weight: bold; margin-bottom: 10px;">Checking Updates...</div>
+                            <div style="width: 80%; height: 6px; background: #ecf0f1; border-radius: 3px;">
+                                <div style="width: 30%; height: 100%; background: #2ecc71; border-radius: 3px;"></div>
+                            </div>
+                            <div style="margin-top: 20px; font-size: 0.7em; color: #7f8c8d;">Initializing SDK...</div>
+                        </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Splash / Update</div>
+                <div class="ui-mockup-label">Splash / Update (Landscape)</div>
             </div>
         </div>
         <ul>
@@ -349,20 +382,25 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen">
-                        <div class="m-logo" style="margin-top: 60px;">GAME LOGO</div>
-                        <div style="flex: 1;"></div>
-                        
-                        <div class="m-input" style="text-align:center; cursor: pointer;">Guest Login</div>
-                        <div class="m-btn primary">Facebook Login</div>
-                        <div class="m-btn">Google Login</div>
-                        
-                        <div style="text-align: center; font-size: 0.7em; color: #bdc3c7; margin: 20px;">
-                            By logging in, you agree to our<br>Terms of Service & Privacy Policy
+                    <div class="ui-content">
+                        <div class="ui-col-left" style="background: #2c3e50; color: white;">
+                            <div class="m-logo" style="color: white;">GAME LOGO</div>
+                            <div style="margin-top: 20px; text-align: center; font-size: 0.8em; opacity: 0.8;">
+                                Welcome back to the adventure.<br>Build your legacy.
+                            </div>
+                        </div>
+                        <div class="ui-col-right">
+                            <div class="m-btn primary">Facebook Login</div>
+                            <div class="m-btn">Google Login</div>
+                            <div class="m-input" style="text-align:center; cursor: pointer; margin-top: 10px;">Guest Login</div>
+                            
+                            <div style="text-align: center; font-size: 0.7em; color: #bdc3c7; margin-top: 20px;">
+                                By logging in, you agree to our<br>Terms of Service & Privacy Policy
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Login Screen</div>
+                <div class="ui-mockup-label">Login Screen (Landscape)</div>
             </div>
         </div>
         <ul>
@@ -380,34 +418,38 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen">
-                        <!-- Top Info -->
-                        <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50;">Server: S1-Alpha</div>
-                            <div style="font-size: 0.8em; color: #7f8c8d;">Player1</div>
+                    <div class="ui-content">
+                        <!-- Left: Character -->
+                        <div class="ui-col-left" style="background: #eef2f3;">
+                            <div class="m-char-placeholder" style="margin: 0; width: 140px; height: 220px;">
+                                <span>Char</span>
+                            </div>
                         </div>
                         
-                        <!-- Character Model Placeholder -->
-                        <div class="m-char-placeholder">
-                            <span>Char</span>
-                        </div>
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div style="font-weight: bold; font-size: 1.2em;">Lv.45 Warrior</div>
-                            <div style="font-size: 0.8em; color: #95a5a6;">Power: 12,450</div>
-                        </div>
-
-                        <div style="flex: 1;"></div>
-
-                        <!-- Buttons -->
-                        <div class="m-btn success" style="margin-bottom: 15px; padding: 15px; font-size: 1.1em;">START GAME</div>
-                        
-                        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
-                            <div style="font-size: 0.8em; color: #3498db; text-decoration: underline; cursor: pointer;">Switch Server</div>
-                            <div style="font-size: 0.8em; color: #7f8c8d; text-decoration: underline; cursor: pointer;">Log Out</div>
+                        <!-- Right: Info & Actions -->
+                        <div class="ui-col-right" style="justify-content: space-between; padding: 15px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                                    <div style="font-size: 1em; font-weight: bold; color: #2c3e50;">S1-Alpha</div>
+                                    <div style="font-size: 0.8em; color: #7f8c8d;">Player1</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-weight: bold; font-size: 1.2em;">Lv.45 Warrior</div>
+                                    <div style="font-size: 0.8em; color: #95a5a6;">Power: 12,450</div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="m-btn success" style="margin: 5px 0; padding: 12px; font-size: 1.1em;">START GAME</div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 10px; padding: 0 10px;">
+                                    <div style="font-size: 0.8em; color: #3498db; text-decoration: underline; cursor: pointer;">Switch Server</div>
+                                    <div style="font-size: 0.8em; color: #7f8c8d; text-decoration: underline; cursor: pointer;">Log Out</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Lobby (Last Played)</div>
+                <div class="ui-mockup-label">Lobby (Landscape)</div>
             </div>
         </div>
 
@@ -415,7 +457,9 @@
             <p><b>已有角色玩家:</b> 界面中心展示 <span class="highlight">上次登出的角色</span> 模型、ID、等级及所在服务器名称。</p>
         </div>
 
-        <h4>B. 切换服务器 (Switch Server)</h4>
+        <h4>B. 选服流程 (Server Selection - Scheme 2)</h4>
+        
+        <!-- Scenario 1: New Player (Region Selection) -->
         <div class="mockup-container">
             <div>
                 <div class="ui-mockup">
@@ -423,61 +467,119 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen">
-                        <div class="m-header">Select Server</div>
-                        
-                        <div class="m-tab-bar">
-                            <div class="m-tab active">My Servers</div>
-                            <div class="m-tab">Recommended</div>
-                            <div class="m-tab">All</div>
+                    <div class="ui-content" style="position: relative; padding: 0;">
+                        <!-- Map Background Simulation -->
+                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #e0f7fa; z-index: 0;">
+                            <!-- Quadrants -->
+                            <div style="position: absolute; top: 10%; left: 10%; width: 35%; height: 35%; border: 2px dashed #00bcd4; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <div style="text-align: center;">
+                                    <div style="font-weight: bold;">Region A</div>
+                                    <div style="font-size: 0.7em; color: #0097a7;">Zone 1001</div>
+                                    <span class="m-tag tag-new">Rec</span>
+                                </div>
+                            </div>
+                            <div style="position: absolute; top: 10%; right: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center; color: #78909c;">
+                                    <div style="font-weight: bold;">Region B</div>
+                                    <div style="font-size: 0.7em;">Full</div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; bottom: 10%; left: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center; color: #78909c;">
+                                    <div style="font-weight: bold;">Region C</div>
+                                    <div style="font-size: 0.7em;">Busy</div>
+                                </div>
+                            </div>
+                            <div style="position: absolute; bottom: 10%; right: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center; color: #78909c;">
+                                    <div style="font-weight: bold;">Region D</div>
+                                    <div style="font-size: 0.7em;">Maintenance</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Center Hub/Deco -->
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: #fff; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2c3e50;">
+                                WORLD
+                            </div>
                         </div>
-
-                        <div style="flex: 1; overflow-y: auto;">
-                            <div class="m-list-item">
-                                <div>
-                                    <div style="font-weight: bold; font-size: 0.9em;">S1-Alpha</div>
-                                    <div style="font-size: 0.7em; color: #95a5a6;">Last login: 2h ago</div>
-                                </div>
-                                <span class="m-tag tag-new">Lv.45</span>
-                            </div>
-                            <div class="m-list-item">
-                                <div>
-                                    <div style="font-weight: bold; font-size: 0.9em;">S3-Omega</div>
-                                    <div style="font-size: 0.7em; color: #95a5a6;">Last login: 5d ago</div>
-                                </div>
-                                <span class="m-tag tag-new">Lv.12</span>
-                            </div>
-                            <div class="m-list-item" style="opacity: 0.6;">
-                                <div>
-                                    <div style="font-weight: bold; font-size: 0.9em;">S5-NewWorld</div>
-                                    <div style="font-size: 0.7em; color: #e74c3c;">Full</div>
-                                </div>
-                                <span class="m-tag tag-hot">Queue: 502</span>
+                        
+                        <div style="position: absolute; top: 20px; left: 0; width: 100%; text-align: center; z-index: 2;">
+                            <div style="background: rgba(44, 62, 80, 0.9); color: white; padding: 5px 20px; border-radius: 20px; display: inline-block;">
+                                Select Starting Region
                             </div>
                         </div>
-                        
-                        <div class="m-btn primary">Confirm Selection</div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Server Selection List</div>
+                <div class="ui-mockup-label">Scenario 1: New Player (World Map Selection)</div>
+            </div>
+        </div>
+
+        <!-- Scenario 2: Existing Player (Server + Region) -->
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-content">
+                        <!-- Left: Server List -->
+                        <div class="ui-col-left" style="flex: 0.8; padding: 0; background: white; border-right: 1px solid #ccc;">
+                            <div class="m-tab-bar" style="margin: 0; font-size: 0.8em;">
+                                <div class="m-tab active" style="padding: 8px;">My Servers</div>
+                                <div class="m-tab" style="padding: 8px;">All</div>
+                            </div>
+                            <div style="flex: 1; overflow-y: auto; width: 100%;">
+                                <div class="m-list-item" style="background: #e8f5e9; border-left: 4px solid #2ecc71;">
+                                    <div>
+                                        <div style="font-weight: bold; font-size: 0.8em;">S1-Alpha</div>
+                                        <div style="font-size: 0.6em; color: #27ae60;">Lv.45 War</div>
+                                    </div>
+                                </div>
+                                <div class="m-list-item">
+                                    <div>
+                                        <div style="font-weight: bold; font-size: 0.8em;">S3-Omega</div>
+                                        <div style="font-size: 0.6em; color: #95a5a6;">Lv.12 Mag</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right: Region Preview -->
+                        <div class="ui-col-right" style="flex: 1.2; background: #f0f4f8; position: relative; padding: 0;">
+                            <div style="position: absolute; top: 10px; left: 10px; font-weight: bold; color: #2c3e50;">S1-Alpha Map</div>
+                            
+                            <!-- Simplified Map Visualization -->
+                            <div style="margin: 40px auto; width: 160px; height: 160px; position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
+                                <div style="position: absolute; top: 0; right: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
+                                <div style="position: absolute; bottom: 0; left: 0; width: 50%; height: 50%; background: #3498db; border: 1px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7em;">You</div>
+                                <div style="position: absolute; bottom: 0; right: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
+                            </div>
+                            
+                            <div class="m-btn success" style="margin: 0 20px 20px; padding: 8px;">ENTER WORLD</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Scenario 2: Old Player (Server -> Region)</div>
             </div>
         </div>
         
-        <p>玩家点击【切换服务器】后打开列表，列表分为标签页：</p>
+        <p>根据 <b>Scheme 2</b> 设计，选服分为两种场景：</p>
         <ol>
-            <li><b>我的服务器 (My Servers):</b> 列出所有我已创建过角色的服务器（显示角色简要信息）。</li>
-            <li><b>推荐服务器 (Recommended):</b> 适合新角色的服务器（如新开服、负载均衡服）。</li>
-            <li><b>所有服务器 (All):</b> 完整列表，支持搜索。</li>
+            <li><b>新玩家旅程 (New Journey):</b> 展示平行四边形世界地图 (Scheme 2 Map)，玩家直接选择物理区域 (Region A/B/C/D)。系统根据区域负载自动分配至 Zone (如 Zone 1001)。</li>
+            <li><b>老玩家回归 (Return):</b>
+                <ul>
+                    <li>Step 1: 在左侧列表选择已拥有的服务器 (Server)。</li>
+                    <li>Step 2: 在右侧地图确认该服务器下的出生/复活区域。</li>
+                </ul>
+            </li>
         </ol>
 
         <div class="warning">
-            <strong>参考交互：新玩家旅程 (New Zone Selection)</strong><br>
-            <img src="../docs/assets/scheme2_new_zone_selection.jpg" alt="New Zone Selection Flow">
-        </div>
-
-        <div class="warning">
-            <strong>参考交互：老玩家旅程 (Old Player Server Selection)</strong><br>
-            <img src="../docs/assets/scheme2_old_player_selection.jpg" alt="Old Player Selection Flow">
+            <strong>参考图示 (Reference): Scheme 2 Map V3</strong><br>
+            <p>请参考文档库中的标准地图设计：</p>
+            <img src="../docs/assets/scheme2_map_v3.jpg" alt="Scheme 2 Map V3" style="max-width: 600px;">
         </div>
 
         <h3>2.4 新角色流程 (New Character Flow)</h3>
@@ -488,30 +590,34 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen">
-                        <div class="m-header">Create Character</div>
-                        
-                        <div class="m-char-placeholder">
-                            <span>Model</span>
+                    <div class="ui-content">
+                        <!-- Left: Model Preview -->
+                        <div class="ui-col-left" style="background: #fdfdfd;">
+                             <div class="m-char-placeholder" style="margin: 0; width: 160px; height: 200px;">
+                                <span>Model</span>
+                            </div>
                         </div>
                         
-                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold; color: #2c3e50;">Choose Class</div>
-                        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
-                            <div style="width: 40px; height: 40px; background: #3498db; border-radius: 50%; border: 2px solid #2980b9; display: flex; align-items: center; justify-content: center; color: white;">⚔️</div>
-                            <div style="width: 40px; height: 40px; background: #e74c3c; border-radius: 50%; opacity: 0.5;">🏹</div>
-                            <div style="width: 40px; height: 40px; background: #f1c40f; border-radius: 50%; opacity: 0.5;">🪄</div>
-                        </div>
+                        <!-- Right: Customization -->
+                        <div class="ui-col-right">
+                            <div class="m-header" style="margin-bottom: 20px; font-size: 0.9em;">Create Character</div>
+                            
+                            <div style="text-align: center; margin-bottom: 10px; font-weight: bold; color: #2c3e50; font-size: 0.8em;">Choose Class</div>
+                            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                                <div style="width: 40px; height: 40px; background: #3498db; border-radius: 50%; border: 2px solid #2980b9; display: flex; align-items: center; justify-content: center; color: white;">⚔️</div>
+                                <div style="width: 40px; height: 40px; background: #e74c3c; border-radius: 50%; opacity: 0.5;">🏹</div>
+                                <div style="width: 40px; height: 40px; background: #f1c40f; border-radius: 50%; opacity: 0.5;">🪄</div>
+                            </div>
 
-                        <input type="text" class="m-input" placeholder="Enter Character Name..." style="text-align: center;">
-                        
-                        <div style="flex: 1;"></div>
-                        <div class="m-btn success" style="margin-bottom: 30px;">CREATE & START</div>
+                            <input type="text" class="m-input" placeholder="Enter Name..." style="text-align: center; margin: 0 0 20px 0;">
+                            
+                            <div class="m-btn success" style="margin: 0; padding: 10px;">CREATE & START</div>
+                        </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Character Creation</div>
+                <div class="ui-mockup-label">Character Creation (Landscape)</div>
             </div>
         </div>
-
         <h3>2.5 进入游戏 (Enter Game)</h3>
         <div class="mockup-container">
             <div>
@@ -520,20 +626,25 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-screen" style="justify-content: flex-end;">
+                    <div class="ui-content" style="position: relative; padding: 0;">
                         <!-- Background image placeholder -->
-                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: url('https://placehold.co/300x533/ecf0f1/bdc3c7?text=Art+Scene') center; opacity: 0.5;"></div>
+                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: #bdc3c7; opacity: 0.3; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 2em; color: #7f8c8d; opacity: 0.5;">SCENE ART</span>
+                        </div>
                         
-                        <div style="padding: 20px; z-index: 1; background: rgba(255,255,255,0.9); border-top: 1px solid #eee;">
-                            <div style="font-size: 0.8em; margin-bottom: 5px; color: #2c3e50; font-weight: bold;">Loading resources... (45%)</div>
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; z-index: 1; background: rgba(255,255,255,0.9); border-top: 1px solid #eee;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <div style="font-size: 0.8em; color: #2c3e50; font-weight: bold;">Loading resources...</div>
+                                <div style="font-size: 0.8em; color: #2c3e50;">45%</div>
+                            </div>
                             <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
                                 <div style="width: 45%; height: 100%; background: #3498db;"></div>
                             </div>
-                            <div style="font-size: 0.7em; color: #7f8c8d; margin-top: 10px; font-style: italic; text-align: center;">"Tip: Join an alliance to grow faster!"</div>
+                            <div style="font-size: 0.7em; color: #7f8c8d; margin-top: 5px; font-style: italic; text-align: center;">"Tip: Join an alliance to grow faster!"</div>
                         </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Loading Screen</div>
+                <div class="ui-mockup-label">Loading Screen (Landscape)</div>
             </div>
         </div>
         <ul>
