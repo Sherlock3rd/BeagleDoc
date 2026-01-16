@@ -34,7 +34,7 @@ graph TD
         SelectRegion -->|系统分配| EnterZone[分配至 Zone]
         EnterZone --> NewCharFlow[新角色创建流程]
         
-        SelectExistingServer -->|选择服务器| SelectRegionOld[选择该服出生/复活区域]
+        SelectExistingServer -->|1.选定服务器| SelectRegionOld[2.选择该服出生/复活区域]
         SelectRegionOld -->|确认| EnterGameProcess
     end
 

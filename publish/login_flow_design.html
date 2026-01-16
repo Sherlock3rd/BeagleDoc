@@ -312,14 +312,18 @@
                 QuickStart -- 是 --> ShowLastRole[展示上次角色信息]
                 ShowLastRole -->|点击开始| EnterGameProcess[请求进入游戏]
                 
-                ShowLastRole -->|点击切换服务器| ServerList[服务器列表]
+                ShowLastRole -->|点击切换服务器| SelectExistingServer[选择已有服务器]
                 ShowLastRole -->|点击切换角色| RoleList[当前服角色列表]
                 
-                QuickStart -- 否 (新账号) --> ServerSelection[新玩家: 选择服务器]
+                QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 选择物理区域 Region]
                 
+                %% Scheme 2 Selection Logic
+                SelectRegion -->|系统分配| EnterZone[分配至 Zone]
+                EnterZone --> NewCharFlow[新角色创建流程]
+
                 %% 切换逻辑分支
-                ServerList -->|选择已有角色的服| RoleList
-                ServerList -->|选择新服| NewCharFlow[新角色创建流程]
+                SelectExistingServer -->|1.选定服务器| SelectRegionOld[2.选择该服出生/复活区域]
+                SelectRegionOld -->|确认| RoleList
                 
                 RoleList -->|选择指定角色| EnterGameProcess
                 RoleList -->|点击创建新角色| NewCharFlow
@@ -467,50 +471,39 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-content" style="position: relative; padding: 0;">
-                        <!-- Map Background Simulation -->
-                        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #e0f7fa; z-index: 0;">
-                            <!-- Quadrants -->
-                            <div style="position: absolute; top: 10%; left: 10%; width: 35%; height: 35%; border: 2px dashed #00bcd4; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                <div style="text-align: center;">
-                                    <div style="font-weight: bold;">Region A</div>
-                                    <div style="font-size: 0.7em; color: #0097a7;">Zone 1001</div>
-                                    <span class="m-tag tag-new">Rec</span>
-                                </div>
-                            </div>
-                            <div style="position: absolute; top: 10%; right: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
-                                <div style="text-align: center; color: #78909c;">
-                                    <div style="font-weight: bold;">Region B</div>
-                                    <div style="font-size: 0.7em;">Full</div>
-                                </div>
-                            </div>
-                            <div style="position: absolute; bottom: 10%; left: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
-                                <div style="text-align: center; color: #78909c;">
-                                    <div style="font-weight: bold;">Region C</div>
-                                    <div style="font-size: 0.7em;">Busy</div>
-                                </div>
-                            </div>
-                            <div style="position: absolute; bottom: 10%; right: 10%; width: 35%; height: 35%; border: 2px dashed #b0bec5; background: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center;">
-                                <div style="text-align: center; color: #78909c;">
-                                    <div style="font-weight: bold;">Region D</div>
-                                    <div style="font-size: 0.7em;">Maintenance</div>
-                                </div>
-                            </div>
+                    <div class="ui-content" style="position: relative; padding: 0; background: #2c3e50;">
+                        <!-- Map Image Reference -->
+                        <div style="width: 100%; height: 100%; overflow: hidden; position: relative;">
+                            <img src="../docs/assets/scheme2_map_v3.jpg" alt="Scheme 2 Map V3" style="width: 100%; height: 100%; object-fit: cover;">
                             
-                            <!-- Center Hub/Deco -->
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: #fff; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #2c3e50;">
-                                WORLD
+                            <!-- Overlay UI -->
+                            <div style="position: absolute; top: 20px; left: 0; width: 100%; text-align: center; z-index: 2;">
+                                <div style="background: rgba(0, 0, 0, 0.7); color: white; padding: 8px 30px; border-radius: 20px; display: inline-block; border: 1px solid rgba(255,255,255,0.3); font-size: 0.9em;">
+                                    SELECT STARTING REGION
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div style="position: absolute; top: 20px; left: 0; width: 100%; text-align: center; z-index: 2;">
-                            <div style="background: rgba(44, 62, 80, 0.9); color: white; padding: 5px 20px; border-radius: 20px; display: inline-block;">
-                                Select Starting Region
+
+                            <!-- Region Labels Simulation (Positioned relative to map assumption) -->
+                            <div style="position: absolute; top: 30%; left: 25%; transform: translate(-50%, -50%); color: white; text-shadow: 0 0 4px black; text-align: center;">
+                                <div style="font-weight: bold; font-size: 1.2em;">REGION A</div>
+                                <div style="font-size: 0.7em; color: #2ecc71;">Recommended</div>
+                            </div>
+                            <div style="position: absolute; top: 30%; right: 25%; transform: translate(50%, -50%); color: white; text-shadow: 0 0 4px black; text-align: center;">
+                                <div style="font-weight: bold; font-size: 1.2em;">REGION B</div>
+                                <div style="font-size: 0.7em; color: #e74c3c;">Full</div>
+                            </div>
+                            <div style="position: absolute; bottom: 30%; left: 25%; transform: translate(-50%, 50%); color: white; text-shadow: 0 0 4px black; text-align: center;">
+                                <div style="font-weight: bold; font-size: 1.2em;">REGION C</div>
+                                <div style="font-size: 0.7em; color: #f1c40f;">Busy</div>
+                            </div>
+                            <div style="position: absolute; bottom: 30%; right: 25%; transform: translate(50%, 50%); color: white; text-shadow: 0 0 4px black; text-align: center;">
+                                <div style="font-weight: bold; font-size: 1.2em;">REGION D</div>
+                                <div style="font-size: 0.7em; color: #95a5a6;">Maintenance</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Scenario 1: New Player (World Map Selection)</div>
+                <div class="ui-mockup-label">Scenario 1: New Player (Map V3 Selection)</div>
             </div>
         </div>
 
@@ -522,46 +515,42 @@
                         <span>9:41</span>
                         <span>📶 🔋</span>
                     </div>
-                    <div class="ui-content">
-                        <!-- Left: Server List -->
-                        <div class="ui-col-left" style="flex: 0.8; padding: 0; background: white; border-right: 1px solid #ccc;">
-                            <div class="m-tab-bar" style="margin: 0; font-size: 0.8em;">
-                                <div class="m-tab active" style="padding: 8px;">My Servers</div>
-                                <div class="m-tab" style="padding: 8px;">All</div>
-                            </div>
-                            <div style="flex: 1; overflow-y: auto; width: 100%;">
-                                <div class="m-list-item" style="background: #e8f5e9; border-left: 4px solid #2ecc71;">
+                    <div class="ui-content" style="position: relative; padding: 0; background: #2c3e50;">
+                        <!-- Full Map Background (Unified with Scheme 2 Map V3) -->
+                        <div style="width: 100%; height: 100%; overflow: hidden; position: relative;">
+                            <img src="../docs/assets/scheme2_map_v3.jpg" alt="Scheme 2 Map V3" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.9;">
+                            
+                            <!-- Step 1: Server Selector Overlay -->
+                            <div style="position: absolute; top: 15px; left: 15px; z-index: 10;">
+                                <div style="background: white; padding: 8px 12px; border-radius: 4px; border: 2px solid #2c3e50; box-shadow: 0 4px 6px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;">
                                     <div>
-                                        <div style="font-weight: bold; font-size: 0.8em;">S1-Alpha</div>
-                                        <div style="font-size: 0.6em; color: #27ae60;">Lv.45 War</div>
+                                        <div style="font-size: 0.6em; color: #7f8c8d; font-weight: bold;">CURRENT WORLD</div>
+                                        <div style="font-size: 1em; font-weight: bold; color: #2c3e50;">S1-Alpha</div>
                                     </div>
-                                </div>
-                                <div class="m-list-item">
-                                    <div>
-                                        <div style="font-weight: bold; font-size: 0.8em;">S3-Omega</div>
-                                        <div style="font-size: 0.6em; color: #95a5a6;">Lv.12 Mag</div>
-                                    </div>
+                                    <div class="m-btn" style="margin: 0; padding: 4px 8px; font-size: 0.7em; border-width: 1px;">CHANGE ▼</div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Right: Region Preview -->
-                        <div class="ui-col-right" style="flex: 1.2; background: #f0f4f8; position: relative; padding: 0;">
-                            <div style="position: absolute; top: 10px; left: 10px; font-weight: bold; color: #2c3e50;">S1-Alpha Map</div>
-                            
-                            <!-- Simplified Map Visualization -->
-                            <div style="margin: 40px auto; width: 160px; height: 160px; position: relative;">
-                                <div style="position: absolute; top: 0; left: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
-                                <div style="position: absolute; top: 0; right: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
-                                <div style="position: absolute; bottom: 0; left: 0; width: 50%; height: 50%; background: #3498db; border: 1px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.7em;">You</div>
-                                <div style="position: absolute; bottom: 0; right: 0; width: 50%; height: 50%; background: #bdc3c7; border: 1px solid white;"></div>
+
+                            <!-- Step 2: Region Selection on Map -->
+                            <div style="position: absolute; top: 20px; right: 20px; z-index: 2;">
+                                <div style="background: rgba(0,0,0,0.6); color: white; padding: 5px 15px; border-radius: 15px; font-size: 0.8em; border: 1px solid rgba(255,255,255,0.3);">
+                                    Step 2: Select Spawn Region
+                                </div>
                             </div>
-                            
-                            <div class="m-btn success" style="margin: 0 20px 20px; padding: 8px;">ENTER WORLD</div>
+
+                            <!-- Region Interactions (Active for Old Player) -->
+                            <div style="position: absolute; top: 40%; left: 30%; transform: translate(-50%, -50%);">
+                                <div class="m-btn success" style="margin: 0; padding: 6px 12px; font-size: 0.8em; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">ENTER REGION A</div>
+                                <div style="text-align: center; color: white; font-size: 0.6em; text-shadow: 0 0 2px black; margin-top: 2px;">Your Guild Here</div>
+                            </div>
+
+                            <div style="position: absolute; bottom: 35%; right: 30%; transform: translate(50%, 50%); opacity: 0.7;">
+                                <div class="m-btn" style="margin: 0; padding: 6px 12px; font-size: 0.8em; background: rgba(255,255,255,0.8);">REGION D</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="ui-mockup-label">Scenario 2: Old Player (Server -> Region)</div>
+                <div class="ui-mockup-label">Scenario 2: Old Player (1. Select Server -> 2. Select Map Region)</div>
             </div>
         </div>
         
