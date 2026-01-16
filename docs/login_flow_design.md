@@ -6,53 +6,80 @@
 
 ```mermaid
 graph TD
-    %% 阶段定义
+    %% 全局样式定义
+    classDef flowState fill:#e3f2fd,stroke:#1565c0,stroke-width:2px,color:#0d47a1;
+    classDef decision fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#f57f17,shape:diamond;
+    classDef startEnd fill:#a5d6a7,stroke:#2e7d32,stroke-width:2px,color:#1b5e20,rx:5,ry:5;
+    classDef errorState fill:#ffcdd2,stroke:#c62828,stroke-width:2px,color:#b71c1c;
+    classDef action fill:#ffffff,stroke:#333,stroke-width:1px,color:#333;
+    classDef sceneNode fill:#e1bee7,stroke:#7b1fa2,stroke-width:2px,color:#4a148c,stroke-dasharray: 5 5;
+
+    %% 阶段 1: 启动与检测
     subgraph Stage1_Init [1. 启动与检测]
-        Start((游戏启动)) --> SDKCheck[SDK 初始化与检测]
-        SDKCheck --> NetCheck[网络环境检测]
-        NetCheck -->|网络良好| LoginPage[账号登陆界面]
-        NetCheck -->|网络异常| ErrorNet[提示网络错误/重试]
+        direction TB
+        Start((游戏启动)):::startEnd --> Scene1_Launch[SCENE 1: 启动与检测]:::sceneNode
+        Scene1_Launch --> NetCheck[网络环境检测]:::action
+        NetCheck -->|网络异常| ErrorNet[提示网络错误/重试]:::errorState
     end
 
-    subgraph Stage2_Login [2. 认证与大厅]
-        LoginPage -->|点击登录| Auth[SDK/账号认证]
-        Auth -->|成功| RoleLobby[开始游戏/大厅界面]
-        Auth -->|失败| LoginPage
+    %% 阶段 2: 账号认证
+    subgraph Stage2_Login [2. 账号认证]
+        direction TB
+        NetCheck -->|网络良好| CheckToken{本地有 Token?}:::decision
+        
+        %% 自动登录路径
+        CheckToken -- YES --> AutoLogin[自动/静默登录]:::action
+        AutoLogin --> Auth[服务端认证]:::action
+        
+        %% 手动登录路径
+        CheckToken -- NO --> Scene2_Login[SCENE 2: 账号登陆界面]:::sceneNode
+        Scene2_Login -->|输入账号/SDK| Auth
+        
+        Auth -->|认证失败| Scene2_Login
     end
 
-    subgraph Stage3_Selection [3. 角色与服务器决策]
-        RoleLobby -->|默认行为| QuickStart{是否存在<br>上次登录角色?}
+    %% 阶段 3: 角色决策与大厅
+    subgraph Stage3_Selection [3. 角色决策与大厅]
+        direction TB
+        Auth -->|认证成功| CheckRole{有上次角色?}:::decision
         
-        QuickStart -- 是 (老玩家) --> ShowLastRole[展示上次角色信息]
-        ShowLastRole -->|点击开始| EnterGameProcess[请求进入游戏]
+        %% 路径 A: 快速开始 (老玩家)
+        CheckRole -- YES --> Scene3_Lobby[SCENE 3: 登陆大厅<br/>展示上次角色]:::sceneNode
+        Scene3_Lobby -->|开始游戏| EnterGameProcess[请求进入游戏]:::action
+        Scene3_Lobby -->|切换/新建| Scene3_5_List[SCENE 3.5: 角色总览<br/>列表/新建]:::sceneNode
         
-        ShowLastRole -->|点击切换/返回| SelectExistingServer[选择已有服务器]
+        %% 路径 B: 新玩家/无角色
+        CheckRole -- NO --> Scene3_5_List
         
-        QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 选择物理区域 Region]
+        %% 角色列表交互
+        Scene3_5_List -->|选择已有角色| Scene3_Lobby
+        Scene3_5_List -->|点击新建| NewGameChoice{选择世界类型?}:::decision
         
-        %% Scheme 2 Selection Logic
-        SelectRegion -->|系统分配| EnterZone[分配至 Zone]
-        EnterZone --> NewCharFlow[新角色创建流程]
+        %% 路径 C: 创建新角色
+        NewGameChoice -- 合服世界 --> Scene4_Server[SCENE 4: 选择服务器]:::sceneNode
+        Scene4_Server --> Scene5_SpawnRegion[SCENE 5: 出生区域]:::sceneNode
         
-        SelectExistingServer -->|1.选定服务器| SelectRegionOld[2.选择该服出生/复活区域]
-        SelectRegionOld -->|确认| EnterGameProcess
+        NewGameChoice -- 新世界 Zone --> Scene6_PhysRegion[SCENE 6: 物理区域]:::sceneNode
+        Scene6_PhysRegion --> Scene7_ZoneList[SCENE 7: Zone 列表]:::sceneNode
+        Scene7_ZoneList -->|选择 Zone| EnterZone[进入 Zone]:::action
+        
+        Scene5_SpawnRegion --> CharacterCreation[角色定制]:::flowState
+        EnterZone --> CharacterCreation
+        
+        CharacterCreation -->|创建完成| EnterGameProcess
     end
 
+    %% 阶段 4: 进入游戏
     subgraph Stage4_Entry [4. 进入游戏]
-        NewCharFlow -->|完成创建| EnterGameProcess
-        EnterGameProcess -->|加载资源| Loading[场景加载]
-        Loading --> InGame((游戏中))
+        EnterGameProcess --> Scene8_Connect[SCENE 8: 连接中 Connecting]:::sceneNode
+        Scene8_Connect --> Loading[场景加载 & 恢复]:::action
+        Loading --> InGame((游戏中)):::startEnd
     end
-    
-    %% 样式
-    style Start fill:#2ecc71,stroke:#27ae60,color:white
-    style InGame fill:#2ecc71,stroke:#27ae60,color:white
-    style QuickStart fill:#f1c40f,stroke:#f39c12
 ```
 
 ## 2. 详细流程说明 (Detailed Steps)
 
-### 2.1 游戏启动与检测 (Startup & Check)
+### 2.1 游戏启动与检测 (Startup & Check) [SCENE 1]
 *   **游戏启动**: 客户端冷启动。
 *   **SDK检测**:
     *   初始化渠道SDK（如Google Play, iOS GameCenter, 第三方发行SDK）。
@@ -61,7 +88,7 @@ graph TD
     *   Ping 列表中的 Login Server 网关，选择延迟最低的节点。
     *   若无网络连接，弹出系统弹窗提示重试。
 
-### 2.2 账号登陆 (Account Login)
+### 2.2 账号登陆 (Account Login) [SCENE 2]
 *   **自动登录**: 若本地存有有效 Token，尝试静默登录。
 *   **手动登录**: 唤起 SDK 登录窗口或输入账号密码。
 *   **获取数据**: 登录成功后，从服务器拉取该账号下的**最近登录角色**、**拥有角色的服务器列表**以及**推荐服务器列表**。
@@ -69,43 +96,29 @@ graph TD
 ### 2.3 开始游戏/切换 (Lobby & Selection)
 这是玩家进入游戏前的核心决策界面。
 
-#### A. 默认展示 (Default View)
+#### A. 默认展示 (Default View) [SCENE 3]
 *   **已有角色玩家**: 界面中心展示**上次登出的角色**模型、ID、等级及所在服务器名称。
     *   **主按钮**: 【开始游戏】 (Enter Game)。
-    *   **辅助按钮**: 【切换服务器】 (Switch Server)、【切换账号】 (Switch Account)。
-*   **新玩家**: 直接进入服务器选择/推荐界面。
+    *   **辅助按钮**: 【切换/总览】 (Switch / All Roles) - 进入角色总览界面，可切换其他角色或创建新角色。
+    *   **其他**: 【切换账号】 (Switch Account)。
+*   **新玩家**: 直接进入角色总览界面 (默认显示新建角色引导)。
 
-#### B. 选服流程 (Server Selection - Scheme 2)
-> 参考文档: [Scheme 2 Detailed Design](scheme2_detailed_design.md)
+#### B. 角色总览与新建 (Role Overview & New Character) [SCENE 3.5]
+*   **角色总览**: 展示该账号下的所有角色列表。
+*   **新建角色**: 点击 [+] 号进入新角色创建流程，面临两个世界选择：
+    1.  **Option 1 (Merged Server)**: 加入已合服的成熟世界 (Server [SCENE 4] -> Region [SCENE 5]) -> **进入角色定制**。
+    2.  **Option 2 (New Zone)**: 加入未合服的新世界 (Region [SCENE 6] -> Zone [SCENE 7]) -> **进入角色定制**。
 
-根据 **Scheme 2** 的世界架构，选服流程分为两种截然不同的场景：
+### 2.4 角色定制与进入游戏 (Character Creation & Entry)
+进入游戏流程分为两条独立的逻辑通道：
 
-1.  **新玩家旅程 (New Journey)**:
-    *   **交互**: 展示平行四边形世界地图 (World Map)，地图被划分为 A/B/C/D 四个物理区域。
-    *   **逻辑**: 玩家选择物理区域 (Region)。
-    *   **结果**: 系统根据该区域的负载情况，自动将玩家分配至某个 Zone (如 Zone 1001 或 1001-A)。
-    *   **图示**: 仅展示地图与区域拥挤度，无传统服务器列表。
+*   **TRACK 1: NEW JOURNEY (新角色)**
+    *   **流程**: 连接服务器 (Connect [SCENE 8]) -> 角色定制 (Customize) -> 出生在新手村 (Spawn)。
+    *   **描述**: 玩家选择好服务器/Zone后，系统建立连接，进入捏脸界面，完成后出生在新手村。
 
-2.  **老玩家回归 (Existing World)**:
-    *   **Step 1 选择服务器**: 在列表中选择已拥有角色的服务器 (Server)。
-    *   **Step 2 选择区域**: 进入该服务器的世界地图，选择出生/复活区域 (Region)。
-    *   **目的**: 允许老玩家定向回归特定服务器并选择战略位置。
-
-#### C. 切换登陆角色 (Switch Role)
-*   在选定服务器后，若该服有多个角色（通常通过合并服务器产生，或者游戏允许多角色），展示角色列表供选择。
-*   若该服无角色，则直接进入**新角色创建流程**。
-
-### 2.4 新角色流程 (New Character Flow)
-当玩家选择了一个**没有角色**的服务器，或在已有服选择**新建角色**时触发：
-1.  **选择服务器**: (如果是从服务器列表进入则已选定)。
-2.  **创建角色**: 输入昵称、选择性别/外貌（如有）。
-3.  **进入游戏**: 完成创建后，自动触发进入游戏逻辑。
-
-### 2.5 进入游戏 (Enter Game)
-*   客户端向 Game Server 发起连接请求。
-*   同步用户数据、背包数据、场景数据。
-*   展示 Loading 界面。
-*   Loading 结束，渲染场景，玩家控制权移交，进入 **游戏中** 状态。
+*   **TRACK 2: CONTINUE JOURNEY (老角色)**
+    *   **流程**: 大厅直接开始 (Start) -> 资源加载与连接 (Connect [SCENE 8]) -> 恢复至原场景 (Restore)。
+    *   **描述**: 玩家在大厅点击开始游戏，系统直接连接上次下线的服务器/Zone，并恢复玩家位置。
 
 ## 3. 异常处理 (Exception Handling)
 
