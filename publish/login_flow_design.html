@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家进入游戏流程设计 (Login & Entry Flow)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #e1e4e8;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 40px;
+            color: var(--primary-color);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+            font-size: 1.5em;
+        }
+
+        h3 {
+            color: var(--accent-color);
+            margin-top: 25px;
+            font-size: 1.2em;
+        }
+
+        h4 {
+            color: #666;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .rule-box, .def-box {
+            background-color: #f1f8ff;
+            border: 1px solid #c8e1ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .def-box {
+            background-color: #fff9c4;
+            border-color: #fbc02d;
+        }
+
+        .highlight {
+            background-color: #e8f5e9;
+            padding: 2px 5px;
+            border-radius: 3px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .warning {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-left: 5px solid #ff9800;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        img {
+            max-width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .mermaid {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            color: var(--primary-color);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: white;
+            font-size: 0.9em;
+            margin: 2px;
+        }
+        .btn-primary { background-color: #3498db; }
+        .btn-success { background-color: #2ecc71; }
+        .btn-warning { background-color: #f1c40f; color: #333; }
+
+        /* UI Mockup Styles - Clean Wireframe Style */
+        .mockup-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 20px;
+        }
+        .ui-mockup {
+            width: 300px;
+            height: 533px; /* 9:16 aspect ratio */
+            background-color: #fff;
+            border: 2px solid #2c3e50;
+            position: relative;
+            overflow: hidden;
+            color: #333;
+            font-family: sans-serif;
+            box-shadow: 8px 8px 0 rgba(44, 62, 80, 0.2);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .ui-screen {
+            flex: 1;
+            background: #fdfdfd;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ui-top-bar {
+            height: 24px;
+            background: #e0e0e0;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+            font-size: 10px;
+            color: #555;
+        }
+        .ui-mockup-label {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 1em;
+            color: #2c3e50;
+            font-weight: bold;
+            width: 300px;
+        }
+        
+        /* Mockup Elements */
+        .m-header { background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        .m-logo { font-size: 1.8em; font-weight: bold; color: #2c3e50; margin-top: 80px; text-align: center; letter-spacing: 2px; }
+        .m-btn { 
+            background: #fff; 
+            color: #2c3e50; 
+            padding: 10px; 
+            margin: 8px 30px; 
+            border: 2px solid #2c3e50; 
+            border-radius: 4px; 
+            text-align: center; 
+            font-weight: bold; 
+            cursor: default; 
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+        .m-btn.primary { background: #3498db; color: white; border-color: #2980b9; }
+        .m-btn.success { background: #2ecc71; color: white; border-color: #27ae60; }
+        
+        .m-input { 
+            background: #fff; 
+            margin: 8px 30px; 
+            padding: 10px; 
+            border: 1px solid #bdc3c7; 
+            border-radius: 4px; 
+            font-size: 0.9em; 
+            color: #7f8c8d;
+        }
+        
+        .m-char-placeholder {
+            width: 120px;
+            height: 200px;
+            background: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            margin: 30px auto;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #bdc3c7;
+            font-size: 2em;
+        }
+
+        .m-list-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+        .m-list-item:hover { background: #f9f9f9; }
+        .m-tag { font-size: 0.7em; padding: 2px 6px; border-radius: 3px; color: white; }
+        .tag-hot { background: #e74c3c; }
+        .tag-new { background: #2ecc71; }
+        
+        .m-tab-bar { display: flex; border-bottom: 2px solid #2c3e50; margin-bottom: 10px; }
+        .m-tab { flex: 1; text-align: center; padding: 10px; background: #ecf0f1; color: #7f8c8d; cursor: pointer; }
+        .m-tab.active { background: #2c3e50; color: white; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>玩家进入游戏流程设计 (Login & Entry Flow Design)</h1>
+        
+        <p>本文档规划了玩家从启动游戏到正式进入游戏世界的完整交互流程，涵盖了SDK检测、网络优选、账号登录及多角色/多服务器的管理逻辑。</p>
+
+        <h2>1. 整体流程图 (Overall Flowchart)</h2>
+        <div class="mermaid">
+            graph TD
+            subgraph Stage1_Init [1. 启动与检测]
+                Start((游戏启动)) --> SDKCheck[SDK 初始化与检测]
+                SDKCheck --> NetCheck[网络环境检测]
+                NetCheck -->|网络良好| LoginPage[账号登陆界面]
+                NetCheck -->|网络异常| ErrorNet[提示网络错误/重试]
+            end
+        
+            subgraph Stage2_Login [2. 认证与大厅]
+                LoginPage -->|点击登录| Auth[SDK/账号认证]
+                Auth -->|成功| RoleLobby[开始游戏/大厅界面]
+                Auth -->|失败| LoginPage
+            end
+        
+            subgraph Stage3_Selection [3. 角色与服务器决策]
+                RoleLobby -->|默认行为| QuickStart{是否存在<br>上次登录角色?}
+                
+                QuickStart -- 是 --> ShowLastRole[展示上次角色信息]
+                ShowLastRole -->|点击开始| EnterGameProcess[请求进入游戏]
+                
+                ShowLastRole -->|点击切换服务器| ServerList[服务器列表]
+                ShowLastRole -->|点击切换角色| RoleList[当前服角色列表]
+                
+                QuickStart -- 否 (新账号) --> ServerSelection[新玩家: 选择服务器]
+                
+                %% 切换逻辑分支
+                ServerList -->|选择已有角色的服| RoleList
+                ServerList -->|选择新服| NewCharFlow[新角色创建流程]
+                
+                RoleList -->|选择指定角色| EnterGameProcess
+                RoleList -->|点击创建新角色| NewCharFlow
+            end
+        
+            subgraph Stage4_Entry [4. 进入游戏]
+                NewCharFlow -->|完成创建| EnterGameProcess
+                EnterGameProcess -->|加载资源| Loading[场景加载]
+                Loading --> InGame((游戏中))
+            end
+            
+            style Start fill:#2ecc71,stroke:#27ae60,color:white
+            style InGame fill:#2ecc71,stroke:#27ae60,color:white
+            style QuickStart fill:#f1c40f,stroke:#f39c12
+        </div>
+
+        <h2>2. 详细流程说明 (Detailed Steps)</h2>
+
+        <h3>2.1 游戏启动与检测 (Startup & Check)</h3>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen" style="justify-content: center; align-items: center;">
+                        <div class="m-logo">GAME LOGO</div>
+                        <div style="margin-top: 40px; font-size: 0.8em; color: #7f8c8d;">Checking Updates...</div>
+                        <div style="width: 70%; height: 4px; background: #ecf0f1; margin-top: 10px; border-radius: 2px;">
+                            <div style="width: 30%; height: 100%; background: #2ecc71;"></div>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.7em; color: #95a5a6;">v1.2.0</div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Splash / Update</div>
+            </div>
+        </div>
+        <ul>
+            <li><b>游戏启动:</b> 客户端冷启动。</li>
+            <li><b>SDK检测:</b>
+                <ul>
+                    <li>初始化渠道SDK（如Google Play, iOS GameCenter, 第三方发行SDK）。</li>
+                    <li>检查是否需要强制更新（Version Check）。</li>
+                </ul>
+            </li>
+            <li><b>网络检测:</b> Ping 列表中的 Login Server 网关，选择延迟最低的节点。</li>
+        </ul>
+
+        <h3>2.2 账号登陆 (Account Login)</h3>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen">
+                        <div class="m-logo" style="margin-top: 60px;">GAME LOGO</div>
+                        <div style="flex: 1;"></div>
+                        
+                        <div class="m-input" style="text-align:center; cursor: pointer;">Guest Login</div>
+                        <div class="m-btn primary">Facebook Login</div>
+                        <div class="m-btn">Google Login</div>
+                        
+                        <div style="text-align: center; font-size: 0.7em; color: #bdc3c7; margin: 20px;">
+                            By logging in, you agree to our<br>Terms of Service & Privacy Policy
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Login Screen</div>
+            </div>
+        </div>
+        <ul>
+            <li><b>自动登录:</b> 若本地存有有效 Token，尝试静默登录。</li>
+            <li><b>手动登录:</b> 唤起 SDK 登录窗口或输入账号密码。</li>
+        </ul>
+
+        <h3>2.3 开始游戏/切换 (Lobby & Selection)</h3>
+        
+        <h4>A. 默认展示 (Default View - Existing User)</h4>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen">
+                        <!-- Top Info -->
+                        <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-size: 0.9em; font-weight: bold; color: #2c3e50;">Server: S1-Alpha</div>
+                            <div style="font-size: 0.8em; color: #7f8c8d;">Player1</div>
+                        </div>
+                        
+                        <!-- Character Model Placeholder -->
+                        <div class="m-char-placeholder">
+                            <span>Char</span>
+                        </div>
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div style="font-weight: bold; font-size: 1.2em;">Lv.45 Warrior</div>
+                            <div style="font-size: 0.8em; color: #95a5a6;">Power: 12,450</div>
+                        </div>
+
+                        <div style="flex: 1;"></div>
+
+                        <!-- Buttons -->
+                        <div class="m-btn success" style="margin-bottom: 15px; padding: 15px; font-size: 1.1em;">START GAME</div>
+                        
+                        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
+                            <div style="font-size: 0.8em; color: #3498db; text-decoration: underline; cursor: pointer;">Switch Server</div>
+                            <div style="font-size: 0.8em; color: #7f8c8d; text-decoration: underline; cursor: pointer;">Log Out</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Lobby (Last Played)</div>
+            </div>
+        </div>
+
+        <div class="def-box">
+            <p><b>已有角色玩家:</b> 界面中心展示 <span class="highlight">上次登出的角色</span> 模型、ID、等级及所在服务器名称。</p>
+        </div>
+
+        <h4>B. 切换服务器 (Switch Server)</h4>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen">
+                        <div class="m-header">Select Server</div>
+                        
+                        <div class="m-tab-bar">
+                            <div class="m-tab active">My Servers</div>
+                            <div class="m-tab">Recommended</div>
+                            <div class="m-tab">All</div>
+                        </div>
+
+                        <div style="flex: 1; overflow-y: auto;">
+                            <div class="m-list-item">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 0.9em;">S1-Alpha</div>
+                                    <div style="font-size: 0.7em; color: #95a5a6;">Last login: 2h ago</div>
+                                </div>
+                                <span class="m-tag tag-new">Lv.45</span>
+                            </div>
+                            <div class="m-list-item">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 0.9em;">S3-Omega</div>
+                                    <div style="font-size: 0.7em; color: #95a5a6;">Last login: 5d ago</div>
+                                </div>
+                                <span class="m-tag tag-new">Lv.12</span>
+                            </div>
+                            <div class="m-list-item" style="opacity: 0.6;">
+                                <div>
+                                    <div style="font-weight: bold; font-size: 0.9em;">S5-NewWorld</div>
+                                    <div style="font-size: 0.7em; color: #e74c3c;">Full</div>
+                                </div>
+                                <span class="m-tag tag-hot">Queue: 502</span>
+                            </div>
+                        </div>
+                        
+                        <div class="m-btn primary">Confirm Selection</div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Server Selection List</div>
+            </div>
+        </div>
+        
+        <p>玩家点击【切换服务器】后打开列表，列表分为标签页：</p>
+        <ol>
+            <li><b>我的服务器 (My Servers):</b> 列出所有我已创建过角色的服务器（显示角色简要信息）。</li>
+            <li><b>推荐服务器 (Recommended):</b> 适合新角色的服务器（如新开服、负载均衡服）。</li>
+            <li><b>所有服务器 (All):</b> 完整列表，支持搜索。</li>
+        </ol>
+
+        <div class="warning">
+            <strong>参考交互：新玩家旅程 (New Zone Selection)</strong><br>
+            <img src="../docs/assets/scheme2_new_zone_selection.jpg" alt="New Zone Selection Flow">
+        </div>
+
+        <div class="warning">
+            <strong>参考交互：老玩家旅程 (Old Player Server Selection)</strong><br>
+            <img src="../docs/assets/scheme2_old_player_selection.jpg" alt="Old Player Selection Flow">
+        </div>
+
+        <h3>2.4 新角色流程 (New Character Flow)</h3>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen">
+                        <div class="m-header">Create Character</div>
+                        
+                        <div class="m-char-placeholder">
+                            <span>Model</span>
+                        </div>
+                        
+                        <div style="text-align: center; margin-bottom: 10px; font-weight: bold; color: #2c3e50;">Choose Class</div>
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+                            <div style="width: 40px; height: 40px; background: #3498db; border-radius: 50%; border: 2px solid #2980b9; display: flex; align-items: center; justify-content: center; color: white;">⚔️</div>
+                            <div style="width: 40px; height: 40px; background: #e74c3c; border-radius: 50%; opacity: 0.5;">🏹</div>
+                            <div style="width: 40px; height: 40px; background: #f1c40f; border-radius: 50%; opacity: 0.5;">🪄</div>
+                        </div>
+
+                        <input type="text" class="m-input" placeholder="Enter Character Name..." style="text-align: center;">
+                        
+                        <div style="flex: 1;"></div>
+                        <div class="m-btn success" style="margin-bottom: 30px;">CREATE & START</div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Character Creation</div>
+            </div>
+        </div>
+
+        <h3>2.5 进入游戏 (Enter Game)</h3>
+        <div class="mockup-container">
+            <div>
+                <div class="ui-mockup">
+                    <div class="ui-top-bar">
+                        <span>9:41</span>
+                        <span>📶 🔋</span>
+                    </div>
+                    <div class="ui-screen" style="justify-content: flex-end;">
+                        <!-- Background image placeholder -->
+                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: url('https://placehold.co/300x533/ecf0f1/bdc3c7?text=Art+Scene') center; opacity: 0.5;"></div>
+                        
+                        <div style="padding: 20px; z-index: 1; background: rgba(255,255,255,0.9); border-top: 1px solid #eee;">
+                            <div style="font-size: 0.8em; margin-bottom: 5px; color: #2c3e50; font-weight: bold;">Loading resources... (45%)</div>
+                            <div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden;">
+                                <div style="width: 45%; height: 100%; background: #3498db;"></div>
+                            </div>
+                            <div style="font-size: 0.7em; color: #7f8c8d; margin-top: 10px; font-style: italic; text-align: center;">"Tip: Join an alliance to grow faster!"</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui-mockup-label">Loading Screen</div>
+            </div>
+        </div>
+        <ul>
+            <li>客户端向 Game Server 发起连接请求。</li>
+            <li>同步用户数据、背包数据、场景数据。</li>
+            <li>展示 Loading 界面。</li>
+            <li>Loading 结束，渲染场景，玩家控制权移交，进入 <b>游戏中</b> 状态。</li>
+        </ul>
+
+        <h2>3. 异常处理 (Exception Handling)</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>异常场景</th>
+                    <th>处理逻辑</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>SDK 初始化失败</b></td>
+                    <td>弹窗提示“组件初始化失败”，禁止进入下一步，提供退出或重试按钮。</td>
+                </tr>
+                <tr>
+                    <td><b>网络超时</b></td>
+                    <td>在登录或连接阶段超过 10s 无响应，提示“连接服务器超时，请检查网络”。</td>
+                </tr>
+                <tr>
+                    <td><b>服务器维护</b></td>
+                    <td>在选择服务器或点击开始游戏时，若目标服处于维护状态，弹窗显示维护公告及预计开服时间。</td>
+                </tr>
+                <tr>
+                    <td><b>排队等待</b></td>
+                    <td>若目标服务器负载过高，弹出排队窗口，显示当前排队位置及预计等待时间。</td>
+                </tr>
+                <tr>
+                    <td><b>版本不兼容</b></td>
+                    <td>登录前检测客户端版本，若低于服务器要求，强制引导至应用商店更新。</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</body>
+</html>
