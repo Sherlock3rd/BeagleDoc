@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>玩家进入游戏流程设计 (Comic Style)</title>
+    <title>玩家进入游戏流程设计 (Login & Entry Flow)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module">
         import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
@@ -13,181 +13,252 @@
         @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&display=swap');
 
         :root {
-            --comic-black: #000000;
+            --comic-black: #212121;
             --comic-white: #ffffff;
             --comic-accent: #ffeb3b; /* Yellow */
-            --comic-primary: #00e5ff; /* Cyan */
-            --comic-danger: #ff1744; /* Magenta/Red */
+            --comic-primary: #00bcd4; /* Cyan */
+            --comic-danger: #ff5252; /* Red */
             --comic-border: 3px solid var(--comic-black);
-            --comic-shadow: 6px 6px 0px var(--comic-black);
+            --comic-shadow: 5px 5px 0px rgba(0,0,0,0.8);
+            --bg-pattern: #f0f4f8;
         }
 
         body {
-            font-family: 'Comic Neue', cursive;
-            background-color: #f0f0f0;
-            background-image: radial-gradient(#ccc 1px, transparent 1px);
+            font-family: 'Comic Neue', 'Verdana', sans-serif;
+            background-color: var(--bg-pattern);
+            background-image: radial-gradient(#cbd5e0 1px, transparent 1px);
             background-size: 20px 20px;
-            color: var(--comic-black);
-            padding: 20px;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             background: var(--comic-white);
             border: var(--comic-border);
             box-shadow: var(--comic-shadow);
-            padding: 40px;
+            padding: 50px;
+            position: relative;
         }
 
-        h1, h2, h3 {
-            font-family: 'Bangers', cursive;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
+        /* Documentation Typography */
         h1 {
-            font-size: 4em;
+            font-family: 'Bangers', cursive;
+            font-size: 3.5em;
             text-align: center;
-            color: var(--comic-danger);
-            text-shadow: 3px 3px 0px var(--comic-black);
-            transform: rotate(-2deg);
+            color: #333;
             margin-bottom: 40px;
+            text-shadow: 2px 2px 0px var(--comic-accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
         h2 {
-            font-size: 2.5em;
-            background: var(--comic-accent);
-            display: inline-block;
-            padding: 5px 20px;
-            border: var(--comic-border);
-            box-shadow: 4px 4px 0px var(--comic-black);
-            margin-top: 40px;
-            transform: rotate(1deg);
+            font-family: 'Bangers', cursive;
+            font-size: 2.2em;
+            color: #333;
+            border-bottom: 3px solid var(--comic-accent);
+            padding-bottom: 10px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
         }
 
-        .comic-panel-container {
+        h3 {
+            font-family: 'Comic Neue', sans-serif;
+            font-weight: 700;
+            font-size: 1.5em;
+            color: #00838f;
+            margin-top: 30px;
+            border-left: 5px solid var(--comic-accent);
+            padding-left: 15px;
+        }
+
+        h4 {
+            font-weight: bold;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        p, ul, li {
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        ul {
+            list-style-type: square;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #d32f2f;
+        }
+
+        /* Comic Panel Styles */
+        .storyboard {
             display: flex;
             flex-wrap: wrap;
             gap: 40px;
             justify-content: center;
             margin: 40px 0;
+            padding: 20px;
+            background: #fffde7; /* Light yellow bg for storyboard area */
+            border: 2px dashed #ccc;
+        }
+
+        .panel-wrapper {
+            position: relative;
         }
 
         .comic-panel {
-            width: 600px;
-            height: 337.5px; /* 16:9 Landscape */
+            width: 480px;
+            height: 270px; /* 16:9 Landscape */
             background: var(--comic-white);
-            border: 4px solid var(--comic-black);
-            box-shadow: var(--comic-shadow);
+            border: 3px solid var(--comic-black);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
             position: relative;
             overflow: hidden;
-            transition: transform 0.2s;
-        }
-
-        .comic-panel:hover {
-            transform: scale(1.02) rotate(-1deg);
-            z-index: 10;
+            display: flex;
+            flex-direction: column;
         }
 
         .panel-label {
             position: absolute;
-            top: -15px;
-            left: -10px;
+            top: -12px;
+            left: 10px;
             background: var(--comic-primary);
-            color: var(--comic-black);
+            color: white;
             font-family: 'Bangers';
-            font-size: 1.5em;
-            padding: 5px 15px;
-            border: var(--comic-border);
+            font-size: 1.2em;
+            padding: 2px 10px;
+            border: 2px solid var(--comic-black);
             z-index: 20;
-            transform: rotate(-3deg);
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
         }
 
-        /* Comic UI Elements */
+        /* Comic UI Components */
+        .c-screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .c-btn {
+            background: var(--comic-danger);
+            color: white;
+            border: 2px solid var(--comic-black);
+            font-family: 'Bangers';
+            padding: 5px 15px;
+            text-align: center;
+            cursor: pointer;
+            display: inline-block;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+        }
+
         .speech-bubble {
             position: absolute;
-            background: var(--comic-white);
-            border: 2px solid var(--comic-black);
-            border-radius: 50%;
-            padding: 15px;
-            text-align: center;
+            background: white;
+            border: 2px solid black;
+            border-radius: 20px;
+            padding: 10px;
+            font-size: 0.9em;
             font-weight: bold;
             box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
-            z-index: 5;
+            z-index: 10;
+            text-align: center;
         }
-        
-        .speech-bubble::after {
+
+        .speech-bubble:after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 20px;
-            border-width: 10px 10px 0;
+            bottom: -8px;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px 8px 0;
             border-style: solid;
-            border-color: var(--comic-black) transparent;
+            border-color: black transparent;
             display: block;
             width: 0;
         }
 
         .caption-box {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            background: #fff9c4;
-            border: 2px solid var(--comic-black);
-            padding: 5px 10px;
-            font-style: italic;
-            font-size: 0.9em;
-        }
-
-        .action-btn {
-            background: var(--comic-danger);
-            color: white;
-            border: 2px solid var(--comic-black);
-            padding: 5px 15px;
-            font-family: 'Bangers';
-            font-size: 1.2em;
-            cursor: pointer;
-            box-shadow: 2px 2px 0px var(--comic-black);
-        }
-
-        /* Specific Scene Styles */
-        .scene-bg {
+            bottom: 0;
+            left: 0;
             width: 100%;
-            height: 100%;
+            background: rgba(255, 255, 224, 0.95);
+            border-top: 2px solid black;
+            padding: 5px 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            z-index: 15;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-family: 'Comic Neue', sans-serif;
+        }
+        
+        th, td {
+            border: 2px solid #333;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--comic-accent);
+            font-weight: bold;
+        }
+
+        /* Specific Scene Elements */
+        .map-bg {
+            background-image: url('../docs/assets/scheme2_map_v3.jpg');
             background-size: cover;
             background-position: center;
+            width: 100%;
+            height: 100%;
         }
 
-        .map-overlay {
+        .region-overlay {
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.2);
+            top: 0; left: 0; width: 100%; height: 100%;
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
         }
-
-        .region-select {
+        
+        .region-zone {
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px dashed rgba(255,255,255,0.5);
-            transition: all 0.2s;
+            transition: background 0.2s;
+            border: 1px dashed rgba(255,255,255,0.3);
         }
         
-        .region-select:hover {
-            background: rgba(255, 235, 59, 0.3);
+        .region-zone:hover {
+            background: rgba(255, 235, 59, 0.2);
             border: 2px solid var(--comic-accent);
         }
 
-        .region-tag {
-            background: var(--comic-black);
-            color: var(--comic-white);
-            padding: 5px 10px;
+        .region-badge {
+            background: black;
+            color: white;
             font-family: 'Bangers';
-            transform: rotate(-5deg);
+            padding: 2px 8px;
+            font-size: 1.2em;
+            transform: rotate(-3deg);
         }
 
     </style>
@@ -195,182 +266,263 @@
 <body>
 
 <div class="container">
-    <h1>🚀 玩家进入游戏流程 (COMIC EDITION)</h1>
+    <h1>玩家进入游戏流程设计</h1>
+    <p style="text-align: center; font-style: italic; margin-top: -20px; margin-bottom: 40px;">Login & Entry Flow Design - Comic Edition</p>
 
-    <div class="warning" style="background: #ffebee; border: 3px solid #ff1744; padding: 20px; font-weight: bold;">
-        <span style="font-size: 1.5em;">💥 注意!</span>
-        <p>本设计严格遵循 <strong>Scheme 2</strong> 核心规则：新玩家基于物理区域 (Region) 分配 Zone，老玩家选择服务器 (Server) 后再选区域。</p>
+    <div style="background: #e3f2fd; border-left: 5px solid #2196f3; padding: 15px; margin-bottom: 30px;">
+        <p><strong>文档说明：</strong> 本文档规划了玩家从启动游戏到正式进入游戏世界的完整交互流程，特别强调了符合 <strong>Scheme 2</strong> 规则的选服逻辑。</p>
     </div>
 
-    <!-- Mermaid Flowchart -->
-    <h2>1. 逻辑流程图 (THE PLAN)</h2>
+    <!-- 1. 整体流程图 -->
+    <h2>1. 整体流程图 (Overall Flowchart)</h2>
     <div class="mermaid">
     graph TD
-        Start((开始)) --> Launch[启动游戏]
-        Launch --> SDK[SDK 初始化/登录]
-        SDK --> NetCheck{网络检测}
-        NetCheck -- 失败 --> Error[显示错误弹窗]
-        NetCheck -- 成功 --> AccountCheck{是否有账号?}
-        
-        AccountCheck -- 否 --> NewPlayerFlow[新玩家流程]
-        AccountCheck -- 是 --> OldPlayerFlow[老玩家流程]
-        
-        subgraph New_Player [新玩家旅程]
-            NewPlayerFlow --> ShowMap[展示世界地图 scheme2_map_v3]
-            ShowMap --> SelectRegion[选择物理区域 A/B/C/D]
-            SelectRegion --> AssignZone[系统分配至对应 Zone]
-            AssignZone --> CreateChar[创建角色]
-            CreateChar --> EnterGame
+        %% 阶段定义
+        subgraph Stage1_Init [1. 启动与检测]
+            Start((游戏启动)) --> SDKCheck[SDK 初始化与检测]
+            SDKCheck --> NetCheck[网络环境检测]
+            NetCheck -->|网络良好| LoginPage[账号登陆界面]
+            NetCheck -->|网络异常| ErrorNet[提示网络错误/重试]
+        end
+
+        subgraph Stage2_Login [2. 认证与大厅]
+            LoginPage -->|点击登录| Auth[SDK/账号认证]
+            Auth -->|成功| RoleLobby[开始游戏/大厅界面]
+            Auth -->|失败| LoginPage
+        end
+
+        subgraph Stage3_Selection [3. 角色与服务器决策]
+            RoleLobby -->|默认行为| QuickStart{是否存在<br>上次登录角色?}
+            
+            QuickStart -- 是 (老玩家) --> ShowLastRole[展示上次角色信息]
+            ShowLastRole -->|点击开始| EnterGameProcess[请求进入游戏]
+            
+            ShowLastRole -->|点击切换/返回| SelectExistingServer[选择已有服务器]
+            
+            QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 选择物理区域 Region]
+            
+            %% Scheme 2 Selection Logic
+            SelectRegion -->|系统分配| EnterZone[分配至 Zone]
+            EnterZone --> NewCharFlow[新角色创建流程]
+            
+            SelectExistingServer -->|1.选定服务器| SelectRegionOld[2.选择该服出生/复活区域]
+            SelectRegionOld -->|确认| EnterGameProcess
+        end
+
+        subgraph Stage4_Entry [4. 进入游戏]
+            NewCharFlow -->|完成创建| EnterGameProcess
+            EnterGameProcess -->|加载资源| Loading[场景加载]
+            Loading --> InGame((游戏中))
         end
         
-        subgraph Old_Player [老玩家旅程]
-            OldPlayerFlow --> ShowLastChar[展示上次登录角色]
-            ShowLastChar --> Action{玩家操作}
-            Action -- 直接开始 --> EnterGame[进入游戏]
-            Action -- 切换服务器 --> ServerList[展示服务器列表]
-            ServerList --> SelectServer[选定服务器]
-            SelectServer --> SelectRegionOld[选择出生区域]
-            SelectRegionOld --> EnterGame
-        end
+        %% 样式
+        style Start fill:#2ecc71,stroke:#27ae60,color:white
+        style InGame fill:#2ecc71,stroke:#27ae60,color:white
+        style QuickStart fill:#f1c40f,stroke:#f39c12
     </div>
 
-    <h2>2. 视觉分镜 (VISUAL STORYBOARD)</h2>
+    <!-- 2. 详细流程说明 -->
+    <h2>2. 详细流程说明 (Detailed Steps)</h2>
 
-    <div class="comic-panel-container">
-        <!-- Panel 1: Launch -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 1: THE LAUNCH</div>
-            <div class="comic-panel">
-                <div style="width: 100%; height: 100%; background: #263238; display: flex; align-items: center; justify-content: center; flex-direction: column;">
-                    <div style="font-family: 'Bangers'; font-size: 5em; color: var(--comic-accent); text-shadow: 5px 5px 0px #000; transform: rotate(-5deg);">GAME LOGO</div>
-                    <div style="margin-top: 20px; width: 300px; height: 25px; border: 3px solid #000; background: #fff;">
-                        <div style="width: 75%; height: 100%; background: var(--comic-primary); border-right: 3px solid #000;"></div>
-                    </div>
-                    <div style="color: white; font-weight: bold; margin-top: 10px; font-family: 'Courier New';">LOADING ASSETS...</div>
-                </div>
-            </div>
-        </div>
+    <h3>2.1 游戏启动与检测 (Startup & Check)</h3>
+    <ul>
+        <li><strong>游戏启动</strong>: 客户端冷启动。</li>
+        <li><strong>SDK检测</strong>: 初始化渠道SDK，检查强制更新。</li>
+        <li><strong>网络检测</strong>: Ping Login Server 网关，选择延迟最低节点。</li>
+    </ul>
 
-        <!-- Panel 2: Login -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 2: IDENTITY</div>
-            <div class="comic-panel">
-                <div style="width: 100%; height: 100%; background: #e0f7fa; display: flex; align-items: center; justify-content: center;">
-                    <div style="background: white; border: 3px solid black; padding: 20px; box-shadow: 5px 5px 0px rgba(0,0,0,0.2); width: 300px; text-align: center;">
-                        <h3 style="margin: 0; color: #006064;">ACCOUNT LOGIN</h3>
-                        <div style="margin: 15px 0; border-bottom: 2px solid #ccc;">username...</div>
-                        <div style="margin: 15px 0; border-bottom: 2px solid #ccc;">password...</div>
-                        <button class="action-btn">LOGIN!</button>
-                    </div>
-                    <div class="speech-bubble" style="top: 20px; right: 20px;">WHO GOES THERE?</div>
-                </div>
-            </div>
-        </div>
+    <h3>2.2 账号登陆 (Account Login)</h3>
+    <ul>
+        <li><strong>自动登录</strong>: 若本地有 Token 则静默登录。</li>
+        <li><strong>手动登录</strong>: 唤起 SDK 窗口或输入账号密码。</li>
+        <li><strong>获取数据</strong>: 拉取最近登录角色、服务器列表等。</li>
+    </ul>
 
-        <!-- Panel 3: New Player Selection -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 3: NEW JOURNEY</div>
+    <!-- 漫画分镜 1 & 2 -->
+    <div class="storyboard">
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 1: LAUNCH</div>
             <div class="comic-panel">
-                <!-- Map Background -->
-                <div class="scene-bg" style="background-image: url('../docs/assets/scheme2_map_v3.jpg'); position: relative;">
-                    <div class="map-overlay">
-                        <div class="region-select">
-                            <div class="region-tag">REGION A</div>
-                        </div>
-                        <div class="region-select">
-                            <div class="region-tag">REGION B</div>
-                        </div>
-                        <div class="region-select">
-                            <div class="region-tag">REGION C</div>
-                        </div>
-                        <div class="region-select">
-                            <div class="region-tag">REGION D</div>
-                        </div>
-                    </div>
-                    <div class="speech-bubble" style="top: 10%; left: 50%; transform: translateX(-50%); width: 200px;">
-                        CHOOSE YOUR DESTINY!
-                    </div>
-                    <div class="caption-box">
-                        New players select a Physical Region. The system assigns a Zone automatically.
+                <div class="c-screen" style="background: #263238; align-items: center; justify-content: center;">
+                    <div style="font-family: 'Bangers'; font-size: 4em; color: var(--comic-accent);">GAME LOGO</div>
+                    <div style="color: white; margin-top: 10px;">CHECKING UPDATES...</div>
+                    <div style="width: 200px; height: 10px; border: 1px solid white; margin-top: 5px;">
+                        <div style="width: 60%; height: 100%; background: var(--comic-primary);"></div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Panel 4: Old Player Lobby -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 4: WELCOME BACK</div>
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 2: LOGIN</div>
             <div class="comic-panel">
-                <div style="width: 100%; height: 100%; background: #37474f; display: flex;">
-                    <div style="width: 40%; border-right: 3px solid black; padding: 20px; color: white;">
-                        <div style="font-family: 'Bangers'; font-size: 1.5em; color: var(--comic-accent);">LAST PLAYED</div>
-                        <div style="margin-top: 20px;">
-                            <div>Lv. 45 WARRIOR</div>
-                            <div>Server: S1-Alpha</div>
-                            <div>Region: B</div>
-                        </div>
-                        <button class="action-btn" style="margin-top: 20px;">ENTER GAME</button>
-                    </div>
-                    <div style="width: 60%; display: flex; align-items: center; justify-content: center;">
-                        <div style="font-size: 5em;">👤</div>
-                        <button style="position: absolute; bottom: 20px; right: 20px; background: white; border: 2px solid black; padding: 5px;">SWITCH SERVER</button>
+                <div class="c-screen" style="background: #e0f7fa; align-items: center; justify-content: center;">
+                    <div style="background: white; border: 2px solid black; padding: 20px; width: 250px; text-align: center;">
+                        <div style="margin-bottom: 10px; font-weight: bold;">USER LOGIN</div>
+                        <div style="border: 1px solid #999; margin-bottom: 5px; background: #eee; height: 20px;"></div>
+                        <div style="border: 1px solid #999; margin-bottom: 10px; background: #eee; height: 20px;"></div>
+                        <div class="c-btn">START</div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Panel 5: Server List (Old Player) -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 5: SERVER LIST</div>
+    <h3>2.3 开始游戏/切换 (Lobby & Selection)</h3>
+    <p>这是玩家进入游戏前的核心决策界面。</p>
+    
+    <h4>A. 默认展示 (Default View)</h4>
+    <ul>
+        <li><strong>已有角色玩家</strong>: 展示上次登出的角色模型。主按钮【开始游戏】。</li>
+        <li><strong>新玩家</strong>: 直接进入新旅程（选区）。</li>
+    </ul>
+
+    <!-- 漫画分镜 3 & 4 -->
+    <div class="storyboard">
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 3: LOBBY (OLD PLAYER)</div>
             <div class="comic-panel">
-                <div style="padding: 20px; background: #fff3e0; height: 100%;">
-                    <h3 style="border-bottom: 3px solid black;">SELECT UNIVERSE</h3>
-                    <div style="display: flex; gap: 10px; margin-top: 20px;">
-                        <div style="width: 30%; border-right: 2px solid black;">
-                            <div style="padding: 5px; background: black; color: white;">RECOMMENDED</div>
-                            <div style="padding: 5px;">ALL SERVERS</div>
-                            <div style="padding: 5px;">MY SERVERS</div>
+                <div class="c-screen" style="background: #37474f;">
+                    <div style="width: 40%; height: 100%; border-right: 2px solid black; padding: 20px; color: white;">
+                        <div style="font-family: 'Bangers'; color: var(--comic-accent);">LAST PLAYED</div>
+                        <div style="margin-top: 10px;">
+                            <div>Lv.45 Hero</div>
+                            <div>Server: S1</div>
                         </div>
-                        <div style="width: 70%;">
-                            <div style="border: 2px solid black; margin-bottom: 10px; padding: 10px; background: white; display: flex; justify-content: space-between;">
-                                <span>Server 001 (Merged)</span>
-                                <span style="color: green;">ONLINE</span>
+                        <div class="c-btn" style="margin-top: 20px;">ENTER GAME</div>
+                    </div>
+                    <div style="flex: 1; position: relative;">
+                        <div class="speech-bubble" style="top: 20px; right: 20px; width: 120px;">Ready to fight?</div>
+                        <div style="position: absolute; bottom: 10px; right: 10px;">
+                            <div class="c-btn" style="background: white; color: black; font-size: 0.8em;">SWITCH SERVER</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="caption-box">老玩家默认展示上次角色，可直接进入或切换服务器。</div>
+            </div>
+        </div>
+    </div>
+
+    <h4>B. 选服流程 (Server Selection - Scheme 2)</h4>
+    <div class="warning" style="background: #fff3e0; padding: 15px; border-left: 5px solid #ff9800; margin: 10px 0;">
+        <strong>Scheme 2 核心规则：</strong>
+        <ul>
+            <li><strong>新玩家</strong>: 选择物理区域 (Region) -> 系统分配 Zone。</li>
+            <li><strong>老玩家</strong>: 选择服务器 (Server) -> 选择出生区域 (Region)。</li>
+        </ul>
+    </div>
+
+    <!-- 漫画分镜 5 & 6 & 7 -->
+    <div class="storyboard">
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 4: NEW JOURNEY</div>
+            <div class="comic-panel">
+                <div class="c-screen">
+                    <div class="map-bg">
+                        <div class="region-overlay">
+                            <div class="region-zone"><div class="region-badge">A</div></div>
+                            <div class="region-zone"><div class="region-badge">B</div></div>
+                            <div class="region-zone"><div class="region-badge">C</div></div>
+                            <div class="region-zone"><div class="region-badge">D</div></div>
+                        </div>
+                    </div>
+                    <div class="speech-bubble" style="top: 40%; left: 50%; transform: translate(-50%, -50%); width: 200px;">
+                        Where will you be born?
+                    </div>
+                </div>
+                <div class="caption-box">新玩家：直接在世界地图上选择物理区域 (Region)。</div>
+            </div>
+        </div>
+
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 5: SERVER LIST (OLD)</div>
+            <div class="comic-panel">
+                <div class="c-screen" style="background: #f5f5f5; padding: 15px;">
+                    <h3 style="margin-top: 0; font-size: 1.2em; border: none; padding: 0;">SELECT SERVER</h3>
+                    <div style="display: flex; height: 100%; gap: 10px;">
+                        <div style="width: 30%; background: #333; color: white; padding: 5px;">
+                            <div>ALL</div>
+                            <div style="color: var(--comic-accent);">MY SERVERS</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="border: 2px solid black; padding: 5px; margin-bottom: 5px; background: white; display: flex; justify-content: space-between;">
+                                <span>S1-Alpha</span>
+                                <span style="color: green;">ON</span>
                             </div>
-                            <div style="border: 2px solid black; margin-bottom: 10px; padding: 10px; background: #eee; display: flex; justify-content: space-between;">
-                                <span>Server 002 (Full)</span>
+                            <div style="border: 2px solid black; padding: 5px; margin-bottom: 5px; background: #eee; display: flex; justify-content: space-between;">
+                                <span>S2-Beta</span>
                                 <span style="color: red;">BUSY</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Panel 6: Region Select (Old Player) -->
-        <div style="position: relative;">
-            <div class="panel-label">SCENE 6: RESPAWN POINT</div>
-            <div class="comic-panel">
-                <div class="scene-bg" style="background-image: url('../docs/assets/scheme2_map_v3.jpg');">
-                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);"></div>
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 3px solid black; padding: 20px; width: 80%;">
-                        <h3 style="text-align: center;">SELECT SPAWN REGION</h3>
-                        <div style="display: flex; justify-content: space-around; margin-top: 20px;">
-                            <button class="action-btn">REGION A</button>
-                            <button class="action-btn">REGION B</button>
-                        </div>
-                        <div style="display: flex; justify-content: space-around; margin-top: 10px;">
-                            <button class="action-btn">REGION C</button>
-                            <button class="action-btn">REGION D</button>
-                        </div>
-                    </div>
-                    <div class="caption-box">
-                        Old players moving to a new server must choose a spawn region on the map.
-                    </div>
-                </div>
+                <div class="caption-box">老玩家：先选择已有的服务器。</div>
             </div>
         </div>
 
+        <div class="panel-wrapper">
+            <div class="panel-label">SCENE 6: REGION SELECT (OLD)</div>
+            <div class="comic-panel">
+                <div class="c-screen">
+                    <div class="map-bg" style="filter: grayscale(50%);"></div>
+                    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center;">
+                        <div style="background: white; border: 3px solid black; padding: 15px; text-align: center;">
+                            <div style="font-family: 'Bangers'; margin-bottom: 10px;">SELECT SPAWN REGION</div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <div class="c-btn">Region A</div>
+                                <div class="c-btn">Region B</div>
+                                <div class="c-btn">Region C</div>
+                                <div class="c-btn">Region D</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="caption-box">老玩家：选定服务器后，再选择该服的出生区域。</div>
+            </div>
+        </div>
     </div>
+
+    <h3>2.4 新角色流程 (New Character Flow)</h3>
+    <ol>
+        <li><strong>选择服务器</strong>: (如果是从服务器列表进入则已选定)。</li>
+        <li><strong>创建角色</strong>: 输入昵称、选择性别/外貌（如有）。</li>
+        <li><strong>进入游戏</strong>: 完成创建后，自动触发进入游戏逻辑。</li>
+    </ol>
+
+    <h3>2.5 进入游戏 (Enter Game)</h3>
+    <ul>
+        <li>客户端向 Game Server 发起连接请求。</li>
+        <li>同步用户数据、背包数据、场景数据。</li>
+        <li>展示 Loading 界面。</li>
+        <li>Loading 结束，渲染场景，玩家控制权移交，进入 <strong>游戏中</strong> 状态。</li>
+    </ul>
+
+    <h2>3. 异常处理 (Exception Handling)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>异常场景</th>
+                <th>处理逻辑</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>SDK 初始化失败</strong></td>
+                <td>弹窗提示“组件初始化失败”，禁止进入下一步，提供退出或重试按钮。</td>
+            </tr>
+            <tr>
+                <td><strong>网络超时</strong></td>
+                <td>在登录或连接阶段超过 10s 无响应，提示“连接服务器超时，请检查网络”。</td>
+            </tr>
+            <tr>
+                <td><strong>服务器维护</strong></td>
+                <td>在选择服务器或点击开始游戏时，若目标服处于维护状态，弹窗显示维护公告及预计开服时间。</td>
+            </tr>
+            <tr>
+                <td><strong>排队等待</strong></td>
+                <td>若目标服务器负载过高，弹出排队窗口，显示当前排队位置及预计等待时间。</td>
+            </tr>
+        </tbody>
+    </table>
 
 </div>
 
