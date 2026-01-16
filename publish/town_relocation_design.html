@@ -332,19 +332,20 @@
         <p>为了解决"抢车位"可能带来的挫败感，系统提供一套智能导航辅助功能。</p>
 
         <!-- Logic Diagram (Schematic Map) -->
-        <div class="visual-scene" style="height: 420px; background-color: #f8f9fa; position: relative;">
-            <!-- Background Grid -->
-            <div style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(#bdc3c7 1px, transparent 1px); background-size: 20px 20px; opacity: 0.4;"></div>
-            
-            <!-- Server Logic (Top) -->
-            <div style="position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: white; border: 2px solid #333; padding: 8px 20px; border-radius: 12px; z-index: 10; text-align: center; box-shadow: 4px 4px 0 rgba(0,0,0,0.1);">
-                <strong>☁️ SERVER CLOUD</strong><br>
-                <span style="font-size: 0.8em; color: #666; font-family: monospace;">SELECT * FROM spots <br>WHERE dist < 500m AND status = 'VACANT'</span>
-            </div>
-
-            <!-- Map Area -->
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+        <div class="visual-scene" style="height: 450px; background-color: #f8f9fa; position: relative; overflow-x: auto;">
+            <!-- Content Wrapper for Fixed Layout -->
+            <div style="width: 800px; height: 100%; margin: 0 auto; position: relative;">
                 
+                <!-- Background Grid -->
+                <div style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(#bdc3c7 1px, transparent 1px); background-size: 20px 20px; opacity: 0.4;"></div>
+                
+                <!-- Server Logic (Top) -->
+                <!-- Fixed position to ensure arrow alignment -->
+                <div style="position: absolute; top: 30px; left: 400px; transform: translateX(-50%); background: white; border: 2px solid #333; padding: 8px 20px; border-radius: 12px; z-index: 10; text-align: center; box-shadow: 4px 4px 0 rgba(0,0,0,0.1); min-width: 200px;">
+                    <strong>☁️ SERVER CLOUD</strong><br>
+                    <span style="font-size: 0.8em; color: #666; font-family: monospace;">SELECT * FROM spots <br>WHERE dist < 500m AND status = 'VACANT'</span>
+                </div>
+
                 <!-- SVG Layer for connections -->
                 <svg width="100%" height="100%" style="position: absolute; top: 0; left: 0; z-index: 1;">
                     <defs>
@@ -354,25 +355,28 @@
                         <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
                             <path d="M0,0 L0,6 L9,3 z" fill="#2ecc71" />
                         </marker>
+                        <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#e74c3c" />
+                        </marker>
                     </defs>
                     
-                    <!-- Request Line -->
-                    <path d="M 200 250 Q 300 150 450 80" fill="none" stroke="#95a5a6" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-grey)" />
-                    <text x="260" y="160" fill="#7f8c8d" font-size="12" font-weight="bold">1. Request</text>
+                    <!-- Request Line: Player(150,280) -> Server(400,90) -->
+                    <path d="M 150 280 Q 250 150 400 90" fill="none" stroke="#95a5a6" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrow-grey)" />
+                    <text x="260" y="180" fill="#7f8c8d" font-size="12" font-weight="bold" transform="rotate(-20 260,180)">1. Request</text>
 
-                    <!-- Navigation Line -->
-                    <path d="M 200 250 L 600 300" stroke="#2ecc71" stroke-width="4" fill="none" stroke-dasharray="12,6" marker-end="url(#arrow-green)" />
-                    <text x="400" y="270" fill="#27ae60" font-size="14" font-weight="bold" transform="rotate(7 400,270)">2. Path to Nearest</text>
+                    <!-- Navigation Line: Player(150,280) -> Target(500,320) -->
+                    <path d="M 150 280 L 500 320" stroke="#2ecc71" stroke-width="4" fill="none" stroke-dasharray="12,6" marker-end="url(#arrow-green)" />
+                    <text x="320" y="315" fill="#27ae60" font-size="14" font-weight="bold" transform="rotate(6 320,315)">2. Path to Nearest</text>
 
-                    <!-- Reroute Line -->
-                    <path d="M 620 300 Q 700 250 750 150" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="4,4" opacity="0.6" />
-                    <text x="650" y="220" fill="#e74c3c" font-size="12" font-family: monospace>If Taken -> Reroute</text>
+                    <!-- Reroute Line: Target(520,320) -> Backup(650,160) -->
+                    <path d="M 520 320 Q 600 280 650 175" stroke="#e74c3c" stroke-width="2" fill="none" stroke-dasharray="4,4" opacity="0.8" marker-end="url(#arrow-red)" />
+                    <text x="600" y="240" fill="#e74c3c" font-size="12" font-family: monospace font-weight="bold">If Taken -> Reroute</text>
                 </svg>
 
                 <!-- Elements (Z-index > 1) -->
                 
                 <!-- Player -->
-                <div style="position: absolute; top: 250px; left: 200px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
+                <div style="position: absolute; top: 280px; left: 150px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
                     <div style="width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 24px solid #2c3e50; margin: 0 auto;"></div>
                     <div style="background: #2c3e50; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 5px;">YOU</div>
                     <!-- Range Circle -->
@@ -381,23 +385,22 @@
                 </div>
 
                 <!-- Spot: Occupied -->
-                <div style="position: absolute; top: 200px; left: 350px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
+                <div style="position: absolute; top: 200px; left: 300px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
                     <div style="width: 30px; height: 30px; background: #e74c3c; border: 3px solid #333; border-radius: 50%; box-shadow: 2px 2px 0 rgba(0,0,0,0.1);"></div>
                     <span style="color: #c0392b; font-size: 12px; font-weight: bold;">OCCUPIED</span>
                 </div>
 
                 <!-- Spot: Target (Nearest) -->
-                <div style="position: absolute; top: 300px; left: 600px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
+                <div style="position: absolute; top: 320px; left: 500px; transform: translate(-50%, -50%); z-index: 5; text-align: center;">
                     <div style="width: 40px; height: 40px; background: #2ecc71; border: 3px solid #333; border-radius: 50%; box-shadow: 0 0 15px #2ecc71;"></div>
                     <div style="background: white; border: 1px solid #333; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 5px; font-weight: bold; color: #27ae60;">TARGET</div>
                 </div>
 
                 <!-- Spot: Vacant (Far) -->
-                <div style="position: absolute; top: 150px; left: 750px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
+                <div style="position: absolute; top: 160px; left: 650px; transform: translate(-50%, -50%); z-index: 2; text-align: center;">
                     <div style="width: 25px; height: 25px; background: #fff; border: 3px solid #95a5a6; border-radius: 50%;"></div>
                     <span style="color: #7f8c8d; font-size: 12px;">Backup</span>
                 </div>
-
             </div>
         </div>
         <div class="figure-caption">Figure 3: System Logic Visualization (Schematic)</div>
