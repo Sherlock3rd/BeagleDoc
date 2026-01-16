@@ -28,7 +28,7 @@ graph TD
         
         ShowLastRole -->|点击切换/返回| SelectExistingServer[选择已有服务器]
         
-        QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 选择物理区域 Region]
+        QuickStart -- 否 (新账号) --> SelectRegion[新旅程: 展示 scheme2_map_v3 并选择物理区域]
         
         %% Scheme 2 Selection Logic
         SelectRegion -->|系统分配| EnterZone[分配至 Zone]
