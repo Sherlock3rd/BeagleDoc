@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Merge & Parking Discussion</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22; /* Changed accent to orange for architecture */
+            --bg-color: #fdfbf7;
+            --text-color: #333;
+            --border-color: #333;
+            --comic-font: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 2px;
+            border: 2px solid #333;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+        }
+
+        /* Comic Style Cards */
+        .scheme-card {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .scheme-card:hover {
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: var(--comic-font);
+            border-bottom: 3px solid var(--primary-color);
+            padding-bottom: 10px;
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 3.2em !important;
+            text-align: center;
+        }
+
+        h2 {
+            font-family: var(--comic-font);
+            margin-top: 50px;
+            color: var(--primary-color);
+            border-left: 8px solid var(--accent-color);
+            padding-left: 15px;
+            font-size: 2.5em !important;
+        }
+
+        h3 {
+            font-family: var(--comic-font);
+            color: var(--accent-color);
+            margin-top: 0;
+            font-size: 2.0em !important;
+        }
+
+        h4 {
+            font-family: var(--comic-font);
+            color: #444;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.5em !important;
+        }
+
+        p { margin-bottom: 1em; }
+        ul, ol { margin-bottom: 1em; padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Tables - Comic Style */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border: 2px solid #333;
+            border-radius: 4px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        th, td {
+            border-bottom: 2px solid #333;
+            border-right: 2px solid #333;
+            padding: 12px 15px;
+            text-align: left;
+            font-family: var(--comic-font);
+        }
+        th:last-child, td:last-child { border-right: none; }
+        tr:last-child td { border-bottom: none; }
+        th {
+            background-color: #ffe0b2; /* Orange tint */
+            color: #e65100;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-transform: uppercase;
+        }
+        tr:nth-child(even) { background-color: #fff8e1; }
+
+        /* Custom Boxes */
+        .highlight-box {
+            background-color: #e3f2fd;
+            border: 2px solid #333;
+            border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .alert-box {
+            background-color: #ffebee;
+            border: 2px solid #c62828;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #b71c1c;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+            font-family: var(--comic-font);
+            border: 1px solid #333;
+            margin-right: 5px;
+        }
+        .tag-rec { background: #d4edda; color: #155724; }
+        .tag-warn { background: #fff3cd; color: #856404; }
+
+        /* --- VISUAL SCENES (SVG HAND-DRAWN STYLE) --- */
+        .visual-scene {
+            position: relative;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 10px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin: 20px auto;
+            font-family: var(--comic-font);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* SVG Styles */
+        svg { display: block; width: 100%; height: 100%; }
+        
+        .sketch-line {
+            fill: none;
+            stroke: #333;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .sketch-fill {
+            fill: #fff;
+            stroke: #333;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .sketch-text {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 16px;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .sketch-title {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 20px;
+            font-weight: bold;
+            fill: #333;
+            text-anchor: middle;
+        }
+
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes dash { to { stroke-dashoffset: 0; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes shake { 
+            0% { transform: translate(1px, 1px) rotate(0deg); } 
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        
+        .anim-float { animation: float 3s infinite ease-in-out; }
+        .anim-blink { animation: blink 2s infinite; }
+        .anim-shake { animation: shake 0.5s infinite; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏗️ 分线合线与停车位问题深度讨论</h1>
+    <div style="text-align: center; margin-bottom: 40px; font-family: var(--comic-font); color: #666;">
+        <p><strong>Topic:</strong> Server Merge & Parking Architecture | <strong>Status:</strong> Discussion Draft</p>
+    </div>
+
+    <!-- Section 1: Background -->
+    <h2>1. 核心问题定义 (Problem Definition)</h2>
+    
+    <div class="scheme-card" style="border-left: 8px solid #c62828;">
+        <h3>🔴 问题一：导量阀门与物理空间的矛盾</h3>
+        <h4>(The Conflict: User Influx vs. Physical Space)</h4>
+        
+        <p><strong>背景：</strong> 游戏的导量上限（能进多少人）目前被“停车位数量”硬性锁死。</p>
+        <div class="highlight-box">
+            <ul>
+                <li><strong>现状：</strong> 单服上限约 <strong>4000人</strong>。</li>
+                <li><strong>刚需：</strong> 我们需要测试更大规模（如 10000+）的压力，或应对留存超预期的情况。</li>
+                <li><strong>死结：</strong> 停车位有物理体积 (30m x 30m)。如果强行增加车位数量而不扩大地图，地图会被塞满。</li>
+            </ul>
+        </div>
+
+        <div class="visual-scene" style="aspect-ratio: 800/350;">
+            <svg viewBox="0 0 800 350">
+                <!-- Data Visualization -->
+                <defs>
+                    <pattern id="grid-dense" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <rect x="0" y="0" width="8" height="8" fill="#e0e0e0" stroke="#9e9e9e" stroke-width="1"/>
+                    </pattern>
+                </defs>
+
+                <!-- Scenario A: Current -->
+                <g transform="translate(50, 50)">
+                    <rect x="0" y="0" width="200" height="200" class="sketch-fill" style="fill:#e8f5e9;" />
+                    <text x="100" y="-20" class="sketch-title">现状: 35个车位</text>
+                    
+                    <!-- 6% Density Visual (approx 35/555 spots area, simplified) -->
+                    <!-- Drawing exactly 35 small dots to represent spots -->
+                    <g fill="#4caf50">
+                        <!-- 5 rows of 7 dots -->
+                        <circle cx="20" cy="30" r="3" /> <circle cx="45" cy="30" r="3" /> <circle cx="70" cy="30" r="3" /> <circle cx="95" cy="30" r="3" /> <circle cx="120" cy="30" r="3" /> <circle cx="145" cy="30" r="3" /> <circle cx="170" cy="30" r="3" />
+                        <circle cx="30" cy="60" r="3" /> <circle cx="55" cy="60" r="3" /> <circle cx="80" cy="60" r="3" /> <circle cx="105" cy="60" r="3" /> <circle cx="130" cy="60" r="3" /> <circle cx="155" cy="60" r="3" /> <circle cx="180" cy="60" r="3" />
+                        <circle cx="20" cy="90" r="3" /> <circle cx="45" cy="90" r="3" /> <circle cx="70" cy="90" r="3" /> <circle cx="95" cy="90" r="3" /> <circle cx="120" cy="90" r="3" /> <circle cx="145" cy="90" r="3" /> <circle cx="170" cy="90" r="3" />
+                        <circle cx="30" cy="120" r="3" /> <circle cx="55" cy="120" r="3" /> <circle cx="80" cy="120" r="3" /> <circle cx="105" cy="120" r="3" /> <circle cx="130" cy="120" r="3" /> <circle cx="155" cy="120" r="3" /> <circle cx="180" cy="120" r="3" />
+                        <circle cx="20" cy="150" r="3" /> <circle cx="45" cy="150" r="3" /> <circle cx="70" cy="150" r="3" /> <circle cx="95" cy="150" r="3" /> <circle cx="120" cy="150" r="3" /> <circle cx="145" cy="150" r="3" /> <circle cx="170" cy="150" r="3" />
+                    </g>
+                    
+                    <text x="100" y="180" class="sketch-text" style="font-size:18px; font-weight:bold;">~6% - 10% 占比</text>
+                    <text x="100" y="200" class="sketch-text" style="font-size:14px;">合理舒适</text>
+                </g>
+
+                <!-- Arrow -->
+                <g transform="translate(260, 150)">
+                    <path d="M0,0 L70,0" class="sketch-line" style="marker-end: url(#arrow);" />
+                    <text x="35" y="-15" class="sketch-text">人数 x 2.5倍</text>
+                </g>
+
+                <!-- Scenario B: Forced -->
+                <g transform="translate(350, 50)">
+                    <rect x="0" y="0" width="200" height="200" class="sketch-fill" style="fill:#ffebee;" />
+                    <text x="100" y="-20" class="sketch-title">强塞: ~90个车位</text>
+                    
+                    <!-- Massive dots density overlay -->
+                    <rect x="10" y="10" width="180" height="180" fill="url(#grid-dense)" opacity="0.8" />
+                    
+                    <text x="100" y="100" class="sketch-text" style="font-size:24px; font-weight:bold; fill:#c62828; stroke: #fff; paint-order: stroke; stroke-width: 4px;">>25% 占比</text>
+                    <text x="100" y="130" class="sketch-text" style="fill:#c62828; stroke: #fff; paint-order: stroke; stroke-width: 4px;">极度拥挤</text>
+                </g>
+                
+                <!-- Result Character -->
+                <g transform="translate(660, 150)">
+                    <circle cx="0" cy="-20" r="15" class="sketch-line" />
+                    <path d="M0,-5 L0,30 M0,10 L-20,0 M0,10 L20,0 M0,30 L-10,60 M0,30 L10,60" class="sketch-line" />
+                    <text x="0" y="-50" class="sketch-text">"没地方玩了..."</text>
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <div class="scheme-card" style="border-left: 8px solid #ff9800;">
+        <h3>🟠 问题二：合线瞬间的物理拥堵</h3>
+        <h4>(The Bottleneck: Instant Merge Traffic)</h4>
+        
+        <p><strong>背景：</strong> 玩家在新手村（出生岛）是 30 人一组的“平行宇宙”。但在某一刻，他们会被瞬间合并进主世界。</p>
+        <div class="highlight-box">
+            <ul>
+                <li><strong>瞬间爆发：</strong> 约 <strong>700名</strong> 玩家同时被合并进同一个出生省。</li>
+                <li><strong>物理瓶颈：</strong> 这 700 人需要通过有限的道路/桥梁进入并找到停车位。</li>
+                <li><strong>后果：</strong> 如果必须“开车进入”，桥头和主路会瞬间瘫痪，甚至发生恶意堵路。</li>
+            </ul>
+        </div>
+
+        <div class="visual-scene" style="aspect-ratio: 800/350;">
+            <svg viewBox="0 0 800 350">
+                <defs>
+                    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#c62828" /></marker>
+                    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#666" /></marker>
+                </defs>
+
+                <!-- Background: Map Terrain -->
+                <rect x="0" y="0" width="800" height="350" class="sketch-fill" style="fill:#e8f5e9;" />
+                
+                <!-- Central Spawn Zone (Crowded) -->
+                <g transform="translate(400, 175)">
+                    <!-- Zone Circle -->
+                    <circle cx="0" cy="0" r="90" class="sketch-fill" style="fill:#ffebee; stroke:#c62828; stroke-dasharray: 5,5;" />
+                    <text x="0" y="-105" class="sketch-title" style="fill:#c62828; font-size: 22px;">Spawn Point (Instant Merge)</text>
+                    <text x="0" y="115" class="sketch-text" style="fill:#c62828; font-weight:bold;">⚠️ 700+ Players Here!</text>
+                    
+                    <!-- The Crowd (Random dots) -->
+                    <g fill="#333">
+                        <!-- Dense Crowd Center -->
+                        <circle cx="-20" cy="-20" r="4" /> <circle cx="20" cy="20" r="4" /> <circle cx="-30" cy="10" r="4" />
+                        <circle cx="10" cy="-30" r="4" /> <circle cx="0" cy="0" r="4" /> <circle cx="40" cy="-10" r="4" />
+                        <circle cx="-40" cy="10" r="4" /> <circle cx="15" cy="35" r="4" /> <circle cx="-15" cy="-35" r="4" />
+                        <circle cx="50" cy="0" r="4" /> <circle cx="-50" cy="0" r="4" /> <circle cx="0" cy="50" r="4" />
+                        <circle cx="0" cy="-50" r="4" /> <circle cx="25" cy="-25" r="4" /> <circle cx="-25" cy="25" r="4" />
+                        <!-- Outer Crowd -->
+                         <circle cx="-10" cy="-10" r="4" /> <circle cx="10" cy="10" r="4" /> <circle cx="-60" cy="-20" r="4" />
+                         <circle cx="60" cy="20" r="4" /> <circle cx="-20" cy="60" r="4" /> <circle cx="20" cy="-60" r="4" />
+                         <circle cx="35" cy="-45" r="4" /> <circle cx="-35" cy="45" r="4" /> <circle cx="45" cy="35" r="4" />
+                    </g>
+                </g>
+
+                <!-- Nearby Parking Spots (Scarce & Fighting) -->
+                
+                <!-- Spot 1: Taken (Top Left) -->
+                <g transform="translate(200, 80)">
+                    <rect x="0" y="0" width="50" height="50" class="sketch-fill" style="fill:#ef5350;" />
+                    <text x="25" y="30" class="sketch-text" style="fill:#fff; font-weight:bold;">Taken</text>
+                </g>
+                <path d="M330,130 L260,100" class="sketch-line" style="stroke:#c62828; stroke-width:3; marker-end:url(#arrow-red);" />
+
+                <!-- Spot 2: Fighting (Top Right) -->
+                <g transform="translate(550, 80)">
+                     <rect x="0" y="0" width="50" height="50" class="sketch-fill" style="fill:#fff9c4;" />
+                     <text x="25" y="30" class="sketch-text" style="font-size: 20px; font-weight:bold;">P</text>
+                     <!-- Conflict Text -->
+                     <text x="25" y="-15" class="sketch-text anim-shake" style="fill:#c62828; font-weight:bold; font-size: 18px;">MINE!!</text>
+                </g>
+                <!-- Multiple Arrows indicating race -->
+                <path d="M470,130 L540,100" class="sketch-line" style="stroke:#c62828; stroke-width:3; marker-end:url(#arrow-red);" />
+                <path d="M490,150 L540,120" class="sketch-line" style="stroke:#c62828; stroke-width:3; marker-end:url(#arrow-red);" />
+
+                <!-- Spot 3: Taken (Bottom Left) -->
+                <g transform="translate(250, 250)">
+                    <rect x="0" y="0" width="50" height="50" class="sketch-fill" style="fill:#ef5350;" />
+                    <text x="25" y="30" class="sketch-text" style="fill:#fff; font-weight:bold;">Taken</text>
+                </g>
+                <path d="M350,230 L310,260" class="sketch-line" style="stroke:#c62828; stroke-width:3; marker-end:url(#arrow-red);" />
+
+                <!-- Far away search (The consequence) -->
+                <g transform="translate(650, 220)">
+                    <text x="0" y="0" class="sketch-title" style="font-size:40px;">🏃💨</text>
+                    <text x="0" y="30" class="sketch-text" style="fill:#666; font-weight:bold;">Too late...</text>
+                    <text x="0" y="50" class="sketch-text" style="fill:#666;">Driving 10 mins away</text>
+                </g>
+                <path d="M490,220 Q550,240 630,220" class="sketch-line" style="stroke:#666; stroke-dasharray:5,5; marker-end:url(#arrow-gray);" />
+
+            </svg>
+        </div>
+    </div>
+
+    <!-- Section 2: Issue 1 Solutions -->
+    <h2>2. 针对问题一的解决方案 (Solving Issue 1)</h2>
+    <p style="text-align:center; color:#666;">目标：解决导量上限与地图密度的矛盾</p>
+
+    <!-- Scheme A -->
+    <div class="scheme-card">
+        <h3>方案 A: 超量地图承载 (Oversized Map)</h3>
+        <span class="tag tag-rec">推荐 (Recommended)</span>
+        <p><strong>核心:</strong> 既然车位多了，地图也得按比例变大！保持 10% 黄金比例。</p>
+        
+        <div class="visual-scene" style="aspect-ratio: 700/250;">
+            <svg viewBox="0 0 700 250">
+                <g transform="translate(50, 125)">
+                     <rect x="0" y="-50" width="100" height="100" class="sketch-fill" style="fill:#e8f5e9;" />
+                     <text x="50" y="5" class="sketch-text">4k Users</text>
+                     <text x="50" y="70" class="sketch-text">Small Map</text>
+                </g>
+                <text x="180" y="125" class="sketch-text" style="font-size:30px;">vs</text>
+                <g transform="translate(250, 25)">
+                     <rect x="0" y="0" width="400" height="200" class="sketch-fill anim-float" style="fill:#e8f5e9;" />
+                     <text x="200" y="100" class="sketch-title" style="font-size: 30px;">10k+ Capacity</text>
+                     <text x="200" y="130" class="sketch-text">Same Density (10%) = Good Vibes</text>
+                     <!-- Scattered spots -->
+                     <circle cx="50" cy="50" r="5" fill="#333" />
+                     <circle cx="350" cy="150" r="5" fill="#333" />
+                     <circle cx="200" cy="50" r="5" fill="#333" />
+                </g>
+            </svg>
+        </div>
+        <ul>
+            <li>✅ <strong>高弹性:</strong> 随便导量，空间够用。</li>
+            <li>✅ <strong>体验一致:</strong> 无论地图多大，玩家周围的感觉是一样的。</li>
+            <li>❌ <strong>成本高:</strong> 地图制作量巨大 (2.5x+)。</li>
+        </ul>
+    </div>
+
+    <!-- Scheme B & C Comparison -->
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div class="scheme-card" style="flex: 1; min-width: 300px; border-color: #7f8c8d;">
+            <h3>方案 B: 多地图并行</h3>
+            <span class="tag tag-warn">备选</span>
+            <div class="visual-scene" style="aspect-ratio: 300/150;">
+                <svg viewBox="0 0 300 150">
+                    <rect x="20" y="20" width="260" height="40" class="sketch-fill" style="fill:#e3f2fd;" />
+                    <text x="150" y="45" class="sketch-text">Server A (Big Map)</text>
+                    <rect x="20" y="80" width="260" height="40" class="sketch-fill" style="fill:#fff3e0;" />
+                    <text x="150" y="105" class="sketch-text">Server B (Small Map)</text>
+                </svg>
+            </div>
+            <p><strong>逻辑:</strong> 同时开两个服跑测试。</p>
+            <p>❌ 维护成本翻倍，用户体验割裂。</p>
+        </div>
+
+        <div class="scheme-card" style="flex: 1; min-width: 300px; border-color: #7f8c8d;">
+            <h3>方案 C: 嵌套分线</h3>
+            <span class="tag tag-warn">备选</span>
+            <div class="visual-scene" style="aspect-ratio: 300/150;">
+                <svg viewBox="0 0 300 150">
+                    <!-- Base Layer (Phy) -->
+                    <path d="M50,140 L250,140 L200,100 L0,100 Z" class="sketch-fill" style="fill:#e0e0e0;" />
+                    <text x="125" y="128" class="sketch-text">Phy Layer</text>
+                    
+                    <!-- Layer 1 -->
+                    <path d="M50,140 L250,140 L200,100 L0,100 Z" class="sketch-fill" style="fill:#b3e5fc; opacity:0.8;" transform="translate(0,-30)" />
+                    <text x="125" y="98" class="sketch-text">Layer 1</text>
+                    
+                    <!-- Layer 2 -->
+                    <path d="M50,140 L250,140 L200,100 L0,100 Z" class="sketch-fill" style="fill:#b3e5fc; opacity:0.6;" transform="translate(0,-60)" />
+                    <text x="125" y="68" class="sketch-text">Layer 2</text>
+                </svg>
+            </div>
+            <p><strong>逻辑:</strong> 同一个省，叠好几层位面。</p>
+            <p>❌ 社交割裂，你看得见我，我看不见你。</p>
+        </div>
+    </div>
+
+    <!-- Section 3: Issue 2 Solutions -->
+    <h2>3. 针对问题二的解决方案 (Solving Issue 2)</h2>
+    <p style="text-align:center; color:#666;">目标：解决 700 人合线瞬间的交通瘫痪</p>
+
+    <div class="scheme-card" style="border-color: #2e7d32;">
+        <h3>方案 D: 混合式进入 (Hybrid Entry)</h3>
+        <span class="tag tag-rec">强烈推荐 (Highly Recommended)</span>
+        
+        <div class="highlight-box">
+            <h4>💡 核心逻辑 (Core Logic)</h4>
+            <ul>
+                <li><strong>分区分布:</strong> 玩家以 <strong>“郡” (County)</strong> 为单位分散降生，而非全部挤在一个点。</li>
+                <li><strong>双重选择:</strong>
+                    <ul>
+                        <li>🚗 <strong>自主驾驶:</strong> 依靠物理连接（桥梁）进入，保留沉浸感。</li>
+                        <li>✈️ <strong>自动代驾/传送:</strong> 任务触发“一键代驾”，瞬间抵达停车位。</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="visual-scene" style="aspect-ratio: 800/400;">
+            <svg viewBox="0 0 800 400">
+                <!-- Background Environment -->
+                <path d="M0,300 Q400,250 800,300 L800,400 L0,400 Z" class="sketch-fill" style="fill:#c8e6c9;" />
+                
+                <!-- The Bridge -->
+                <path d="M100,300 L300,300 L350,200 L150,200 Z" class="sketch-fill" style="fill:#bcaaa4;" />
+                <text x="220" y="260" class="sketch-text" transform="rotate(-10)">Bridge</text>
+
+                <!-- Start Zone (Left) -->
+                <g transform="translate(50, 250)">
+                    <text x="0" y="0" class="sketch-title">Crowd (700+)</text>
+                    <circle cx="0" cy="20" r="5" fill="#333" />
+                    <circle cx="20" cy="20" r="5" fill="#333" />
+                    <circle cx="10" cy="30" r="5" fill="#333" />
+                    <circle cx="-10" cy="30" r="5" fill="#333" />
+                </g>
+
+                <!-- Path 1: Drive -->
+                <g transform="translate(180, 220)">
+                    <rect x="0" y="0" width="30" height="15" rx="2" class="sketch-fill" style="fill:#ef5350;" />
+                    <circle cx="5" cy="15" r="3" fill="black" />
+                    <circle cx="25" cy="15" r="3" fill="black" />
+                    <text x="15" y="-10" class="sketch-text" style="font-size:12px;">Hardcore</text>
+                </g>
+                <text x="200" y="350" class="sketch-text">Option 1: Drive (Immersion)</text>
+
+                <!-- Path 2: Teleport Arc -->
+                <path d="M50,260 Q360,60 670,270" class="sketch-line" style="stroke-dasharray: 10,5; stroke:#2196f3; stroke-width: 3; fill: none;" />
+                
+                <!-- Debug Center Point (Optional, hidden but implies calculation source) -->
+                <!-- Calculated Midpoint of Q-Bezier: t=0.5, x=360, y=162.5 -->
+                <!-- Moving to t=0.6 approx for "bottom right" positioning: x=420, y=170 -->
+                
+                <g transform="translate(420, 170)">
+                    <g class="anim-float">
+                        <!-- Plane: Centered on line -->
+                        <text x="0" y="5" style="font-size: 34px; text-anchor: middle; dominant-baseline: central;">✈️</text>
+                        <!-- Label: Below line -->
+                        <text x="0" y="35" class="sketch-text" style="fill:#2196f3; font-weight:bold; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 4px;">Option 2: Valet Teleport</text>
+                    </g>
+                </g>
+
+                <!-- Destination (Right) -->
+                <g transform="translate(650, 270)">
+                    <rect x="0" y="0" width="40" height="30" class="sketch-fill" style="fill:#fff9c4;" />
+                    <text x="20" y="20" class="sketch-text">P</text>
+                    <text x="20" y="50" class="sketch-text">Parking Spot</text>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Macro Map Comparison -->
+        <h4>🗺️ 宏观分布模式对比 (Macro View: Distribution Strategy)</h4>
+        <div class="visual-scene" style="aspect-ratio: 800/400;">
+            <svg viewBox="0 0 800 400">
+                <defs>
+                    <marker id="arrow-sm" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#999" /></marker>
+                    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L0,12 L12,6 z" fill="#2196f3" /></marker>
+                    <marker id="arrow-blue-sm" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L0,10 L10,5 z" fill="#2196f3" /></marker>
+                </defs>
+                
+                <!-- Separator Line -->
+                <line x1="400" y1="20" x2="400" y2="300" style="stroke:#ddd; stroke-width:2; stroke-dasharray: 10,10;" />
+
+                <!-- Legend (Top Center) -->
+                <g transform="translate(350, 20)">
+                    <circle cx="0" cy="0" r="4" fill="#333" />
+                    <text x="10" y="5" class="sketch-text" style="font-size:14px; text-anchor:start;">Player</text>
+                    <circle cx="80" cy="0" r="10" class="sketch-fill" style="fill:#fff9c4;" />
+                    <text x="95" y="5" class="sketch-text" style="font-size:14px; text-anchor:start;">Area/Spot</text>
+                </g>
+
+                <!-- Left: Centralized (Top) -->
+                <g transform="translate(40, 40)">
+                    <text x="0" y="-15" class="sketch-text" style="font-weight:bold; font-size:16px; fill:#666;">Birth Province (出生省)</text>
+                    <rect x="0" y="0" width="320" height="240" class="sketch-fill" style="fill:#f5f5f5;" />
+                    <text x="160" y="25" class="sketch-title" style="font-size:18px;">Old: 集中出生 (Bottleneck)</text>
+                    
+                    <!-- Spawn Hub (Bottom Left Corner) -->
+                    <path d="M20,220 Q60,180 100,220" class="sketch-fill" style="fill:#ffebee; stroke:#c62828;" />
+                    <text x="60" y="235" class="sketch-text" style="fill:#c62828; font-size:12px;">Spawn Hub</text>
+                    
+                    <!-- Players Clustered -->
+                    <g>
+                        <circle cx="40" cy="210" r="3" fill="#333" />
+                        <circle cx="50" cy="215" r="3" fill="#333" />
+                        <circle cx="60" cy="210" r="3" fill="#333" />
+                        <circle cx="45" cy="205" r="3" fill="#333" />
+                        <circle cx="70" cy="215" r="3" fill="#333" />
+                    </g>
+
+                    <!-- Linear Arrows & Progression -->
+                    <path d="M80,200 L120,160" class="sketch-line" style="stroke:#999; marker-end: url(#arrow-sm);" />
+                    <path d="M120,160 L180,120" class="sketch-line" style="stroke:#999; stroke-dasharray:5,5; marker-end: url(#arrow-sm);" />
+                    <path d="M180,120 L240,80" class="sketch-line" style="stroke:#999; stroke-dasharray:5,5; marker-end: url(#arrow-sm);" />
+
+                    <!-- Distant Empty Spots -->
+                    <circle cx="130" cy="150" r="15" class="sketch-fill" style="fill:#e0e0e0;" /> <!-- Locked -->
+                    <circle cx="200" cy="100" r="15" class="sketch-fill" style="fill:#e0e0e0;" /> <!-- Locked -->
+                    <circle cx="280" cy="50" r="15" class="sketch-fill" style="fill:#e0e0e0;" /> <!-- Locked -->
+                    
+                    <text x="220" y="200" class="sketch-text" style="fill:#999; font-size:14px;">Waste of Space</text>
+                </g>
+
+                <!-- Flow Arrow Left: Upward Curve -->
+                <!-- Start from Island Left (250+50=300, 310+40=350) to Spawn Hub (40+60=100, 40+220=260) -->
+                <!-- Adjusted control point to curve from bottom-center to top-left -->
+                <path d="M300,350 Q200,350 100,270" class="sketch-line" style="stroke:#2196f3; stroke-width:3; marker-end:url(#arrow-blue); stroke-dasharray: 8,4; fill:none;" />
+                <text x="180" y="300" class="sketch-text" style="fill:#2196f3; font-size:12px; font-weight:bold;">All -> One Spot</text>
+
+                <!-- Right: Distributed (Top) -->
+                <g transform="translate(440, 40)">
+                    <text x="0" y="-15" class="sketch-text" style="font-weight:bold; font-size:16px; fill:#2e7d32;">Birth Province (出生省)</text>
+                    <rect x="0" y="0" width="320" height="240" class="sketch-fill" style="fill:#e8f5e9;" />
+                    <text x="160" y="25" class="sketch-title" style="font-size:18px;">New: 并行游玩 (Parallel)</text>
+                    
+                    <!-- Scattered Active Zones -->
+                    <!-- Zone 1 -->
+                    <g transform="translate(60, 60)">
+                        <circle cx="0" cy="0" r="25" class="sketch-fill" style="fill:#fff9c4;" />
+                        <circle cx="-5" cy="5" r="3" fill="#333" />
+                        <circle cx="5" cy="-5" r="3" fill="#333" />
+                    </g>
+                    <!-- Zone 2 -->
+                    <g transform="translate(260, 50)">
+                        <circle cx="0" cy="0" r="25" class="sketch-fill" style="fill:#fff9c4;" />
+                        <circle cx="0" cy="0" r="3" fill="#333" />
+                        <circle cx="-8" cy="2" r="3" fill="#333" />
+                    </g>
+                    <!-- Zone 3 -->
+                    <g transform="translate(160, 120)">
+                        <circle cx="0" cy="0" r="25" class="sketch-fill" style="fill:#fff9c4;" />
+                        <circle cx="5" cy="5" r="3" fill="#333" />
+                        <circle cx="-5" cy="-5" r="3" fill="#333" />
+                    </g>
+                    <!-- Zone 4 -->
+                    <g transform="translate(60, 180)">
+                        <circle cx="0" cy="0" r="25" class="sketch-fill" style="fill:#fff9c4;" />
+                        <circle cx="0" cy="8" r="3" fill="#333" />
+                        <circle cx="8" cy="0" r="3" fill="#333" />
+                    </g>
+                    <!-- Zone 5 -->
+                    <g transform="translate(260, 180)">
+                        <circle cx="0" cy="0" r="25" class="sketch-fill" style="fill:#fff9c4;" />
+                        <circle cx="-5" cy="5" r="3" fill="#333" />
+                    </g>
+
+                    <text x="160" y="220" class="sketch-text" style="fill:#2e7d32; font-weight:bold; paint-order: stroke; stroke: #fff; stroke-width: 3px;">Balanced Load</text>
+                </g>
+
+                <!-- Flow Arrows Right: Upward Distribution -->
+                <!-- Start from Island Right (250+250=500, 310+40=350) to Targets -->
+                <!-- Target 1 (Zone 4): 440+60=500, 40+180=220 -->
+                <path d="M500,350 Q500,300 500,230" class="sketch-line" style="stroke:#2196f3; stroke-width:2; marker-end:url(#arrow-blue-sm); stroke-dasharray: 4,4; fill:none;" />
+                <!-- Target 2 (Zone 5): 440+260=700, 40+180=220 -->
+                <path d="M500,350 Q600,320 680,230" class="sketch-line" style="stroke:#2196f3; stroke-width:2; marker-end:url(#arrow-blue-sm); stroke-dasharray: 4,4; fill:none;" />
+                <!-- Target 3 (Zone 1): 440+60=500, 40+60=100 -->
+                <path d="M500,350 Q420,200 480,110" class="sketch-line" style="stroke:#2196f3; stroke-width:2; marker-end:url(#arrow-blue-sm); stroke-dasharray: 4,4; fill:none;" />
+                
+                <text x="580" y="320" class="sketch-text" style="fill:#2196f3; font-size:12px;">Auto-Distribute</text>
+
+                <!-- Newbie Island (Source) - Moved to Bottom -->
+                <g transform="translate(250, 310)">
+                    <!-- Cloud Shape -->
+                    <path d="M50,40 Q30,40 30,20 Q50,-10 150,-10 Q250,-10 270,20 Q270,40 250,40 Z" class="sketch-fill" style="fill:#e3f2fd; stroke:#2196f3;" />
+                    <text x="150" y="20" class="sketch-text" style="font-weight:bold; fill:#1565c0; font-size:18px;">Newbie Island (新手岛)</text>
+                    <text x="150" y="55" class="sketch-text" style="font-size:14px; fill:#1565c0;">(Pre-Merge Phase)</text>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Comparison Table -->
+        <h4>🆚 方案对比 (Comparison)</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>维度 (Dimension)</th>
+                    <th>🚫 旧方案：纯开车 (Drive-Only)</th>
+                    <th>✅ 新方案：混合式 (Hybrid)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>拥堵风险</strong></td>
+                    <td><span style="color:#c62828;">极高 (High)</span> - 700人挤独木桥</td>
+                    <td><span style="color:#2e7d32;">低 (Low)</span> - 传送分流大部分压力</td>
+                </tr>
+                <tr>
+                    <td><strong>恶意堵路</strong></td>
+                    <td><span style="color:#c62828;">易受攻击</span> - 桥头一堵，全服瘫痪</td>
+                    <td><span style="color:#2e7d32;">免疫</span> - 堵路我就飞过去</td>
+                </tr>
+                <tr>
+                    <td><strong>新手体验</strong></td>
+                    <td><span style="color:#c62828;">高门槛</span> - 迷路/车技差直接退游</td>
+                    <td><span style="color:#2e7d32;">友好</span> - 一键到达，零压力</td>
+                </tr>
+                <tr>
+                    <td><strong>沉浸感</strong></td>
+                    <td>强制沉浸 (也是折磨)</td>
+                    <td>各取所需 (风景党开车，效率党传送)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Scheme E: Township Sharding -->
+    <div class="scheme-card" style="border-color: #0277bd;">
+        <h3>方案 E: 城镇分线托管 (Township Sharding)</h3>
+        <span class="tag tag-rec" style="background: #e1f5fe; color: #0277bd;">新思路 (New Proposal)</span>
+        
+        <div class="highlight-box">
+            <h4>💡 核心逻辑 (Core Logic)</h4>
+            <ul>
+                <li><strong>直达城镇:</strong> 玩家从新手岛直接进入一个<strong>大型城镇 (Township)</strong>，而非荒郊野外。</li>
+                <li><strong>位面分线 (Sharding):</strong> 城镇内部采用分线技术（或多层位面），轻松容纳 <strong>700+ 停车位</strong>。</li>
+                <li><strong>系统托管:</strong> 既然在城镇里，系统可以直接接管车辆，自动引导或代客泊车。</li>
+            </ul>
+        </div>
+
+        <div class="visual-scene" style="aspect-ratio: 800/350;">
+            <svg viewBox="0 0 800 350">
+                <defs>
+                    <marker id="arrow-blue-e" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L0,12 L12,6 z" fill="#0277bd" /></marker>
+                    <marker id="arrow-green-e" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L0,12 L12,6 z" fill="#2e7d32" /></marker>
+                </defs>
+
+                <!-- Background -->
+                <rect x="0" y="0" width="800" height="350" class="sketch-fill" style="fill:#f0f4c3;" />
+                
+                <!-- 1. Newbie Island (Source) - Left -->
+                <g transform="translate(20, 200)">
+                    <path d="M50,40 Q30,40 30,20 Q50,-10 150,-10 Q250,-10 270,20 Q270,40 250,40 Z" class="sketch-fill" style="fill:#e3f2fd; stroke:#2196f3;" />
+                    <text x="150" y="20" class="sketch-text" style="font-weight:bold; fill:#1565c0; font-size:18px;">Newbie Island</text>
+                    <text x="150" y="50" class="sketch-text" style="font-size:14px; fill:#1565c0;">(新手岛)</text>
+                </g>
+
+                <!-- Arrow 1: Entry -->
+                <path d="M280,220 Q310,220 330,200" class="sketch-line" style="stroke:#0277bd; stroke-width:3; marker-end:url(#arrow-blue-e); stroke-dasharray: 8,4; fill:none;" />
+                
+                <!-- System Guide (Robot) - Moved to Entry Point -->
+                <g transform="translate(260, 130)">
+                    <text x="30" y="30" style="font-size:30px;">🤖</text>
+                    <path d="M60,30 L90,10" class="sketch-line" style="stroke:#0277bd; stroke-width:1;" />
+                    <text x="100" y="10" class="sketch-text" style="font-size:12px; fill:#0277bd; text-anchor:start;">"Auto-Parking"</text>
+                </g>
+
+                <!-- 2. Township Hub (Center) - Shifted to avoid overlap -->
+                <g transform="translate(350, 50)">
+                    <!-- Base Floor -->
+                    <path d="M-20,200 L280,200 L230,250 L-70,250 Z" class="sketch-fill" style="fill:#bcaaa4;" />
+                    <text x="105" y="280" class="sketch-title">Township Hub (城镇中心)</text>
+                    
+                    <!-- Shard 1 (Top) -->
+                    <g transform="translate(0, 140)">
+                         <path d="M-20,50 L280,50 L230,0 L-70,0 Z" class="sketch-fill" style="fill:#fff9c4; opacity: 0.9;" />
+                         <text x="105" y="30" class="sketch-text">Shard 1: 100 Spots</text>
+                         <rect x="0" y="10" width="20" height="15" fill="#0277bd" /> <text x="10" y="22" fill="white" font-size="10" text-anchor="middle">P</text>
+                         <rect x="40" y="10" width="20" height="15" fill="#0277bd" /> <text x="50" y="22" fill="white" font-size="10" text-anchor="middle">P</text>
+                    </g>
+                    
+                    <!-- Shard 2 (Middle) -->
+                    <g transform="translate(0, 80)">
+                         <path d="M-20,50 L280,50 L230,0 L-70,0 Z" class="sketch-fill" style="fill:#fff9c4; opacity: 0.7;" />
+                         <text x="105" y="30" class="sketch-text">Shard 2: 100 Spots</text>
+                         <rect x="130" y="10" width="20" height="15" fill="#0277bd" /> <text x="140" y="22" fill="white" font-size="10" text-anchor="middle">P</text>
+                    </g>
+
+                    <!-- Shard 3 (Bottom/Back) -->
+                    <g transform="translate(0, 20)">
+                         <path d="M-20,50 L280,50 L230,0 L-70,0 Z" class="sketch-fill" style="fill:#fff9c4; opacity: 0.5;" />
+                         <text x="105" y="30" class="sketch-text">Shard N...</text>
+                    </g>
+
+                    <!-- Elastic Capacity Line -->
+                    <line x1="-80" y1="20" x2="-80" y2="200" style="stroke:#666; stroke-width:2; stroke-dasharray: 5,5;" />
+                    <text x="-90" y="110" class="sketch-text" transform="rotate(-90)" style="fill:#666;">Elastic Layering</text>
+                </g>
+                
+                <!-- Arrow 2: Exit to Explore -->
+                <path d="M600,180 Q640,180 660,180" class="sketch-line" style="stroke:#2e7d32; stroke-width:3; marker-end:url(#arrow-green-e); stroke-dasharray: 8,4; fill:none;" />
+
+                <!-- 3. Exploration Zone (Right) -->
+                <g transform="translate(680, 120)">
+                    <!-- Landscape -->
+                    <path d="M0,100 L30,50 L60,100 Z" class="sketch-fill" style="fill:#c8e6c9; stroke:#2e7d32;" /> <!-- Mountain -->
+                    <path d="M40,100 L80,30 L120,100 Z" class="sketch-fill" style="fill:#a5d6a7; stroke:#2e7d32;" /> <!-- Big Mountain -->
+                    <circle cx="20" cy="40" r="15" style="fill:#fff176; opacity:0.8;" /> <!-- Sun -->
+                    
+                    <text x="60" y="130" class="sketch-text" style="font-weight:bold; fill:#2e7d32;">Go Explore!</text>
+                    <text x="60" y="150" class="sketch-text" style="fill:#2e7d32;">(探索大世界)</text>
+                    
+                    <!-- Happy Player -->
+                    <g transform="translate(80, 160)" class="anim-float">
+                        <circle cx="0" cy="0" r="5" fill="#333" />
+                        <path d="M0,5 L0,15 M-5,10 L5,10 M0,15 L-5,25 M0,15 L5,25" stroke="#333" stroke-width="2" />
+                    </g>
+                </g>
+            </svg>
+        </div>
+
+        <p><strong>优势分析：</strong></p>
+        <ul>
+            <li>✅ <strong>容量无限：</strong> 通过分线技术，理论上可以承载无限多的玩家停车。</li>
+            <li>✅ <strong>秩序井然：</strong> 城镇内禁止随意驾驶，必须按系统指引停入车位（类似现实中的立体车库）。</li>
+            <li>✅ <strong>社交集中：</strong> 所有玩家都在同一个“地理位置”（城镇），虽然分线，但感觉上是在一起的。</li>
+        </ul>
+    </div>
