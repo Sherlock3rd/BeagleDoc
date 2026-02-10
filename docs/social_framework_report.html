@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beagle Social Framework Discussion v2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #fdfbf7;
+            --text-color: #2d3436;
+            --border-color: #2d3436;
+            --comic-font: 'Patrick Hand', cursive, sans-serif;
+            --body-font: 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            background-image: radial-gradient(#dfe6e9 2px, transparent 2px);
+            background-size: 30px 30px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--comic-font);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .comic-container {
+            max-width: 90%;
+            margin: 30px auto;
+            padding: 10px;
+        }
+
+        .comic-card {
+            background: #fff;
+            border: 3px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 8px 8px 0px rgba(45, 52, 54, 0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 15px 15px 0px rgba(45, 52, 54, 0.2);
+        }
+
+        .comic-title {
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: var(--primary-color);
+            text-shadow: 4px 4px 0px #fff, 7px 7px 0px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            letter-spacing: 2px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            border-bottom: 4px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            display: inline-block;
+            transform: rotate(-1deg);
+            background: #ffeaa7;
+            padding-right: 25px;
+            padding-left: 15px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+
+        /* Typography Improvements */
+        .comic-card p {
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+            color: #636e72;
+            max-width: 70ch;
+        }
+
+        .comic-card h3 {
+            font-size: 1.6rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .comic-card h3::before {
+            content: '#';
+            color: var(--accent-color);
+            margin-right: 10px;
+            font-family: var(--comic-font);
+        }
+
+        .comic-card ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 2rem;
+        }
+
+        .comic-card li {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+            color: #636e72;
+        }
+
+        .comic-card li::before {
+            content: '👉';
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 1.2rem;
+        }
+        
+        .comic-card li strong {
+            color: var(--primary-color);
+        }
+
+        strong {
+            font-weight: 700;
+            color: var(--text-color);
+            background: linear-gradient(180deg, transparent 65%, rgba(253, 203, 110, 0.4) 65%);
+        }
+
+        /* Badge Styling */
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 30px;
+            font-family: var(--comic-font);
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            margin-right: 12px;
+            margin-bottom: 12px;
+            transition: transform 0.2s;
+        }
+        
+        .badge:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-blue { background: #74b9ff; color: white; }
+        .badge-green { background: #55efc4; color: #2d3436; }
+        .badge-red { background: #ff7675; color: white; }
+        .badge-yellow { background: #ffeaa7; color: #2d3436; }
+        .badge-purple { background: #a29bfe; color: white; }
+
+        /* Images */
+        .img-container {
+            border: 3px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 30px 0;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+            background: #fff;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s;
+        }
+
+        .img-container:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 3px solid var(--border-color);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.1);
+            margin: 30px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 2px solid #dfe6e9;
+            border-right: 2px dashed #b2bec3;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #74b9ff;
+            color: white;
+            font-family: var(--comic-font);
+            font-size: 1.3rem;
+            border-bottom: 3px solid var(--border-color);
+            border-right: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr td:last-child, tr th:last-child {
+            border-right: none;
+        }
+        
+        td strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        blockquote {
+            background: #f1f2f6;
+            border-left: 6px solid var(--accent-color);
+            margin: 2rem 0;
+            padding: 1.5rem;
+            font-style: italic;
+            border-radius: 0 10px 10px 0;
+            color: #636e72;
+        }
+
+        .highlight-box {
+            background-color: #fff3cd;
+            border: 3px dashed #e67e22;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            position: relative;
+        }
+        
+        .highlight-box::after {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 2rem;
+            background: #fff;
+            border-radius: 50%;
+            padding: 5px;
+            border: 2px solid #e67e22;
+        }
+
+        .cp-card {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .cp-card {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+            .cp-content {
+                flex: 1.2;
+            }
+            .cp-visual {
+                flex: 0.8;
+                position: sticky;
+                top: 20px;
+            }
+        }
+        /* Grid Layout for Section 1 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .grid-item {
+            background: #f8f9fa;
+            border: 2px solid #dfe6e9;
+            border-radius: 12px;
+            padding: 12px;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-3px);
+            border-color: var(--accent-color);
+            background: #fff;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+        }
+
+        .grid-item h3 {
+            margin-top: 0 !important;
+            margin-bottom: 12px !important;
+            font-size: 1.25rem !important;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 5px;
+            color: var(--primary-color);
+            background-color: #ecf0f1;
+            padding: 8px 12px;
+            border-radius: 6px;
+        }
+
+        .grid-item ul {
+            margin-bottom: 0 !important;
+            padding-left: 10px !important;
+            flex-grow: 1;
+        }
+
+        .grid-item li {
+            font-size: 1.05rem;
+            margin-bottom: 10px !important;
+            line-height: 1.5;
+            padding-left: 1.2rem;
+            position: relative;
+            color: #2d3436;
+        }
+
+        .grid-item li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1rem;
+            color: var(--accent-color);
+        }
+
+        /* Pressure Model Compact */
+        .pressure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .pressure-item {
+            text-align: left;
+            background: #fff;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .pressure-title {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-family: var(--comic-font);
+            font-size: 1.2rem;
+            border-bottom: 2px dashed #dfe6e9;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+
+        .pressure-desc {
+            font-size: 0.9rem;
+            color: #636e72;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .pressure-level {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            background: #f1f2f6;
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .pressure-level div {
+            margin-bottom: 4px;
+        }
+        
+        .pressure-level div:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="comic-container">
+        <h1 class="comic-title">🐾 Beagle 社交框架讨论 (Social Framework Discussion) v2.0</h1>
+
+        <div class="comic-card">
+            <h2 class="section-title">1. 社交构建基础与分析维度 (Social Foundation & Dimensions)</h2>
+            <p>为了构建 Beagle 独特的社交生态，我们需要统一分析维度，采用与《竞品分析报告》一致的评估标准（基于 Pokemon GO 分析模型）。</p>
+
+            <div class="grid-layout">
+                <div class="grid-item">
+                    <h3>1.1 Who (社交对象)</h3>
+                    <ul>
+                        <li><strong>生人社交 (Strangers)</strong>: 物理距离近但无深层关系，强调“萍水相逢”的弱连接。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：Pokemon GO 中一起打道馆的路人；Sky 光遇中点亮蜡烛的陌生人。</span></li>
+                        <li><strong>熟人社交 (Acquaintances)</strong>: 基于现实关系或游戏内长期合作形成的强连接，具有排他性。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：WoW 的固定副本队；微信群里的开黑好友。</span></li>
+                        <li><strong>AI-NPC (AI Partners)</strong>: 玩家与游戏角色的情感投射，作为社交的替代或补充。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：帕鲁 (Palworld) 的打工仔；乙女游戏中的“老公”。</span></li>
+                    </ul>
+                </div>
+
+                <div class="grid-item">
+                    <h3>1.2 Why (社交动机)</h3>
+                    <ul>
+                        <li><strong>内容解锁 (Content Gating)</strong>: 强制性社交，不组队无法体验核心内容。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：WoW 的 40 人团本；双人成行的双人解谜。</span></li>
+                        <li><strong>效率提升 (Efficiency)</strong>: 功利性社交，组队比单刷收益更高或速度更快。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：梦幻西游的抓鬼队伍；ROK 的集结打野蛮人。</span></li>
+                        <li><strong>情感需求 (Emotional)</strong>: 纯粹为了社交而社交，寻求陪伴与共鸣。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：动森里去朋友岛上串门；FF14 广场站街聊天。</span></li>
+                    </ul>
+                </div>
+
+                <div class="grid-item">
+                    <h3>1.3 What (社交内容)</h3>
+                    <ul>
+                        <li><strong>现实分享 (Reality)</strong>: 基于 LBS 或现实身份的交互，打破次元壁。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：Pokemon GO 交换位置礼物；Ingress 约饭面基。</span></li>
+                        <li><strong>游戏玩法 (Gameplay)</strong>: 围绕核心机制的协作与对抗。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：王者荣耀的战斗配合；EVE 的物品交易。</span></li>
+                        <li><strong>二创交流 (Meta)</strong>: 游戏外的知识与文化交流。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：小红书上的时装穿搭分享；NGA 的硬核攻略。</span></li>
+                    </ul>
+                </div>
+
+                <div class="grid-item">
+                    <h3>1.4 Where (社交场所)</h3>
+                    <ul>
+                        <li><strong>线下活动 (Offline)</strong>: 面对面的物理接触，门槛最高。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：Pokemon GO Fest 嘉年华；网吧连坐。</span></li>
+                        <li><strong>游戏内 IM (In-Game)</strong>: 游戏自带的沟通渠道，即时性强。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：世界频道喊话；公会聊天窗。</span></li>
+                        <li><strong>外部平台 (External)</strong>: 沉淀深层关系的第三方工具。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：Discord 语音频道；微信/QQ 战队群。</span></li>
+                    </ul>
+                </div>
+
+                <div class="grid-item">
+                    <h3>1.5 How (核心策略)</h3>
+                    <ul>
+                        <li><strong>渐进引导 (Progressive)</strong>: 从单人体验自然过渡到多人。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：从单人剧情任务引出多人副本任务。</span></li>
+                        <li><strong>利益捆绑 (Interdependence)</strong>: 通过经济或数值互补强迫合作。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：战法牧铁三角缺一不可；EVE 的产销链依赖。</span></li>
+                        <li><strong>机制强迫 (Forced)</strong>: 环境或机制强制玩家相遇。<br><span style="color:#7f8c8d; font-size:0.95em;">🌰 举例：大逃杀的缩圈强制交战；LBS 物理位置撞见。</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">1.6 Pressure Model (压力模型 - 新增)</h3>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4 rounded-r">
+                <p class="font-bold text-sm text-blue-700 mb-1">📐 模型定义与科学性说明 (Methodology & Scientific Basis)</p>
+                <p class="text-sm text-blue-600 mb-2">
+                    本模型是基于<strong>社会摩擦理论 (Social Friction)</strong> 与 <strong>自我决定论 (SDT)</strong> 的综合评估框架。它将抽象的“社交压力”拆解为 5 个可量化的心理成本维度，用于评估系统对泛化用户的“劝退指数”。
+                </p>
+                <ul class="list-disc list-inside text-xs text-blue-500 space-y-1">
+                    <li><strong>科学性来源</strong>: 行为经济学中的“损失厌恶 (Loss Aversion)”、心理学中的“社交焦虑 (Social Anxiety)”及“认知负荷 (Cognitive Load)”。</li>
+                    <li><strong>引用参考</strong>: 综合了 Raph Koster 的《Social Mechanics》与 Quantic Foundry 的游戏动力学模型。</li>
+                </ul>
+                <div class="mt-3 pt-3 border-t border-blue-200">
+                    <p class="font-bold text-sm text-blue-700 mb-1">💡 提示 (Note)</p>
+                    <p class="text-xs text-blue-600">下方表格详细定义了每个维度在“高压”与“低压”状态下的具体游戏体验差异。</p>
+                </div>
+            </div>
+            <p>我们需要引入 <strong>5维压力模型</strong> 来评估社交系统的“劝退值”：</p>
+            
+            <div class="pressure-grid">
+                <div class="pressure-item">
+                    <span class="pressure-title">表现 (Performance)</span>
+                    <span class="pressure-desc">数值/操作门槛带来的歧视链。<br><span style="color:#7f8c8d; font-size:0.9em;">🌰 例：WoW 团本秒伤考核。</span></span>
+                    <div class="pressure-level">
+                        <div>📈 <strong>High</strong>: <strong>硬核筛选</strong><br>数值/操作不达标会被踢出团队。</div>
+                        <div>📉 <strong>Low</strong>: <strong>点击即送</strong><br>只要参与就能获得保底奖励。</div>
+                    </div>
+                </div>
+                <div class="pressure-item">
+                    <span class="pressure-title">义务 (Obligation)</span>
+                    <span class="pressure-desc">维持社交关系的时间强制性。<br><span style="color:#7f8c8d; font-size:0.9em;">🌰 例：像上班一样准点打卡。</span></span>
+                    <div class="pressure-level">
+                        <div>📈 <strong>High</strong>: <strong>上班打卡</strong><br>必须准点上线，缺勤会拖累团队。</div>
+                        <div>📉 <strong>Low</strong>: <strong>随玩随停</strong><br>AFK 几个月回来没有任何负担。</div>
+                    </div>
+                </div>
+                <div class="pressure-item">
+                    <span class="pressure-title">沟通 (Communication)</span>
+                    <span class="pressure-desc">强制性的语言或语音交流。<br><span style="color:#7f8c8d; font-size:0.9em;">🌰 例：必须进语音频道听指挥。</span></span>
+                    <div class="pressure-level">
+                        <div>📈 <strong>High</strong>: <strong>全神贯注</strong><br>必须开麦交流，错漏信息会导致失败。</div>
+                        <div>📉 <strong>Low</strong>: <strong>默契陪伴</strong><br>无需言语，靠动作或系统提示完成协作。</div>
+                    </div>
+                </div>
+                <div class="pressure-item">
+                    <span class="pressure-title">惩罚 (Penalty)</span>
+                    <span class="pressure-desc">失败或死亡后的沉没成本。<br><span style="color:#7f8c8d; font-size:0.9em;">🌰 例：Albion 死亡装备全掉落。</span></span>
+                    <div class="pressure-level">
+                        <div>📈 <strong>High</strong>: <strong>高额负债</strong><br>死亡掉落装备，失败扣除大量资源。</div>
+                        <div>📉 <strong>Low</strong>: <strong>无限重试</strong><br>失败仅消耗时间，无实质损失。</div>
+                    </div>
+                </div>
+                <div class="pressure-item">
+                    <span class="pressure-title">环境 (Environment)</span>
+                    <span class="pressure-desc">社区氛围是零和博弈还是互助。<br><span style="color:#7f8c8d; font-size:0.9em;">🌰 例：黑暗森林法则 vs 互助。</span></span>
+                    <div class="pressure-level">
+                        <div>📈 <strong>High</strong>: <strong>黑暗森林</strong><br>他人即地狱，时刻提防背刺与掠夺。</div>
+                        <div>📉 <strong>Low</strong>: <strong>乌托邦</strong><br>绝对安全区，陌生人是潜在的帮手。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comic-card">
+            <h2 class="section-title">2. 参考分析总结 (Analysis & Benchmarks)</h2>
+            
+            <div style="text-align: center; margin-bottom: 30px;">
+                <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html" class="badge badge-blue" style="font-size: 1.4rem; padding: 12px 30px; text-decoration: none; cursor: pointer;">
+                    📊 查看完整竞品分析报告 (Analysis Report)
+                </a>
+            </div>
+
+            <blockquote><strong>详细数据支持</strong>：请参阅 <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html">Beagle Social Analysis Report</a> 以获取完整的竞品数据图表与交互式分析。</blockquote>
+            <p>为了精准定位 Beagle 的社交生态，我们首先将市场上的核心竞品拆解为四种典型模式，分析其优劣势及对我们的启示。</p>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">2.1 竞品类型化分析 (Categorized Benchmarks)</h3>
+
+            <div class="highlight-box">
+                <h4 class="font-bold text-lg">Type 1: X + SLG 缝合型 (The "Symbiosis" Model)</h4>
+                <p><strong>代表游戏</strong>: <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html#page-analysis_top_heroes">Top Heroes (轰天骑士团)</a>, Call of Dragons (万龙觉醒).</p>
+                <p><strong>核心逻辑</strong>: <strong>生态共生 (Ecological Symbiosis)</strong>。</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>旧时代 (Funnel)</strong>: 像 Puzzles &amp; Survival，X 只是前 15 分钟的买量诱饵，不转 SLG 必死。</li>
+                    <li><strong>新时代 (Symbiosis)</strong>: 像 Top Heroes，X 玩法（单机推图/收菜）被极大扩充，成为了可以长期游玩的平行主线。</li>
+                </ul>
+                <p><strong>社交维度的评分 (Social Dimension Scoring)</strong></p>
+                <p><strong>4W1H Model</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Who</strong>: 以熟人社交为主。体验：阶级分明的庇护感与被需要感。弱化：生人社交。</li>
+                    <li><strong>Why</strong>: 以效率提升为主。体验：羊躺平拿收益，狼花钱买活人排场。弱化：纯粹情感链接。</li>
+                    <li><strong>What</strong>: 以游戏玩法内容为主。体验：非对称数值贡献。弱化：操作与配合。</li>
+                    <li><strong>Where</strong>: 以游戏内 IM 为主。体验：高效指令下达与红包分享。弱化：线下活动。</li>
+                    <li><strong>How</strong>: 以利益捆绑为主。体验：不上线就亏损的焦虑感与责任感。弱化：物理/机制强迫。</li>
+                </ul>
+                <p><strong>5D Pressure</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Performance</strong>: 两极分化。羊门槛极低，狼门槛极高。</li>
+                    <li><strong>Obligation</strong>: 中。每日活跃度是“租金”。</li>
+                    <li><strong>Communication</strong>: 低。羊看公告即可。</li>
+                    <li><strong>Penalty</strong>: 高。一旦失去公会庇护，羊就是待宰肥肉。</li>
+                    <li><strong>Environment</strong>: 共生。虽有阶级但彼此需要。</li>
+                </ul>
+                <p><strong>参考游戏亮点 (Benchmark Highlight)</strong>: <strong>"狼羊共生的安稳乐土"</strong> 🔥 <strong>[维度: 社交 + 经济]</strong></p>
+                <ul class="list-disc pl-5">
+                    <li><strong>体验实例</strong>: 战力几亿的大佬请一群战力几千的种田玩家上线点科技树/帮加速。作为回报，大佬氪金或打下城池，全公会领取联盟宝箱。</li>
+                    <li><strong>机制解析</strong>: 价值维度错位。羊是“后勤员工”，系统将活跃度与公会科技设为硬指标，主要靠种田/收菜产出。狼需要羊维持公会等级与 Buff，羊需要狼提供安全感与共享收益。</li>
+                </ul>
+                <p><strong>深度拆解</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>去肥羊化</strong>: 降低掠夺收益，狼转向打狼，羊在后方安稳发育。</li>
+                    <li><strong>双轨制体验</strong>: 允许单机 RPG，但加入公会即可享受社交红利。</li>
+                </ul>
+                <p><strong>对 Beagle 的启示</strong>: <strong>"共生生态的构建"</strong></p>
+                <ul class="list-disc pl-5">
+                    <li>各取所需的公会结构：休闲党通过低压日常（孵蛋、喂食、提供原料）为强度党提供加成。</li>
+                    <li>被动受保护：享受福利的同时不必参与 PVP，贡献为后勤式。</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4 class="font-bold text-lg">Type 2: 弱社交/渗透型 (The "Alone Together" Model)</h4>
+                <p><strong>代表游戏</strong>: <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html#page-analysis_pokemongo">Pokemon GO</a>, Imo (伊莫), Roco (洛克王国世界).</p>
+                <p><strong>核心逻辑</strong>: <strong>共在感 (Co-presence)</strong>。</p>
+                <ul class="list-disc pl-5">
+                    <li>共享同一物理（LBS）或虚拟空间，彼此可见。</li>
+                    <li>社交是平行而非交互。我在你旁边打怪，你也在打。</li>
+                </ul>
+                <p><strong>社交维度的评分 (Social Dimension Scoring)</strong></p>
+                <p><strong>4W1H Model</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Who</strong>: 以生人社交 &amp; AI-NPC 为主。体验：无压力共在感与情感投射。弱化：熟人社交。</li>
+                    <li><strong>Why</strong>: 以内容解锁 - 现实为主。体验：走出去探索惊喜。弱化：效率提升。</li>
+                    <li><strong>What</strong>: 以玩家现实生活分享为主。体验：打破次元壁。弱化：PVP。</li>
+                    <li><strong>Where</strong>: 以线下活动为主。体验：此时此地唯一性。弱化：游戏内 IM。</li>
+                    <li><strong>How</strong>: 以物理/机制强迫为主。体验：不得不相遇。弱化：利益捆绑。</li>
+                </ul>
+                <p><strong>5D Pressure</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Performance</strong>: 极低。会扔球即可。</li>
+                    <li><strong>Obligation</strong>: 低。AFK 半年回来也没损失。</li>
+                    <li><strong>Communication</strong>: 零。不需要语言交流。</li>
+                    <li><strong>Penalty</strong>: 零。抓跑了再抓。</li>
+                    <li><strong>Environment</strong>: 陪伴。</li>
+                </ul>
+                <p><strong>参考游戏亮点 (Benchmark Highlight)</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Pokemon GO</strong>: "打破次元的街头狂欢" 🔥 [维度: 物理 + 社交]</li>
+                    <li><strong>体验实例</strong>: 看到道馆上冒烟或五星蛋快裂，周围低头看手机的人。无需说话，跟着进房间打神兽。</li>
+                    <li><strong>机制解析</strong>: 低门槛流量聚合。唯一门槛是物理位置，系统自动拉陌生人同房间。</li>
+                    <li><strong>Imo (伊莫)</strong>: "跨越位面的无言陪伴" 🔥 [维度: 社交 + 物理]</li>
+                    <li><strong>体验实例</strong>: 跨位面解谜，看到光影痕迹；战斗时玩家化身宠物。</li>
+                    <li><strong>机制解析</strong>: 场景化轻社交与化身玩法。</li>
+                    <li><strong>Roco (洛克王国世界)</strong>: "触手可及的鲜活世界" 🔥 [维度: 物理 + 策略]</li>
+                    <li><strong>体验实例</strong>: 巨大坐骑飞行、双人同骑、水下潜游，路边观察精灵习性。</li>
+                    <li><strong>机制解析</strong>: 单机生态极致还原与高频交互。</li>
+                </ul>
+                <p><strong>深度拆解</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>去社会化压力</strong>: 剥离责任与评价，实现“零负担”共存。</li>
+                    <li><strong>平行时空设计</strong>: 他人是背景板，社交是可选加分项。</li>
+                </ul>
+                <p><strong>对 Beagle 的启示</strong>: <strong>"泛化用户的平行世界"</strong></p>
+                <ul class="list-disc pl-5">
+                    <li>无压力陪伴感：设计“无言默契”机制。</li>
+                    <li>拒绝强制组队：社交应是“有你在我更好”，而非“你不在我没法玩”。</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4 class="font-bold text-lg">Type 3: 传统 MMO / 隔离型 (The "Theme Park" Model)</h4>
+                <p><strong>代表游戏</strong>: WoW (魔兽世界), FF14 (最终幻想14), Lost Ark (命运方舟).</p>
+                <p><strong>核心逻辑</strong>: <strong>游乐场 (Theme Park)</strong>。世界只是大厅，真正的游戏内容被隔离在副本中，社交基于强迫式协作。</p>
+                <p><strong>社交维度的评分 (Social Dimension Scoring)</strong></p>
+                <p><strong>4W1H Model</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Who</strong>: 熟人社交为主，过命交情与团队归属感。弱化生人社交。</li>
+                    <li><strong>Why</strong>: 内容解锁 - 游戏为主，征服高难度成就感。弱化内容解锁 - 现实。</li>
+                    <li><strong>What</strong>: 游戏玩法为主，精密配合心流。弱化现实分享。</li>
+                    <li><strong>Where</strong>: 游戏外部平台为主，高频深度信息交换。弱化游戏内 IM。</li>
+                    <li><strong>How</strong>: 物理/机制强迫为主，缺一不可。弱化渐进式引导。</li>
+                </ul>
+                <p><strong>5D Pressure</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Performance</strong>: 高。秒伤不够会被踢。</li>
+                    <li><strong>Obligation</strong>: 高。固定队雷打不动。</li>
+                    <li><strong>Communication</strong>: 高。不进语音别想打本。</li>
+                    <li><strong>Penalty</strong>: 高。一人犯错全团陪葬。</li>
+                    <li><strong>Environment</strong>: 精英/筛选。</li>
+                </ul>
+                <p><strong>参考游戏亮点 (Benchmark Highlight)</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>WoW</strong>: "战友情的极致羁绊" 🔥 [维度: 社交 + 策略]</li>
+                    <li><strong>体验实例</strong>: 主坦信任治疗与副坦，40 人技能特效炸裂，命运绑在仇恨列表与治疗链上。</li>
+                    <li><strong>机制解析</strong>: 高压环境下信任交付，公会是核心。</li>
+                    <li><strong>FF14</strong>: "生活化的温情社区" 🔥 [维度: 策略 + 社交]</li>
+                    <li><strong>体验实例</strong>: 不打副本也能弹琴、开 RP 店、聊天拍照。</li>
+                    <li><strong>机制解析</strong>: 去功利化自我表达。</li>
+                    <li><strong>Lost Ark</strong>: "肾上腺素飙升的战斗爽感" 🔥 [维度: 物理 + 策略]</li>
+                    <li><strong>体验实例</strong>: 反制成功慢镜头特写，Boss 硬直与高额伤害。</li>
+                    <li><strong>机制解析</strong>: 极致视听正反馈。</li>
+                </ul>
+                <p><strong>深度拆解</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>高成本的信任构建</strong>: 连坐与高压是筛选机制。</li>
+                    <li><strong>仪式感的代价</strong>: 用效率与自由换情感回报。</li>
+                </ul>
+                <p><strong>对 Beagle 的启示</strong>: <strong>"去门槛化的仪式感"</strong></p>
+                <ul class="list-disc pl-5">
+                    <li>保留史诗感，移除连坐，失误不应导致全团秒灭。</li>
+                    <li>软三角设计，避免死板战法牧。</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4 class="font-bold text-lg">Type 4: 沙盒/经济驱动型 (The "Sandbox Economy" Model)</h4>
+                <p><strong>代表游戏</strong>: Albion (阿尔比恩), EVE Online, <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html#page-analysis_pokemmo">PokeMMO</a>.</p>
+                <p><strong>核心逻辑</strong>: <strong>社会分工 (Social Division of Labor)</strong>。世界统一，内容是人与人关系，经济是社交底层驱动力。</p>
+                <p><strong>社交维度的评分 (Social Dimension Scoring)</strong></p>
+                <p><strong>4W1H Model</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Who</strong>: 生人社交 &amp; 熟人社交为主。体验：社会机器零件的真实感与渺小感。弱化 AI-NPC。</li>
+                    <li><strong>Why</strong>: 效率提升为主。体验：黑暗森林抱团取暖。弱化内容解锁 - 游戏。</li>
+                    <li><strong>What</strong>: 游戏玩法内容 &amp; UGC 为主。体验：书写历史的宏大叙事。弱化现实分享。</li>
+                    <li><strong>Where</strong>: 游戏内 IM &amp; 外部平台为主。体验：谍战般信息差博弈。弱化线下活动。</li>
+                    <li><strong>How</strong>: 利益捆绑为主。体验：全产业链依赖。弱化渐进式引导。</li>
+                </ul>
+                <p><strong>5D Pressure</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Performance</strong>: 动态。PVP 要求极高，倒爷只需脑子好。</li>
+                    <li><strong>Obligation</strong>: 高。资产越多维护成本越高。</li>
+                    <li><strong>Communication</strong>: 极高。情报网与外交是根本。</li>
+                    <li><strong>Penalty</strong>: 极高。死亡全掉落。</li>
+                    <li><strong>Environment</strong>: 黑暗森林。</li>
+                </ul>
+                <p><strong>参考游戏亮点 (Benchmark Highlight)</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>Albion</strong>: "刀尖舔血的掠夺快感" 🔥 [维度: 经济 + 物理]</li>
+                    <li><strong>体验实例</strong>: 黑区埋伏采集者，爆出满地装备资源。</li>
+                    <li><strong>机制解析</strong>: 全掉落机制带来的豪赌。</li>
+                    <li><strong>EVE Online</strong>: "书写历史的宏大叙事" 🔥 [维度: 社交 + 经济]</li>
+                    <li><strong>体验实例</strong>: B-R5RB 战役，泰坦战舰价值数千美元。</li>
+                    <li><strong>机制解析</strong>: 蝴蝶效应下的社会结构。</li>
+                    <li><strong>PokeMMO</strong>: "全球同服的训练师社会" 🔥 [维度: 经济 + 社交]</li>
+                    <li><strong>体验实例</strong>: 全球交易行倒卖精灵发家致富。</li>
+                    <li><strong>机制解析</strong>: IP 赋能下的 MMO 化质变。</li>
+                </ul>
+                <p><strong>深度拆解</strong>:</p>
+                <ul class="list-disc pl-5">
+                    <li><strong>零和与非零和统一</strong>: 宏观非零和，微观零和。</li>
+                    <li><strong>生态位多样性</strong>: 高度分工让每个人找到不可替代的位置。</li>
+                </ul>
+                <p><strong>对 Beagle 的启示</strong>: <strong>"基于价值的社会分工"</strong></p>
+                <ul class="list-disc pl-5">
+                    <li><strong>经济循环 (CP4)</strong>: 引入自由市场，生活玩家产出成为硬通货。</li>
+                    <li><strong>长线身份认同</strong>: 全服第一孵蛋商/最强雇佣兵等身份。</li>
+                    <li>引入风险分层：安全区与危险区分工。</li>
+                </ul>
+            </div>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">2.2 核心体验差异化总结 (Summary of Core Experience Differences)</h3>
+            <p>基于 2.1 的详细拆解，我们可以看到四类竞品代表了社交体验的四个极端方向。本质区别在于“玩家如何通过社交获得反馈”。</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>模式类型 (Type)</th>
+                            <th>核心体验 (Core Experience)</th>
+                            <th>社交结构 (Social Structure)</th>
+                            <th>致命缺憾 (Critical Deficit)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Type 1: 阶级化</strong><br><em>(Top Heroes)</em></td>
+                            <td>"金钱换地位"，付费获得统治权。</td>
+                            <td>封建制，狼羊阶级分明。</td>
+                            <td>缺乏情感，数值崩塌即断裂。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type 2: 休闲化</strong><br><em>(Pokemon GO)</em></td>
+                            <td>"共在无压力"，陪伴氛围。</td>
+                            <td>原子化，人人平等。</td>
+                            <td>缺乏深度，经济弱，产能压力大。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type 3: 协作化</strong><br><em>(WoW)</em></td>
+                            <td>"责任换荣耀"，履职获得认同。</td>
+                            <td>公司制，岗位固定。</td>
+                            <td>压力过载，上班式义务劝退。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type 4: 经济化</strong><br><em>(Albion)</em></td>
+                            <td>"风险换收益"，高风险博弈。</td>
+                            <td>丛林法则，优胜劣汰。</td>
+                            <td>残酷劝退，全掉落毁灭性。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>结论与引出 (Transition)</strong>：</p>
+            <ul class="list-disc pl-5">
+                <li>我们想要 Type 2 的轻松，但不能接受其经济薄弱。</li>
+                <li>我们想要 Type 4 的循环，但不能接受其残酷惩罚。</li>
+                <li>我们想要 Type 1 的留存，但不能接受其阶级冷漠。</li>
+            </ul>
+            <p>因此，Beagle 的机会在于“缝合”——在极端的中间地带寻找新平衡点。</p>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">2.3 Beagle 的机会区间 (The Opportunity Zone)</h3>
+            <blockquote><strong>可视化支持</strong>：详细的生态位坐标映射请参考 <a href="file:///d:\charlie\social\publish\Beagle_Social_Analysis_Report.html#page-opportunity_zone">Beagle Social Analysis Report - Opportunity Zone</a>。</blockquote>
+            <p><strong>坐标定位 (Coordinate Positioning)</strong>:</p>
+            <ul class="list-disc pl-5">
+                <li><strong>横轴 (X) - 社交必要性</strong>：Beagle 定位中偏右。不能做成社交可有可无的单机体验，上限低于 EVE/ROK。</li>
+                <li><strong>纵轴 (Y) - 社交关系</strong>：Beagle 定位中间地带。平衡 SLG 强竞争与 MMO 强协作。</li>
+            </ul>
+
+            <div class="img-container" style="background: #fafafa; padding: 20px;">
+                <svg class="chart-svg" viewBox="-60 -40 900 760" style="width: 100%; height: auto;">
+                    <!-- Grid -->
+                    <line x1="0" y1="320" x2="800" y2="320" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                    <line x1="400" y1="0" x2="400" y2="640" stroke="#eee" stroke-width="1" stroke-dasharray="4"/>
+                    <rect x="0" y="0" width="800" height="640" fill="none" stroke="#eee" stroke-width="1"/>
+                    
+                    <!-- Axis Labels -->
+                    <text x="400" y="670" text-anchor="middle" class="axis-label" font-size="16" fill="#7f8c8d">社交必要性 (Social Necessity) →</text>
+                    <text x="-20" y="320" text-anchor="middle" transform="rotate(-90, -20, 320)" class="axis-label" font-size="16" fill="#7f8c8d">← 社交偏向 (Competition vs Cooperation) →</text>
+                    <text x="400" y="690" text-anchor="middle" font-size="12" fill="#999">(左：可选/锦上添花 — 右：强制/生存压力)</text>
+                    <text x="-35" y="320" text-anchor="middle" transform="rotate(-90, -35, 320)" font-size="12" fill="#999">(上：竞争/对抗 — 下：协作/共赢)</text>
+                    
+                    <!-- Quadrant Labels -->
+                    <text x="780" y="30" text-anchor="end" font-size="14" fill="#e74c3c" font-weight="bold" opacity="0.5">强制竞争 (Dark Forest)</text>
+                    <text x="20" y="610" text-anchor="start" font-size="14" fill="#2ecc71" font-weight="bold" opacity="0.5">单机/弱交互</text>
+                    <text x="20" y="30" text-anchor="start" font-size="14" fill="#9b59b6" font-weight="bold" opacity="0.5">休闲竞技</text>
+                    <text x="780" y="610" text-anchor="end" font-size="14" fill="#3498db" font-weight="bold" opacity="0.5">强制协作 (Raid/Attendance)</text>
+
+                    <!-- Beagle Opportunity Zone -->
+                    <!-- X: > Center(400) to Albion(740) -> Range 410-740 -->
+                    <!-- Y: From CoD(150) to Pre-PokemonGO(500) -> Range 150-500 -->
+                    <rect x="410" y="150" width="330" height="350" fill="rgba(39, 174, 96, 0.15)" stroke="#27ae60" stroke-width="1" stroke-dasharray="4" rx="10"/>
+                    <text x="575" y="325" text-anchor="middle" class="zone-label" fill="#27ae60" font-size="20" font-weight="bold">Beagle Zone</text>
+                    <text x="575" y="350" text-anchor="middle" fill="#27ae60" font-size="12" opacity="0.8">必要性偏高 | 竞争协作均衡</text>
+
+                    <!-- Data Points -->
+                    
+                    <!-- High Necessity + Competition (Top Right) -->
+                    <!-- EVE -->
+                    <circle cx="780" cy="50" r="5" fill="#e74c3c" opacity="0.8"><title>EVE</title></circle>
+                    <text x="774" y="54" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">EVE</text>
+                    <!-- ROK -->
+                    <circle cx="760" cy="100" r="5" fill="#f39c12" opacity="0.8"><title>ROK</title></circle>
+                    <text x="754" y="104" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">ROK</text>
+                    <!-- Albion -->
+                    <circle cx="740" cy="80" r="5" fill="#e74c3c" opacity="0.8"><title>Albion</title></circle>
+                    <text x="734" y="84" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Albion</text>
+                    <!-- CoD -->
+                    <circle cx="720" cy="150" r="5" fill="#f39c12" opacity="0.8"><title>CoD</title></circle>
+                    <text x="714" y="154" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">CoD</text>
+                    <!-- Top Heroes -->
+                    <circle cx="700" cy="200" r="5" fill="#f39c12" opacity="0.8"><title>Top Heroes</title></circle>
+                    <text x="694" y="204" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">TopHeroes</text>
+
+                    <!-- High Necessity + Cooperation (Bottom Right) -->
+                    <!-- WoW -->
+                    <circle cx="750" cy="550" r="5" fill="#e74c3c" opacity="0.8"><title>WoW</title></circle>
+                    <text x="744" y="554" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">WoW</text>
+                    <!-- Lost Ark -->
+                    <circle cx="720" cy="580" r="5" fill="#e74c3c" opacity="0.8"><title>Lost Ark</title></circle>
+                    <text x="714" y="584" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Lost Ark</text>
+
+                    <!-- Mid Necessity + Mixed/Coop (Center/Bottom) -->
+                    <!-- Diablo (Mid-High, Coop) -->
+                    <circle cx="600" cy="500" r="5" fill="#e74c3c" opacity="0.8"><title>Diablo</title></circle>
+                    <text x="594" y="504" text-anchor="end" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Diablo</text>
+                    <!-- PokeMMO (Mid, Mixed) -->
+                    <circle cx="500" cy="320" r="5" fill="#9b59b6" opacity="0.8"><title>PokeMMO</title></circle>
+                    <text x="500" y="310" text-anchor="middle" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">PokeMMO</text>
+                    <!-- Pokemon GO (Mid, Coop) -->
+                    <circle cx="450" cy="550" r="5" fill="#9b59b6" opacity="0.8"><title>Pokemon GO</title></circle>
+                    <text x="450" y="565" text-anchor="middle" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Pokemon GO</text>
+                    <!-- Imo -->
+                    <circle cx="550" cy="530" r="5" fill="#9b59b6" opacity="0.8"><title>Imo</title></circle>
+                    <text x="550" y="545" text-anchor="middle" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Imo</text>
+
+                    <!-- Low Necessity (Left) -->
+                    <!-- Justice (AI, Low Necessity, Coop) -->
+                    <circle cx="150" cy="580" r="5" fill="#e74c3c" opacity="0.8"><title>Justice</title></circle>
+                    <text x="156" y="580" text-anchor="start" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Justice</text>
+                    <!-- AFK Journey (Low, Solo/Parallel) -->
+                    <circle cx="100" cy="500" r="5" fill="#2ecc71" opacity="0.8"><title>AFK Journey</title></circle>
+                    <text x="106" y="500" text-anchor="start" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">AFK Journey</text>
+                    <!-- Yanyun (Low-Mid, Solo/Hybrid) -->
+                    <circle cx="280" cy="450" r="5" fill="#9b59b6" opacity="0.8"><title>Yanyun</title></circle>
+                    <text x="286" y="450" text-anchor="start" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Yanyun</text>
+                    <!-- Roco -->
+                    <circle cx="130" cy="250" r="5" fill="#9b59b6" opacity="0.8"><title>Roco</title></circle>
+                    <text x="136" y="250" text-anchor="start" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Roco</text>
+                    <!-- Sky (Low Necessity, High Coop) -->
+                    <circle cx="220" cy="600" r="5" fill="#9b59b6" opacity="0.8"><title>Sky</title></circle>
+                    <text x="220" y="615" text-anchor="middle" class="point-label" font-size="14" fill="#2c3e50" font-weight="bold">Sky</text>
+
+                </svg>
+            </div>
+
+            <ol class="list-decimal pl-6">
+                <li><strong>安全感的底座</strong>: 取自 Type 2，提供绝对安全养老院，规避 Type 4 风险。</li>
+                <li><strong>经济流的血管</strong>: 取自 Type 4，构建真实供需市场，规避 Type 2 自闭单机。</li>
+                <li><strong>成就感的塔尖</strong>: 取自 Type 1/3，提供高风险高回报舞台，规避 Type 1 掠夺。</li>
+            </ol>
+            <p><strong>核心策略句 (Core Strategy Statement)</strong>：</p>
+            <p><strong>"Type 2 的皮 (无压陪伴) + Type 4 的骨 (经济依赖) + Type 1 的节奏 (温和引导)"</strong></p>
+            <ul class="list-disc pl-5">
+                <li><strong>皮 (Skin)</strong>: Pokemon GO 式 LBS 乐园，抓宠、打卡、看风景。</li>
+                <li><strong>骨 (Bone)</strong>: Albion 式自由市场，资源流向前线战争换回真金白银。</li>
+                <li><strong>节奏 (Pacing)</strong>: 从单机体验开始，逐步走向危险区边缘。</li>
+            </ul>
+        </div>
+
+        <div class="comic-card">
+            <h2 class="section-title">3. 明确用户定位 (User Positioning)</h2>
+            <p>基于 2026-02 的全球玩家调研与 Brain 记忆库，我们的用户画像极其清晰且具有特殊性。</p>
+            <h3 class="font-bold text-xl mt-4 mb-2">3.1 核心数据与结论</h3>
+            <ul class="list-disc pl-5">
+                <li><strong>社交/对抗偏好</strong>：泛化玩家 Solo 优先，抵触野外风险；核心/硬核玩家对团体社交开放；“伙伴被俘”是 50% 玩家红线。</li>
+                <li><strong>GVE 与同步社交</strong>：整体 62% 比较喜欢，泛化玩家接受度低，韩国玩家更不喜欢。</li>
+                <li><strong>PVP 与安全区</strong>：美国更能接受风险，韩国更抵触；31% 要求家园绝对安全，32% 需要明确安全/危险区。</li>
+                <li><strong>炫耀与付费</strong>：炫耀链为绝版神兽 &gt; 绝版时装 &gt; 数值，大 R 渴望成为团体社交焦点。</li>
+            </ul>
+            <h3 class="font-bold text-xl mt-4 mb-2">3.2 我们的用户是谁？</h3>
+            <ul class="list-disc pl-5">
+                <li>不是纯粹赌徒 (SLG)，不能接受一觉醒来家没了。</li>
+                <li>不是纯粹打工仔 (WoW)，拒绝“像上班一样”打团本。</li>
+                <li>他们是“带着爱宠的冒险者”：需要安全感、被需要感、适度刺激。</li>
+            </ul>
+        </div>
+
+        <div class="comic-card">
+            <h2 class="section-title">4. Beagle 社交生态的可行区间定位</h2>
+            <p>为了验证 Beagle 的最佳路径，我们将四种市场极端转化为具体的概念方案 (CP) 进行推演。</p>
+
+            <div class="comic-card">
+                <div class="cp-card">
+                    <div class="cp-content">
+                        <h3 class="font-bold text-2xl mb-2">CP 1: 阶级化/共生方案 (The Symbiotic Class Model)</h3>
+                        <p><strong>一句话体验</strong>: "在狼的羽翼下，羊也能安稳种田 —— 以自由换取绝对的安全与红利。"</p>
+                        <p><strong>参考游戏原型</strong>: Call of Dragons, Top Heroes, ROK</p>
+                        <p><strong>核心社交单位</strong>: 联盟 (Alliance)。单人无法生存，小队无意义。</p>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">1. Who (社交对象与流转)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>社交主体</strong>: 强人与人。AI-NPC 仅作为资源背景板。</li>
+                            <li><strong>生态结构</strong>: 核心单位 100% 联盟。战争需要规模效应，小队没有战略纵深。</li>
+                            <li><strong>系统性扼杀小团体</strong>: 通过随机分组集结打散固定小队，强化垂直交互。</li>
+                            <li><strong>渗透关系</strong>: 垂直吞噬，联盟吞噬个体与小队。</li>
+                            <li><strong>联盟单位组成结构与付费层级</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>金字塔顶 0.1% 图腾 (Totem)：盟主/金主，帝王感。</li>
+                                    <li>中坚层 19.9% 监工 (Enforcers)：R4 官员/高战打手，权力感。</li>
+                                    <li>基石层 80% 共生者 (Symbiotes)：羊，红利感。</li>
+                                </ul>
+                            </li>
+                            <li><strong>玩家全生命周期流转</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>Day 1 (FTE 期): 混沌聚合，社交限于世界频道。</li>
+                                    <li>Day 3 (关系形成期): 初步筛选，首加公会奖励引导加入。</li>
+                                    <li>Day 7 (GVE 接触期): 利益捆绑，羊被迫服从指挥。</li>
+                                    <li>Day 30 (GVG 严肃社交期): 阶级固化与联盟分层，PVE/PVX 大量流失。</li>
+                                    <li>Day 60 (KVK 服务器战争): 命运共同体，粘性顶峰，新血难融。</li>
+                                </ul>
+                            </li>
+                            <li><strong>渐进与转化</strong>: 压力转化，外部环境恶化迫使靠拢联盟。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">2. Why (社交动机)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>效率提升</strong>: 绝对压迫，联盟科技提供 30%~50% 加速，不加公会=原始人。</li>
+                            <li><strong>内容解锁 (60 Days)</strong>: 阶级隔离。独狼只能体验 50% 内容，核心养成资源被阻断。</li>
+                            <li><strong>情绪价值</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>必须满足：狼需要权力具象化，羊需要狐假虎威安全感。</li>
+                                    <li>加分项：炫耀墙与工具人社交。</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">3. What &amp; Where (社交内容与平台构建)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>核心内容</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏玩法内容权重 70%：捐献、集结、驻防。</li>
+                                    <li>UGC 权重 10%：战报与攻略。</li>
+                                    <li>现实分享 &amp; 二创权重 20%：战火中的温情。</li>
+                                </ul>
+                            </li>
+                            <li><strong>平台构建</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏内 IM：高密度指令下达终端。</li>
+                                    <li>游戏外平台：管理层复盘战术。</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">4. How (核心系统与地缘渐进)</h4>
+                        <p><strong>A. 社交系统构建</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>阶级化权限</strong>: 狼掌握强制迁城令/税率/宣战权，羊决策权剥离。</li>
+                            <li><strong>资源再分配</strong>: 自动税收与分红，减少人情摩擦。</li>
+                            <li><strong>强制协作</strong>: 集结机制规定 1 Wolf &lt; 1 Wolf + 10 Sheep，赋予羊存在价值。</li>
+                        </ul>
+                        <p><strong>B. 大地图地缘渐进</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li>Zone 1: 离散与混沌 (Day 1-3) — 广袤且隔离。</li>
+                            <li>Zone 2: 聚合与圈地 (Day 7) — 强制物理聚合。</li>
+                            <li>Zone 3: 接触与摩擦 (Day 15-30) — 制造外部矛盾。</li>
+                            <li>Zone 4: 决战中心 (Day 60) — 终极筛选。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">5. Pressure Model (压力模型)</h4>
+                        <p>对标 Top Heroes：中义务，强诱导。以“贪婪驱动”替代“恐惧驱动”。</p>
+                        <ul class="list-disc pl-5">
+                            <li>表现：傻瓜化。</li>
+                            <li>义务：中高，关键活动期集中。</li>
+                            <li>沟通：低频且功利。</li>
+                            <li>惩罚：中，机会成本高。</li>
+                            <li>环境：公司化管理。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">方案评价 (Evaluation)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>优势</strong>: 商业化极强，生态超稳定。</li>
+                            <li><strong>作为亮点的可行性与代价</strong>: 可行性高，代价是牺牲泛化盘。</li>
+                            <li><strong>SLG 过渡核心问题</strong>: 体验断层与用户错配，最终留下 SLG 狼性用户。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comic-card">
+                <div class="cp-card">
+                    <div class="cp-content order-1 md:order-2">
+                        <h3 class="font-bold text-2xl mb-2">CP 2: 休闲化/小队社交方案 (The Squad-Based Social Model)</h3>
+                        <p><strong>一句话体验</strong>: "三五好友的冒险旅程，公会是我们的后勤基地。"</p>
+                        <p><strong>参考游戏原型</strong>: Imo, Roco Kingdom World, Yanyun</p>
+                        <p><strong>核心社交单位</strong>: 小队 (Squad) 为核心 + 联盟 (Alliance) 为辅助。</p>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">1. Who (社交对象与流转)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>社交主体</strong>: 小队 (Squad)。</li>
+                            <li><strong>生态结构</strong>: 固定小队为核心，联盟为辅助，细胞式组成。</li>
+                            <li><strong>联盟单位组成结构与付费层级</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>核心层 30% 发起者 (Initiators)：车头/话题制造者。</li>
+                                    <li>响应层 40% 搭子 (Partners)：积极响应者。</li>
+                                    <li>游离层 30% 观察者 (Observers)：潜水党。</li>
+                                </ul>
+                            </li>
+                            <li><strong>玩家全生命周期流转</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>Day 1: 单人/双人冒险，隐性匹配同路人。</li>
+                                    <li>Day 3: 弱社交尝试，尝试添加路人好友。</li>
+                                    <li>Day 7: 固定队雏形，签订冒险契约。</li>
+                                    <li>Day 30: 联盟聚合期，联盟是聊天室+Buff 发射器。</li>
+                                    <li>Day 60: SLG 转化期，战斗小队约 20%，休闲小队留存 60%，独狼高流失 20%。</li>
+                                </ul>
+                            </li>
+                            <li><strong>渐进与转化</strong>: 从温情到热血，提供诱惑而非强制。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">2. Why (社交动机)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>效率提升</strong>: 协同效应，组队掉落/经验 1.5 倍。</li>
+                            <li><strong>内容解锁 (60 Days)</strong>: 软性引导，90% 可单人体验，顶级奖励需组队。</li>
+                            <li><strong>情绪价值</strong>: 发起者负责规划与召集，跟随者享受便利与安全感；固定队关系带来温情。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">3. What &amp; Where (社交内容与平台构建)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>核心内容</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏玩法权重 60%：小队副本、探索、双人解谜。</li>
+                                    <li>UGC 权重 20%：家园派对、时装走秀。</li>
+                                    <li>联盟建设权重 20%：捐献、科技升级。</li>
+                                </ul>
+                            </li>
+                            <li><strong>平台构建</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏内 IM：小队频道、联盟频道、世界频道分层。</li>
+                                    <li>游戏外平台：攻略与招募。</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">4. How (核心系统与地缘渐进)</h4>
+                        <p><strong>A. 社交系统构建</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>契约系统 (Bond System)</strong>: 好友度达到一定等级可签订契约，解锁传送、合体技、共享仓库。</li>
+                            <li><strong>联盟福利</strong>: 被动 Buff 吸引散人加入，为后期 SLG 转化做储备。</li>
+                        </ul>
+                        <p><strong>B. 大地图地缘渐进</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li>Zone 1: 安全摇篮 (Day 1-3) — 平行社交，氛围热闹但不吵闹。</li>
+                            <li>Zone 2: 广阔荒野 (Day 7) — 扩大空间，双人载具与传送门驱动弱连接。</li>
+                            <li>Zone 3: 元素边境 (Day 30) — 环境压力驱动互补。</li>
+                            <li>Zone 4: 跨服公共位面 (Day 60) — 情感宣泄与展示舞台。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">5. Pressure Model (压力模型)</h4>
+                        <p>对标 Genshin/Sky：低义务，高情感。友谊驱动，消除互相埋怨机制。</p>
+                        <ul class="list-disc pl-5">
+                            <li>表现：低，容错高。</li>
+                            <li>义务：极低，社交弹性。</li>
+                            <li>沟通：高频轻松，表情动作重于文字。</li>
+                            <li>惩罚：极低。</li>
+                            <li>环境：温室。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">方案评价 (Evaluation)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>优势</strong>: 泛化兼容性高，留存质量高。</li>
+                            <li><strong>作为亮点的可行性与代价</strong>: 可行性中，商业化天花板低。</li>
+                            <li><strong>SLG 过渡核心问题</strong>: 温水煮青蛙困境，小队组织架构难承载 GVG。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comic-card">
+                <div class="cp-card">
+                    <div class="cp-content">
+                        <h3 class="font-bold text-2xl mb-2">CP 3: 协作化/强迫方案 (The Theme Park Model)</h3>
+                        <p><strong>一句话体验</strong>: "把后背交给信任的战友，在极限配合中挑战神明 —— 每一秒的精准操作，都是通往荣耀的阶梯。"</p>
+                        <p><strong>参考游戏原型</strong>: Tarisland, WoW Mobile, Lost Ark</p>
+                        <p><strong>核心社交单位</strong>: 联盟为主 + 小队为辅。</p>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">1. Who (社交对象与流转)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>社交主体</strong>: 强人与人，基于战术配合。</li>
+                            <li><strong>生态结构</strong>: 联盟辖下多小队，模块化管理。</li>
+                            <li><strong>联盟单位组成结构与付费层级</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>管理层 10% 核心指挥：会长/RL/主T。</li>
+                                    <li>中坚层 60% 职业玩家：稳定出勤主力。</li>
+                                    <li>后备层 30% 预备役：替补/新人。</li>
+                                </ul>
+                            </li>
+                            <li><strong>玩家全生命周期流转</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>Day 1: 单人任务与剧情，社交极少。</li>
+                                    <li>Day 3: 副本初体验，意识到不能单人玩。</li>
+                                    <li>Day 7: 机制门槛筛选，30% 休闲流失。</li>
+                                    <li>Day 30: 联盟编制与排班，社交为进度服务。</li>
+                                    <li>Day 60: 精英化与断层，80% 泛化玩家流失。</li>
+                                </ul>
+                            </li>
+                            <li><strong>渐进与转化</strong>: 残酷筛选，最终只保留硬核协作者。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">2. Why (社交动机)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>效率提升</strong>: 绝对刚需，职能铁三角缺一不可。</li>
+                            <li><strong>内容解锁 (60 Days)</strong>: 硬核隔离，不社交=0 游戏体验。</li>
+                            <li><strong>情绪价值</strong>: 职能精英身份与首杀荣誉。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">3. What &amp; Where (社交内容与平台构建)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>核心内容</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏玩法权重 80%：副本攻略、配装、木桩练习。</li>
+                                    <li>UGC 权重 10%：攻略视频、数据分析。</li>
+                                    <li>现实分享权重 10%：固定队线下面基。</li>
+                                </ul>
+                            </li>
+                            <li><strong>平台构建</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>游戏内 IM：实时语音，开麦必需。</li>
+                                    <li>游戏外平台：RaidBots / WarcraftLogs 等工具。</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">4. How (核心系统与地缘渐进)</h4>
+                        <p><strong>A. 社交系统构建</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>战法牧铁三角</strong>: 强制依赖，缺任一角色无法通关。</li>
+                            <li><strong>狂暴机制</strong>: DPS Check，数值与技术双重筛选。</li>
+                        </ul>
+                        <p><strong>B. 大地图地缘渐进</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li>Zone 1: 任务区 (Quest Hub) — 教学与剧情体验。</li>
+                            <li>Zone 2: 五人本入口 (Dungeon) — 初级集合石。</li>
+                            <li>Zone 3: 团本入口 (Raid Entrance) — 大型集合点。</li>
+                            <li>Zone 4: 主城挂机区 (Capital AFK) — 站街展示。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">5. Pressure Model (压力模型)</h4>
+                        <p>对标 WoW Mythic / Lost Ark：高义务，高操作，挑战驱动。</p>
+                        <ul class="list-disc pl-5">
+                            <li>表现：极高，DPS 公开处刑台。</li>
+                            <li>义务：极高，固定队如合同。</li>
+                            <li>沟通：高频且专业。</li>
+                            <li>惩罚：高，一人犯错全团连坐。</li>
+                            <li>环境：精英主义。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">方案评价 (Evaluation)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>优势</strong>: 核心粘性极高，付费深度不错。</li>
+                            <li><strong>作为亮点的可行性与代价</strong>: 可行性低，手机端复刻困难，社区 Toxic。</li>
+                            <li><strong>SLG 过渡核心问题</strong>: 个人英雄主义与集体主义冲突，用户画像错配。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comic-card">
+                <div class="cp-card">
+                    <div class="cp-content order-1 md:order-2">
+                        <h3 class="font-bold text-2xl mb-2">CP 4: 经济化/生态缝合方案 (The Economic Model)</h3>
+                        <p><strong>一句话体验</strong>: "你耕田来我织布，我负责送死你负责致富 —— 跨阶层的贸易与共生。"</p>
+                        <p><strong>参考游戏原型</strong>: Albion Online (Safe Zone Variant), EVE Online (High-Sec), Fantasy Westward Journey</p>
+                        <p><strong>核心社交单位</strong>: 联盟 (Alliance) + 功能性小队 (Functional Squads)。</p>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">1. Who (社交对象与流转)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>社交主体</strong>: 生产者 vs 消费者。</li>
+                            <li><strong>生态结构</strong>: 供应链，非对称依赖。</li>
+                            <li><strong>联盟单位组成结构与付费层级</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>雇主层 20% 资本家 (Capitalists)：掌控权。</li>
+                                    <li>专业层 50% 承包商 (Contractors)：不可替代性。</li>
+                                    <li>基础层 30% 搬砖党 (Laborers)：安稳。</li>
+                                </ul>
+                            </li>
+                            <li><strong>玩家全生命周期流转</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>Day 1: 生存与发现，安全区砍树抓宠。</li>
+                                    <li>Day 3: 第一桶金，意识到装备消耗与金币价值。</li>
+                                    <li>Day 7: 职业分流，狼去危险区，羊在安全区生产。</li>
+                                    <li>Day 30: 联盟垄断期，羊签供货协议。</li>
+                                    <li>Day 60: 经济闭环与阶级固化，联盟核心控制定价权。</li>
+                                </ul>
+                            </li>
+                            <li><strong>渐进与转化</strong>: 利益驱动，主动寻找合作伙伴。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">2. Why (社交动机)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>效率提升</strong>: 信息差，联盟核心掌握配方与资源点。</li>
+                            <li><strong>内容解锁 (60 Days)</strong>: 经济门槛，社交为交易与信息交换。</li>
+                            <li><strong>情绪价值</strong>: 管理者提供秩序与知识，普通成员以劳动力换生存；加分项为阶级跃升。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">3. What &amp; Where (社交内容与平台构建)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>核心内容</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>经济活动权重 50%：看盘、算账、跑商、制造。</li>
+                                    <li>游戏玩法权重 30%：PVP (狼) / PVE (羊)。</li>
+                                    <li>商务谈判权重 20%：讨价还价、签供货协议。</li>
+                                </ul>
+                            </li>
+                            <li><strong>平台构建</strong>:
+                                <ul class="list-disc pl-5">
+                                    <li>全球交易所：核心社交场所，必须支持订单系统。</li>
+                                    <li>游戏外部平台：市场数据网。</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">4. How (核心系统与地缘渐进)</h4>
+                        <p><strong>A. 社交系统构建</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li><strong>物理分层 (Zoning)</strong>: 安全区 vs 危险区，风险收益挂钩。</li>
+                            <li><strong>物品全掉落/损耗 (Item Sink)</strong>: 装备为消耗品，创造永久需求。</li>
+                        </ul>
+                        <p><strong>B. 大地图地缘渐进</strong></p>
+                        <ul class="list-disc pl-5">
+                            <li>Zone 1: 蓝区 (Blue Zone) — 绝对安全，T1-T3 资源。</li>
+                            <li>Zone 2: 黄区 (Yellow Zone) — 切磋区，死亡不掉落。</li>
+                            <li>Zone 3: 红区 (Red Zone) — 高风险区，死亡全掉落。</li>
+                            <li>Zone 4: 黑区 (Black Zone) — 无法律地带，领地战。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">5. Pressure Model (压力模型)</h4>
+                        <p>对标 Albion/EVE：中义务，高风险。贪婪与恐惧驱动。</p>
+                        <ul class="list-disc pl-5">
+                            <li>表现：策略向，重 ROI。</li>
+                            <li>义务：弹性，关键时刻全员上线。</li>
+                            <li>沟通：情报向，欺诈背叛可发生。</li>
+                            <li>惩罚：极高，全掉落。</li>
+                            <li>环境：契约精神。</li>
+                        </ul>
+
+                        <h4 class="font-bold text-xl mt-4 mb-2">方案评价 (Evaluation)</h4>
+                        <ul class="list-disc pl-5">
+                            <li><strong>优势</strong>: 平衡狼与羊，红线回避。</li>
+                            <li><strong>作为亮点的可行性与代价</strong>: 可行性中高，经济系统调优难度极高，Bots 是天敌。</li>
+                            <li><strong>SLG 过渡核心问题</strong>: 羊的安逸陷阱，需危险区收益指数上升与免死券诱导。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="comic-card bg-yellow-50">
+            <h2 class="section-title">5. 总结对比 (Summary & Comparison)</h2>
+            <p>为了更清晰地展示四种社交框架的差异，我们将从核心逻辑、社群结构、压力模型及适用人群等维度进行横向对比。</p>
+
+            <h3 class="font-bold text-xl mt-4 mb-2">决策辅助矩阵 (CEO Decision Support Matrix)</h3>
+            <p>在选择 CP 时，除了核心玩法体验外，还需要结合团队基因、市场趋势及商业化风险进行综合评估。</p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>评估维度 (Dimension)</th>
+                            <th>CP 1: 传统 SLG</th>
+                            <th>CP 2: 开放世界轻社交</th>
+                            <th>CP 3: 传统 MMO</th>
+                            <th>CP 4: 开放经济生态</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>产能与基因匹配</strong><br>(Team DNA: ROK/COD)</td>
+                            <td><strong>⭐⭐⭐⭐⭐ (完美契合)</strong><br>团队拥有成熟的 ROK/COD 数值框架与 GVE 设计经验。</td>
+                            <td><strong>⭐⭐ (挑战巨大)</strong><br>需要极强的 UGC/社交氛围运营能力。</td>
+                            <td><strong>⭐ (基因不符)</strong><br>需要海量 PVE 内容填充，产能黑洞。</td>
+                            <td><strong>⭐⭐⭐⭐ (高度契合)</strong><br>数值平衡与系统设计是舒适区。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2026 买量市场</strong><br>(UA & Market)</td>
+                            <td><strong>🔴 红海 (Red Ocean)</strong><br>竞品增多，CPI 极高，同质化严重。</td>
+                            <td><strong>🟢 蓝海 (Blue Ocean)</strong><br>泛用户广，CPI 低，需解决留存与变现。</td>
+                            <td><strong>🟡 黄海 (Yellow)</strong><br>获客成本中等，对 IP 还原度要求高。</td>
+                            <td><strong>🟣 细分蓝海 (Niche)</strong><br>受众窄但粘性高，竞品稀缺。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>风险与试错</strong><br>(Risk & Trial)</td>
+                            <td><strong>低风险，低上限</strong><br>下限有保障，上限受限于品类萎缩。</td>
+                            <td><strong>高风险，高上限</strong><br>社交生态成则千万 DAU。</td>
+                            <td><strong>中风险，高成本</strong><br>开发成本高，更新压力大。</td>
+                            <td><strong>高风险，长回报</strong><br>经济系统初期易崩，调通寿命长。</td>
+                        </tr>
+                        <tr>
+                            <td><strong>商业化潜力</strong><br>(Monetization)</td>
+                            <td><strong>⭐⭐⭐⭐⭐</strong><br>简单粗暴，已被验证。</td>
+                            <td><strong>⭐⭐</strong><br>依赖大 DAU 的小额付费。</td>
+                            <td><strong>⭐⭐⭐</strong><br>传统数值/外观付费。</td>
+                            <td><strong>⭐⭐⭐⭐</strong><br>交易税与资源调控，付费隐蔽性好。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">关键决策问题 (Key Questions for CEO)</h3>
+            <ol class="list-decimal pl-6">
+                <li><strong>我们要 DAU 还是 LTV？</strong> DAU 选 CP 2；LTV 选 CP 1 或 CP 4。</li>
+                <li><strong>我们能承受多大的创新风险？</strong> 求稳选 CP 1，求突破选 CP 4。</li>
+                <li><strong>如何应对 2026 的宝可梦市场挤压？</strong> CP 1 成本高，CP 2 容易分流，CP 4 差异化最强。</li>
+            </ol>
+
+            <h3 class="font-bold text-xl mt-6 mb-2">总结 (Conclusion)</h3>
+            <ul class="list-disc pl-5">
+                <li><strong>CP 1 (SLG)</strong>：变现强，但对泛化用户不友好，生态维护成本高。</li>
+                <li><strong>CP 2 (Social)</strong>：符合降肝减负趋势，留存泛化用户，但缺乏长线深度。</li>
+                <li><strong>CP 3 (MMO)</strong>：粘性与荣誉感强，但门槛高导致用户断层。</li>
+                <li><strong>CP 4 (Economic)</strong>：平衡狼羊关系，社会稳定，但经济系统要求极高。</li>
+            </ul>
+            <p>四种模式分别代表不同设计哲学，服务于不同诉求的玩家群体。</p>
+        </div>
+    </div>
+
+</body>
+</html>
