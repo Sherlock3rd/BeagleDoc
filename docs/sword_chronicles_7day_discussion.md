@@ -107,6 +107,9 @@ mindmap
     (👣 适度刺激)
       去危险区是为发财
       而不是去送死
+    (⚖️ 社交偏好)
+      首选: 小队/熟人社交
+      次选: 才是联盟/公会
 ```
 
 > **总结**: 我们的用户是 **"带着爱宠的冒险者"**。他们寻求的是**有底线的冒险**（适度刺激），而非**无底线的杀戮**（纯粹SLG）。他们的核心驱动力是**情感链接**（宠物）与**经济价值**（交易），而非单纯的数值碾压。
@@ -620,7 +623,7 @@ svg { display: block; width: 100%; height: 100%; }
             <h4 style="color: #c62828; margin-top: 0;">❌ 代价 (Costs)</h4>
             <ul style="padding-left: 20px; color: #b71c1c;">
                 <li><strong>内容消耗速度极快 (Rapid Content Consumption)</strong>: 由于缺乏复杂的动态博弈（如PVP、政治），玩家的乐趣完全集中在"数值成长"上。这意味着必须提供海量的关卡和数值深度来填补"挂机产出"，一旦数值封顶，游戏乐趣会断崖式下跌。</li>
-                <li><strong>向SLG转化的巨大鸿沟 (The SLG Gap)</strong>: 这是最致命的风险。玩家在"安全区"养成的"挂机、安逸、零风险"习惯，与SLG要求的"手动、博弈、高风险"截然对立。将这批用户推向大地图PVP时，极可能出现严重的"水土不服"导致大面积流失。</li>
+                <li><strong>向SLG转化的巨大鸿沟 (The SLG Gap)</strong>: 这是最致命的风险。<strong>社交形态的断层</strong>：CP1 构建的是一种"渗透式"的和谐社交（小队间互助、甚至跨队帮忙），这与 SLG 要求的"高度统一、排他性强"的联盟社交（强争夺、执行力、一致对外）存在根本冲突。前期的"温情脉脉"会成为后期"残酷战争"的阻碍，导致玩家无法适应 SLG 的铁血逻辑。</li>
                 <li><span style="font-size: 0.9em; opacity: 0.8;">⚠️ <strong>开发量激增 (Scope Creep)</strong>: 7日版本需额外开发"家族挂机"、"属性宝箱"等整套系统，工作量显著增加。</span></li>
             </ul>
         </div>
@@ -846,9 +849,10 @@ svg { display: block; width: 100%; height: 100%; }
 
 ---
 
-### CP3: 联盟中心制 (Alliance Centric) - CoD Dark Chest Mode
-*   **参考游戏 (Reference)**: *Call of Dragons (万龙觉醒) - Dark Chests / WoW (Raid)*
-*   **社交主体**: **联盟 (Alliance)**。小队 (Squad) 是联盟下放的**临时任务单元**。
+### CP3: 联盟中心制 (Alliance Centric) - Top Heroes Rally Mode
+*   **参考游戏 (Reference)**: *Top Heroes (头号英雄) / Call of Dragons (万龙觉醒)*
+*   **核心逻辑**: 将 *Top Heroes* 中的**集结战斗 (Rally)**，转化为联盟框架下的**小队副本**。
+*   **社交主体**: **联盟 (Alliance)**。小队 (Squad) 是联盟下放的**临时任务单元**。这保证了前后社交关系的一致性（从一开始就是为了联盟而战）。
 
 #### 1. 小队层级 (Squad Level)
 > 不再是独立的社交层级，而是联盟组织活动的一种“编制形式”。
