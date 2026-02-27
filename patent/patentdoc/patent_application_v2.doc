@@ -1,0 +1,114 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+body { font-family: "SimSun", "Times New Roman", serif; font-size: 12pt; line-height: 1.5; margin: 1in; }
+h1 { font-size: 18pt; font-weight: bold; text-align: center; margin-bottom: 24pt; }
+h2 { font-size: 14pt; font-weight: bold; margin-top: 18pt; margin-bottom: 12pt; }
+h3 { font-size: 12pt; font-weight: bold; margin-top: 12pt; margin-bottom: 6pt; }
+h4 { font-size: 12pt; font-weight: bold; font-style: italic; margin-top: 10pt; margin-bottom: 6pt; }
+p { margin-bottom: 10pt; text-align: justify; }
+ul { margin-bottom: 10pt; }
+li { margin-bottom: 5pt; }
+code { font-family: "Courier New", monospace; background-color: #f0f0f0; padding: 2px 4px; }
+</style>
+</head>
+<body>
+<h1>专利申请方案：基于动态分线与物理映射的MMO服务器无缝融合技术</h1>
+<p><i>(Method for Seamless MMO Server Merging Based on Dynamic Branching and Physical Mapping)</i></p>
+<h2>1. 技术领域</h2>
+<p>本发明涉及网络游戏服务器架构领域，特别是涉及一种大规模多人在线游戏（MMO）中基于地理空间切片与动态负载均衡的服务器实例管理及数据合并技术。</p>
+<h2>2. 背景技术与现有技术痛点</h2>
+<p>在现有的MMO服务器架构中，普遍存在以下技术瓶颈：</p>
+<p><b>1.</b> <b>静态服务器架构导致的社交割裂 (Static Sharding Isolation):</b></p>
+<ul>
+<li>  <b>现有技术：</b> 传统架构在用户注册阶段即要求选择固定的物理服务器（Server ID），数据被强绑定于该单一数据库实例。</li>
+<li>  <b>缺陷：</b> 这种强绑定导致不同服务器间的用户数据无法实时交互。一旦目标服务器达到并发连接数上限（CCU Cap），新用户被迫分流至其他服务器，造成预定社交关系的物理阻断。</li>
+</ul>
+<p><b>2.</b> <b>资源利用率与用户体验的矛盾 (Resource Utilization vs UX):</b></p>
+<ul>
+<li>  <b>现有技术：</b> 为了应对开服峰值，运营商往往开启大量服务器。</li>
+<li>  <b>缺陷：</b> 随着生命周期推移，用户流失导致大量“僵尸服”（低活跃服务器），不仅造成硬件资源浪费，还破坏了依赖大规模用户互动的游戏生态。</li>
+</ul>
+<p><b>3.</b> <b>传统合服技术的滞后性与破坏性:</b></p>
+<ul>
+<li>  <b>现有技术：</b> 传统的服务器合并（Server Merge）通常作为事后补救措施，需要停机维护，涉及复杂的离线数据清洗和ID冲突解决。</li>
+<li>  <b>缺陷：</b> 这种操作通常发生在运营后期，且对用户体验具有破坏性（如强制改名、排行榜重置），无法解决开服初期的生态密度问题。</li>
+</ul>
+<h2>3. 发明内容与核心技术逻辑</h2>
+<p>本发明提出了一种<b>“基于预设拓扑结构的动态实例组装系统”</b>。其核心在于打破传统的“服务器”概念，将游戏世界划分为可动态实例化的“地理切片（Zone）”，并通过“物理映射标签”在时间轴上实现确定性的自动合并。</p>
+<p>本方案涉及两个部分的控制流程：</p>
+<ul>
+<li>  <b>A - 用户与交互界面的交互流程：</b> 侧重于客户端软件系统的模块构成及用户操作反馈。</li>
+<li>  <b>B - 底层请求与配置流程：</b> 侧重于服务器端的资源分配、动态负载均衡及数据合并逻辑。</li>
+</ul>
+<h2>4. 具体实施方式 (Detailed Description)</h2>
+<h3>4.1 部分 A：用户与交互界面的交互流程 (User Interaction Flow)</h3>
+<h4>4.1.1 客户端软件系统架构</h4>
+<p>为了实现动态分线与无缝融合，客户端软件系统主要由以下模块构成：</p>
+<p><b>1.</b> <b>UI展示层 (View Layer):</b> 负责渲染动态地图界面，展示可选区域（Region A/B/C/D）及其负载状态（如“畅通”、“拥挤”、“爆满”）。</p>
+<p><b>2.</b> <b>区域管理模块 (Zone Manager - Client):</b> 负责维护当前的区域列表数据，解析服务器下发的区域元数据（包括ZoneID、物理标签、倒计时状态）。</p>
+<p><b>3.</b> <b>网络通信层 (Network Layer):</b> 负责封装用户的选区请求（ZoneSelectReq），并处理服务器的动态路由指令（RedirectNtf）。</p>
+<h4>4.1.2 交互流程详解（主场景：初始选区）</h4>
+<p><b>1.</b> <b>界面初始化：</b> 用户登录后，客户端向服务器请求当前可用的“新旅程”列表。</p>
+<p><b>2.</b> <b>地图展示：</b> UI层根据返回数据，展示一张完整的世界地图，被划分为 A、B、C、D 四个物理区域。此时用户看不到具体的服务器ID，只能看到基于地理位置的选项。</p>
+<p><b>3.</b> <b>用户决策：</b> 用户根据社交约定（如“我们去左上角”）点击“Region A”。</p>
+<p><b>4.</b> <b>请求发送：</b> 客户端发送选区请求，携带参数 <code>{Region: "A", Version: "New_Journey"}</code>。</p>
+<p><b>5.</b> <b>反馈响应：</b></p>
+<ul>
+<li>  若请求成功，客户端直接加载游戏场景。</li>
+<li>  若触发溢出逻辑（见下文），UI层可能弹出提示：“该区域当前火爆，正在为您分配至扩展分线（承诺后续合并）”，用户确认后进入。</li>
+</ul>
+<h3>4.2 部分 B：底层请求、数据与服务器的配置流程 (Configuration & Underlying Process)</h3>
+<h4>4.2.1 服务器端系统架构</h4>
+<p><b>1.</b> <b>网关/负载均衡器 (Gateway):</b> 处理所有客户端连接，维护 <code>SessionID -> ZoneInstance</code> 的路由表。</p>
+<p><b>2.</b> <b>区域管理器 (Zone Manager Service):</b> 核心中枢，负责监控所有Zone实例的负载，动态创建/销毁容器，并维护物理映射关系。</p>
+<p><b>3.</b> <b>Zone实例集群 (Zone Instances):</b> 动态生成的轻量级游戏服务进程（如 Docker 容器）。</p>
+<p><b>4.</b> <b>大世界数据库 (Mega-Server DB):</b> 最终数据归档的目标数据库。</p>
+<h4>4.2.2 流程详解：主场景（常规分配）</h4>
+<p><b>1.</b> <b>接收请求：</b> 网关接收到用户对 "Region A" 的选择请求。</p>
+<p><b>2.</b> <b>查询可用性：</b> 网关询问区域管理器：“Region A 当前有哪些可用实例？”</p>
+<p><b>3.</b> <b>负载判断：</b> 区域管理器检查 <code>Zone_A_1</code> 的实时负载（例如 35/50 人）。</p>
+<p><b>4.</b> <b>绑定配置：</b></p>
+<ul>
+<li>  因负载未满，管理器返回 <code>Zone_A_1</code> 的连接信息。</li>
+<li>  网关建立路由映射：<code>User_Session -> Zone_A_1</code>。</li>
+<li>  <b>关键配置：</b> 在用户数据中写入物理标签 <code>Physical_Tag: Region_A_Group_1</code>。</li>
+</ul>
+<h4>4.2.3 流程详解：子场景（动态溢出/Overflow）</h4>
+<p>当短时间内大量用户涌入 Region A，触发<b>高负载</b>场景：</p>
+<p><b>1.</b> <b>触发监控：</b> 区域管理器检测到 <code>Zone_A_1</code> 负载超过 80%（或等待队列 > 阈值）。</p>
+<p><b>2.</b> <b>实例派生：</b> 管理器指令云设施启动新实例 <code>Zone_A_1_Overflow</code>。</p>
+<p><b>3.</b> <b>同源标签配置：</b></p>
+<ul>
+<li>  系统为新实例配置与主实例相同的<b>同源标签 (Homologous Tag)</b>：<code>Group_ID: Alpha_Squad</code>。</li>
+<li>  这意味着 <code>Zone_A_1</code> 和 <code>Zone_A_1_Overflow</code> 在逻辑上属于同一个“未来的服务器”。</li>
+</ul>
+<p><b>4.</b> <b>流转变化：</b> 后续对 "Region A" 的请求将被自动重定向至 <code>Zone_A_1_Overflow</code>。</p>
+<h4>4.2.4 流程详解：特殊场景（动态合并/Merger）</h4>
+<p>当满足预设条件（如开服48小时或生态成熟）时，触发合并流程：</p>
+<p><b>1.</b> <b>锁定阶段：</b> 区域管理器锁定 <code>Group_ID: Alpha_Squad</code> 下的所有实例（Zone A/B/C/D 及其溢出线），停止接纳新用户。</p>
+<p><b>2.</b> <b>数据迁移配置：</b></p>
+<ul>
+<li>  底层数据库执行批处理：将分散在各个 Zone 临时库中的数据，依据 <code>Physical_Tag</code> 迁移至 <code>Mega_Server_Alpha_DB</code>。</li>
+<li>  由于预先使用了全局唯一ID（UUID），此过程无需处理ID冲突。</li>
+</ul>
+<p><b>3.</b> <b>信令流转更新：</b></p>
+<ul>
+<li>  网关更新路由表：所有原 <code>Zone_A_1</code> 及 <code>Zone_A_1_Overflow</code> 的活跃连接，目标地址瞬间切换至新的 <code>Mega_Server_Process</code>。</li>
+<li>  客户端无需断线重连，仅感知到周围玩家数量突然增加（完成了物理汇合）。</li>
+</ul>
+<h2>5. 权利要求书 (Claims)</h2>
+<p><b>1.</b> 一种基于动态分线与物理映射的大规模多人在线游戏服务器架构方法，其特征在于，包括：</p>
+<ul>
+<li>  <b>初始分流步骤</b>：接收客户端的区域选择请求，将客户端连接分配至对应的初始区域实例（Zone Instance）；</li>
+<li>  <b>动态溢出步骤</b>：监控所述初始区域实例的负载状态，当负载超过预设阈值时，自动创建具有相同物理空间映射标签的溢出实例，并将后续请求重定向至该溢出实例；</li>
+<li>  <b>数据合并步骤</b>：在满足预设合并条件时，根据所述物理空间映射标签，将多个关联实例的用户数据迁移至同一个目标服务器数据库中，并将所有相关客户端连接切换至该目标服务器。</li>
+</ul>
+<p><b>2.</b> 根据权利要求1所述的方法，其特征在于，所述物理空间映射标签用于标识该实例对应的游戏世界地理区域及所属的服务器组。</p>
+<p><b>3.</b> 根据权利要求1所述的方法，其特征在于，所述合并操作在不关闭客户端连接的情况下通过网关层的路由热更新实现。</p>
+<h2>6. 本技术方案的有益效果</h2>
+<p><b>1.</b> <b>社交连续性保障：</b> 通过同源标签机制，确保了即使在分流阶段被隔离的玩家，在最终合并后必然处于同一服务器实例。</p>
+<p><b>2.</b> <b>极高的资源弹性：</b> 允许服务器架构从“微型实例集群”平滑演进为“单体巨型实例”。</p>
+<p><b>3.</b> <b>生态优胜劣汰：</b> 支持在合并阶段剔除无效数据，保证大世界服务器的生态密度。</p>
+</body></html>
