@@ -946,6 +946,7 @@
         classDef weak fill:#e1f5fe,stroke:#0277bd
         classDef normal fill:#e8f5e9,stroke:#2e7d32
         classDef strong fill:#fff3e0,stroke:#ef6c00
+        classDef forced fill:#ffebee,stroke:#c62828,stroke-dasharray: 5 5
         classDef start fill:#f9f,stroke:#333,stroke-width:2px
 
         Start(["玩家发起匹配"]) --> CheckCP{"战力判定"}
@@ -981,20 +982,28 @@
 
         %% Scene 3: Strong (Right)
         CheckCP -- "CP 大于 Cap" --> Strong["场景3: 高战玩家"]
-        Strong --> LocalStrong["阶段1: 本服小池 Local_Pool"]
+        Strong --> CheckEra{"副本是否为当期?"}
+
+        CheckEra -- "否 (碾压旧本)" --> ForcedLocal["强制锁定: 本服小池"]
+        ForcedLocal --> FilterLocal{"本服筛选"}
+        FilterLocal -- "有人" --> MatchLocalStrong(["匹配成功: 本服膜拜"])
+        FilterLocal -- "无人(自然隔离)" --> MatchAI_Strong["超时: 分配AI"]
+        MatchAI_Strong --> MatchLocalStrong
+
+        CheckEra -- "是 (当期开荒)" --> LocalStrong["阶段1: 本服小池 Local_Pool"]
         LocalStrong -- "10s未满" --> CheckProgressStrong{"进度判定"}
         CheckProgressStrong -- "进度一致" --> GlobalStrong["阶段2: 扩展至全服大池 Global_Pool"]
-        CheckProgressStrong -- "进度不符" --> MatchAI_Strong["阶段3: 分配AI"]
+        CheckProgressStrong -- "进度不符" --> MatchAI_Strong
 
-        LocalStrong -- "匹配成功" --> MatchLocalStrong(["匹配成功: 本服膜拜"])
+        LocalStrong -- "匹配成功" --> MatchLocalStrong
         
         GlobalStrong -- "匹配成功" --> MatchGlobalStrong(["匹配成功: 跨服碾压"])
         GlobalStrong -- "超时" --> MatchAI_Strong
-        MatchAI_Strong --> MatchGlobalStrong
 
         class Weak,LocalWeak,CheckProgressWeak,GlobalWeak,MatchWeakSuccess,MatchAI_Weak,MatchNormal_Weak,MatchStrong_Weak weak
         class Normal,LocalNormal,CheckProgressNormal,GlobalNormal,MatchLocalNormal,MatchGlobalNormal,MatchAI_Normal normal
-        class Strong,LocalStrong,CheckProgressStrong,GlobalStrong,MatchLocalStrong,MatchGlobalStrong,MatchAI_Strong strong
+        class Strong,LocalStrong,CheckProgressStrong,GlobalStrong,MatchLocalStrong,MatchGlobalStrong,MatchAI_Strong,CheckEra strong
+        class ForcedLocal,FilterLocal forced
 
     </div>
 
@@ -1230,24 +1239,36 @@
                 
                 <path d="M100,90 L180,90" stroke="#ef6c00" stroke-width="2" marker-end="url(#arrow-strong)"/>
                 
-                <g transform="translate(230, 90)">
-                    <rect x="-40" y="-30" width="80" height="60" rx="5" fill="#fff3e0" stroke="#ef6c00"/>
-                    <text x="0" y="-10" font-size="12" text-anchor="middle" fill="#ef6c00">Local Pool</text>
-                    <text x="0" y="15" font-size="10" text-anchor="middle" fill="#666">10s Wait</text>
+                <!-- Progress Check -->
+                <g transform="translate(210, 100)">
+                    <polygon points="0,-30 40,0 0,30 -40,0" fill="#fff3e0" stroke="#ef6c00"/>
+                    <text x="0" y="5" font-size="10" text-anchor="middle" fill="#ef6c00">Check</text>
                 </g>
 
-                <path d="M280,90 L360,90" stroke="#ef6c00" stroke-width="2" marker-end="url(#arrow-strong)"/>
+                <!-- Branch 1: Out-Era -->
+                <path d="M250,100 L310,60" stroke="#ef6c00" stroke-width="2" marker-end="url(#arrow-strong)"/>
+                <text x="280" y="70" font-size="10" fill="#ef6c00" transform="rotate(-30 280,70)">Out-Era</text>
+
+                <g transform="translate(360, 60)">
+                    <rect x="-40" y="-30" width="80" height="60" rx="5" fill="#ffebee" stroke="#c62828" stroke-dasharray="5,5"/>
+                    <text x="0" y="-10" font-size="12" text-anchor="middle" fill="#c62828">Local Lock</text>
+                    <text x="0" y="15" font-size="10" text-anchor="middle" fill="#c62828">Isolated</text>
+                </g>
                 
-                <g transform="translate(410, 90)">
-                    <rect x="-40" y="-30" width="80" height="60" rx="5" fill="#fff3e0" stroke="#ef6c00"/>
-                    <text x="0" y="-10" font-size="12" text-anchor="middle" fill="#ef6c00">Global Pool</text>
-                    <text x="0" y="15" font-size="10" text-anchor="middle" fill="#666">Expansion</text>
+                <path d="M410,60 L480,60" stroke="#c62828" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-strong)"/>
+                <g transform="translate(510, 60)">
+                     <text x="0" y="5" font-size="12" text-anchor="middle" fill="#666">AI (Solo)</text>
                 </g>
 
-                <path d="M460,90 L540,90" stroke="#999" stroke-width="2" stroke-dasharray="4,4" marker-end="url(#arrow-strong)"/>
-                
-                <g transform="translate(570, 90)">
-                    <text x="0" y="5" font-size="12" text-anchor="middle" fill="#666">AI Bot</text>
+
+                <!-- Branch 2: In-Era -->
+                <path d="M250,100 L310,140" stroke="#ef6c00" stroke-width="2" marker-end="url(#arrow-strong)"/>
+                <text x="280" y="140" font-size="10" fill="#ef6c00" transform="rotate(30 280,140)">In-Era</text>
+
+                <g transform="translate(360, 140)">
+                    <rect x="-40" y="-30" width="80" height="60" rx="5" fill="#e8f5e9" stroke="#2e7d32"/>
+                    <text x="0" y="-10" font-size="12" text-anchor="middle" fill="#2e7d32">Same Batch</text>
+                    <text x="0" y="15" font-size="10" text-anchor="middle" fill="#c62828">NO Old Server</text>
                 </g>
             </svg>
         </div>
@@ -1259,7 +1280,7 @@
             </div>
             <div style="background:#fff8e1; border:1px solid #ffecb3; padding:12px; border-radius:6px;">
                 <div style="color:#ef6c00; font-weight:bold; margin-bottom:5px;">痛点修正</div>
-                <div style="font-size:0.95em; color:#333; line-height:1.4;">避免高战玩家长时间匹配不到人，优先本服展示实力，其次跨服。</div>
+                <div style="font-size:0.95em; color:#333; line-height:1.4;">防止跨服匹配到更老服务器的“巨佬”，导致本服第一变成跨服小弟。</div>
             </div>
         </div>
         
@@ -1271,37 +1292,41 @@
             <div style="font-weight:bold; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">匹配规则流程：</div>
             
             <div style="display:flex; flex-direction:column; gap:10px;">
-                <!-- Step 1 -->
+                <!-- Step 1: Check -->
                 <div style="display:flex; align-items:flex-start; background:white; border:1px solid #e0e0e0; border-radius:6px; padding:10px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                    <div style="background:#ef6c00; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">阶段一</div>
+                    <div style="background:#d84315; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">核心判定</div>
                     <div>
-                        <div style="font-weight:bold; color:#ef6c00; margin-bottom:3px;">本服优先 (Local First)</div>
+                        <div style="font-weight:bold; color:#d84315; margin-bottom:3px;">进度一致性判定 (Progress Consistency)</div>
                         <ul style="margin:0; padding-left:20px; color:#555; font-size:0.9em; line-height:1.5;">
-                            <li>进入 <code>Local_Pool</code>。</li>
-                            <li><strong>等待 10秒</strong>：优先寻找本服队友，享受“带飞本服萌新”的成就感。</li>
+                            <li><strong>判定逻辑</strong>：比较 <code>Server_Progress</code> (服务器进度) 与 <code>Dungeon_Era</code> (副本进度)。</li>
+                            <li><strong>进度超前 (Out-Era)</strong>：若服务器进度远超副本进度（如老服打新服保护期的副本），**无法进入 `Global_Pool`**。</li>
+                            <li><strong>结果</strong>：被强制锁定在 <code>Local_Pool</code>。</li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- Step 2 -->
+                <!-- Step 2: Isolation -->
                 <div style="display:flex; align-items:flex-start; background:white; border:1px solid #e0e0e0; border-radius:6px; padding:10px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                    <div style="background:#f57c00; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">阶段二</div>
+                    <div style="background:#ef6c00; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">筛选逻辑</div>
                     <div>
-                        <div style="font-weight:bold; color:#f57c00; margin-bottom:3px;">全服扩展 (Global Expansion)</div>
+                        <div style="font-weight:bold; color:#ef6c00; margin-bottom:3px;">本服筛选与隔离</div>
                         <ul style="margin:0; padding-left:20px; color:#555; font-size:0.9em; line-height:1.5;">
-                            <li>若 10秒 未匹配成功，触发 <strong>进度判定</strong>。</li>
-                            <li>扩展至 <code>Global_Pool</code>，寻找同进度服务器的其他高战或普通玩家。</li>
+                            <li><strong>本服匹配</strong>：尝试在 <code>Local_Pool</code> 中寻找队友（高战或低战）。</li>
+                            <li><strong>自然隔离</strong>：若本服无匹配对象（因为老服玩家不打低级本），则一直等待直到超时。</li>
+                            <li><strong>AI 兜底</strong>：超时后分配 AI 队友（单机体验）。</li>
                         </ul>
                     </div>
                 </div>
 
-                <!-- Step 3 -->
+                <!-- Step 3: In-Era -->
                 <div style="display:flex; align-items:flex-start; background:white; border:1px solid #e0e0e0; border-radius:6px; padding:10px; box-shadow:0 1px 2px rgba(0,0,0,0.05);">
-                    <div style="background:#757575; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">阶段三</div>
+                    <div style="background:#2e7d32; color:white; font-weight:bold; padding:2px 8px; border-radius:4px; font-size:0.85em; margin-right:10px; white-space:nowrap;">正常情况</div>
                     <div>
-                        <div style="font-weight:bold; color:#757575; margin-bottom:3px;">AI 兜底</div>
+                        <div style="font-weight:bold; color:#2e7d32; margin-bottom:3px;">当期体验 (In-Era)</div>
                         <ul style="margin:0; padding-left:20px; color:#555; font-size:0.9em; line-height:1.5;">
-                            <li>若总等待时间超过 30秒，分配 AI 队友。</li>
+                            <li><strong>本服优先</strong>：优先匹配本服玩家。</li>
+                            <li><strong>同届全服</strong>：若本服无人，扩展至 <strong>同批次服务器 (Same Batch)</strong>。</li>
+                            <li><strong>老服屏蔽</strong>：<strong style="color:#c62828;">绝对禁止</strong> 匹配到进度更前的老服玩家，避免“鸡头变凤尾”。</li>
                         </ul>
                     </div>
                 </div>
@@ -1400,7 +1425,46 @@
         </div>
     </div>
 
-    <!-- Row 3: Protection (Removed) -->
+    <!-- Row 3: Protection (Full Width) -->
+    <div style="background:#fff3e0; border-left:5px solid #ff9800; padding:20px; border-radius:0 4px 4px 0; margin-bottom:24px; box-shadow: 0 1px 3px rgba(255,152,0,0.1);">
+        <h4 style="margin-top:0; color:#e65100; font-size:1.2em !important; margin-bottom:15px;">
+            4. 跨服战力保护 (Chicken Head Protection)
+        </h4>
+        
+        <div style="display:flex; gap:15px; align-items:flex-start; margin-bottom:20px; background:rgba(255,255,255,0.5); padding:15px; border-radius:6px; border:1px solid #ffe0b2;">
+            <div style="font-size:24px;">🛡️</div>
+            <div>
+                <strong style="color:#e65100;">核心痛点：全服第一变小弟</strong>
+                <div style="font-size:0.95em; color:#bf360c; margin-top:5px; line-height:1.5;">
+                    Server 001 (100k战力) vs Server 010 (10k战力)。<br>
+                    若直接匹配，新服的大R玩家在老服玩家面前毫无存在感，严重挫伤付费体验。
+                </div>
+            </div>
+        </div>
+
+        <h5 style="color:#e65100; font-size:1.1em; margin:15px 0 10px 0;">解决方案：进度一致性判定 (Progress Consistency)</h5>
+        <ul style="padding-left:20px; margin:0; line-height:1.7; color:#333;">
+            <li style="margin-bottom:8px;">
+                <strong>新本保护期 (Protection Era)</strong>
+                <div style="color:#555; font-size:0.95em;">
+                    新副本解锁后的 <strong>X天内</strong> (如30天)，仅允许 <strong>同进度 (In-Era)</strong> 服务器匹配。<br>
+                    <code style="background:#fff; padding:2px 5px; border-radius:3px; color:#e65100; border:1px solid #ffcc80;">|Server_Progress - Dungeon_Unlock| <= Gap</code>
+                </div>
+            </li>
+            <li style="margin-bottom:8px;">
+                <strong>池子隔离 (Isolation)</strong>
+                <div style="color:#555; font-size:0.95em;">
+                    <strong>进度超前 (Out-Era)</strong> 的老服玩家被禁止进入 Global_Pool，强制分流至 <code>Local_Pool</code> (本服/AI)。
+                </div>
+            </li>
+            <li>
+                <strong>追赶机制 (Catch-up)</strong>
+                <div style="color:#555; font-size:0.95em;">
+                    当新服世界等级/平均战力达到老服 <strong>90%</strong> 时，解除隔离。
+                </div>
+            </li>
+        </ul>
+    </div>
 
 
     <h3>4.4 规则总结表 (Rule Summary)</h3>
@@ -1433,9 +1497,9 @@
                 <tr>
                     <td><strong>高战 (Strong)</strong></td>
                     <td><code>CP > Cap</code></td>
-                    <td>本服 -> 全服 (Local -> Global)</td>
-                    <td>本服玩家 -> 全服玩家 -> AI</td>
-                    <td>快速通关 (Fast Clear)</td>
+                    <td>本服小池 (Local_Pool)</td>
+                    <td>本服玩家 (极少) -> AI</td>
+                    <td>"我是头部" (无降维打击)</td>
                 </tr>
             </tbody>
         </table>
