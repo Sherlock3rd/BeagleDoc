@@ -10,7 +10,7 @@
 - 密钥管理：使用本机环境变量与 GitHub Secrets；严禁将任何密钥写入仓库或日志
 
 ## 3. 分支策略
-- 主干：main（仅通过受控合并进入）
+- 主干：master（仅通过受控合并进入）
 - 功能分支：feature/<模块>-<简述>
 - 修复分支：fix/<模块>-<问题>
 - 文档分支：docs/<范围>-<简述>
@@ -24,7 +24,7 @@
 
 ## 5. 更新与发布流程（最小闭环）
 1) 创建分支  
-   - 从 main 拉取最新，再创建对应分支（feature/fix/docs）
+   - 从 master 拉取最新，再创建对应分支（feature/fix/docs）
 2) 实施修改  
    - 遵循文档维护规范（Hub First + Dual Indexing），涉及发布内容时同步维护 index.html 与 PUBLISHED_DOCS.md
 3) 自检与验证  
@@ -37,7 +37,7 @@
 5) 发起合并请求（PR）  
    - 标题包含 type/scope/summary；描述列出变更点、影响范围、自检项与验证结果
 6) 评审与合并  
-   - 通过评审后，Squash & Merge 到 main；保留清晰的变更日志
+   - 通过评审后，Squash & Merge 到 master；保留清晰的变更日志
 7) 同步会话与规则  
    - 在 session/session.md（总控）登记流程级更新
    - 若本次变更指向具体需求文档，同步更新对应 session/requirements/<doc_slug>.md
@@ -55,11 +55,11 @@
 - 标题：<type>(<scope>): <summary>
 - 内容：变更列表、理由与影响、验证清单、回滚方案
 - 标签：docs / rules / session / spec / publish / breaking-change（如有）
-- 合并：优先 Squash，保持 main 历史整洁；必要时使用 Merge Commit 保留分支结构
+- 合并：优先 Squash，保持 master 历史整洁；必要时使用 Merge Commit 保留分支结构
 
 ## 8. 版本与标签（如涉及发布）
 - 版本语义化：文档/规范以 vX.Y 维护（如 v1.0 初始化）
-- 标签：在 main 上打轻量标签（docs-v1.0、spec-git-update-v1.0）
+- 标签：在 master 上打轻量标签（docs-v1.0、spec-git-update-v1.0）
 - 变更日志：在 PR 中记录，必要时维护 CHANGELOG 段落
 
 ## 9. 密钥与权限管理（强制规范）
@@ -78,7 +78,7 @@
 ## 11. 常用命令（PowerShell 示例）
 - 拉取与分支：  
   - git fetch origin  
-  - git checkout -b docs/spec-git-update origin/main
+  - git checkout -b docs/spec-git-update origin/master
 - 提交与推送：  
   - git add .  
   - git commit -m "docs: spec - add git update spec v1.0"  

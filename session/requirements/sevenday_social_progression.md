@@ -66,7 +66,7 @@
 - fe53497 | fix: publish - restore hub index entries and generator mapping
 - 31d5cd2 | fix: publish - add missing sevenday svg assets for remote rendering
 - 3b81c22 | docs: publish - update cp2/cp3 scope and cp2 timeline curve
-- [待生成] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD
+- [已推送] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD
 
 ## 6. 后续维护清单
 - 文案改动后，同步更新 docs 与 publish，并更新本文件“需求级变更记录”

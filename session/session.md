@@ -39,7 +39,8 @@
 - 2026-04-01 | fe53497 | fix: publish - restore hub index entries and generator mapping | 修复 Hub 文档入口缩减与生成映射
 - 2026-04-01 | 31d5cd2 | fix: publish - add missing sevenday svg assets for remote rendering | 补齐远端缺失 SVG 资源
 - 2026-04-01 | 3b81c22 | docs: publish - update cp2/cp3 scope and cp2 timeline curve | 更新 CP2/CP3 Scope，重绘 CP2 时间轴，精简冗余文本
-- 2026-04-01 | [待生成] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD | 根据反馈重构七日社交方案、精简时间轴并更新图示
+- 2026-04-01 | [已推送] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD | 根据反馈重构七日社交方案、精简时间轴并更新图示
+- 2026-04-01 | [已推送] | chore: clean up temp files and sensitive scripts from root directory | 删除根目录下临时生成的调试脚本、PAT 记录及冗余的垃圾文件
 
 ## 5. 运行规则（会话继承）
 - 新对话启动时，先读取本文件的“文档状态总览 + 提交记录总账”
