@@ -12,6 +12,66 @@ OUTPUT_FILE = os.path.join(PROJECT_ROOT, "index.html")
 
 DOCUMENTS = [
     {
+        "title": u"⚔️ 副本匹配规则详细方案",
+        "desc": u"深度对标 WoW/Albion/仗剑传说，确立了“本服优先 -> 进度门槛 -> 全服扩展”的 Beagle 匹配算法。",
+        "html_name": "matchmaking_rules_analysis.html",
+        "source_name": "matchmaking_rules_analysis.html",
+        "href": "docs/matchmaking_rules_analysis.html",
+        "tag": "Core",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"🤝 7日版本社交生态框架",
+        "desc": u"深度解析 CP1/CP2/CP3 三种社交形态（仗剑/蜂巢/CoD），包含小队与联盟的共生关系及数值压力模型。",
+        "html_name": "concept_economic_symbiosis_squad.html",
+        "source_name": "concept_economic_symbiosis_squad.html",
+        "href": "docs/concept_economic_symbiosis_squad.html",
+        "tag": "Hot",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"🗺️ 七日社交渐进与地图玩法 CP",
+        "desc": u"CP-A/CP-B/CP-C 时间轴与环状 GVE 结构示意，强调“熟人/生人、渗透/隔离”的体验主轴。",
+        "html_name": "sevenday_social_progression.html",
+        "source_name": "map/sevenday_social_progression.md",
+        "tag": "Published",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"🐲 GVE 联盟 Boss 设计 v2.0",
+        "desc": u"定义了“分层实时预约”机制 (Phased Real-Time Booking)，解决在线率与公平性矛盾。",
+        "html_name": "GVE_Alliance_Boss_Design_v2.html",
+        "source_name": "GVE_Alliance_Boss_Design_v2.html",
+        "href": "docs/GVE_Alliance_Boss_Design_v2.html",
+        "tag": "v2.0",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"📊 社交框架整体汇报",
+        "desc": u"社交方案的综合汇报，包含可视化图表与决策矩阵。",
+        "html_name": "social_framework_report.html",
+        "source_name": "social_framework_report.html",
+        "href": "docs/social_framework_report.html",
+        "tag": "Report",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"🏕️ 城镇布局与迁城系统设计",
+        "desc": u"定义了 7日版本的城镇/野外双层空间结构，以及全域抢占式（Scramble）车位迁城机制。",
+        "html_name": "town_relocation_design.html",
+        "source_name": "town_relocation_design.md",
+        "tag": "New",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"⚔️ PVP 地块玩法详细设计",
+        "desc": u"定义了 7日版本的 PVP 地块分级体系（L1/L2）、搜打拿核心循环与地图落位原则。",
+        "html_name": "pvp_tile_detailed_design.html",
+        "source_name": "pvp_tile_detailed_design.md",
+        "tag": "New",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
         "title": u"🗺️ 大地图pvp地块战斗玩法cp",
         "desc": u"包含 PVP/PVE 核心循环、CP1/CP2/CP3 玩法分层及演进路线规划。",
         "html_name": "beagle_map_gameplay_design.html",
@@ -28,11 +88,11 @@ DOCUMENTS = [
         "btn_text": u"🚀 进入文档"
     },
     {
-        "title": u"📊 社交分析报告总览",
-        "desc": u"深度拆解 ROK、逆水寒等竞品社交系统，提供设计参考依据。",
-        "html_name": "Beagle_Social_Analysis_Report.html",
-        "source_name": None,
-        "tag": "Analysis",
+        "title": u"🌿 合线方案CP",
+        "desc": u"文档版本控制、分支管理流程及协作规范说明。",
+        "html_name": "branching_design_spec.html",
+        "source_name": "branching_design_spec.html",
+        "tag": "Meta",
         "btn_text": u"🚀 进入文档"
     },
     {
@@ -52,11 +112,19 @@ DOCUMENTS = [
         "btn_text": u"🚀 进入文档"
     },
     {
-        "title": u"🌿 合线方案CP",
-        "desc": u"文档版本控制、分支管理流程及协作规范说明。",
-        "html_name": "branching_design_spec.html",
-        "source_name": "branching_design_spec.html",
-        "tag": "Meta",
+        "title": u"📊 社交分析报告总览",
+        "desc": u"深度拆解 ROK、逆水寒等竞品社交系统，提供设计参考依据。",
+        "html_name": "Beagle_Social_Analysis_Report.html",
+        "source_name": None,
+        "tag": "Analysis",
+        "btn_text": u"🚀 进入文档"
+    },
+    {
+        "title": u"🔐 登录流程设计",
+        "desc": u"梳理登录入口、账号态与异常分支，统一新手首日转化前的关键触点。",
+        "html_name": "login_flow_design.html",
+        "source_name": "login_flow_design.md",
+        "tag": "Flow",
         "btn_text": u"🚀 进入文档"
     }
 ]
@@ -236,7 +304,7 @@ CARD_TEMPLATE = u"""
                 <p class="text-gray-600">{desc}</p>
             </div>
             <div>
-                <a href="publish/{html_name}" class="btn-jump">{btn_text}</a>
+                <a href="{href}" class="btn-jump">{btn_text}</a>
                 <div class="doc-meta">
                     <span>📅 更新: {date}</span>
                     <span class="badge">{tag}</span>
@@ -284,7 +352,7 @@ def main():
         card = CARD_TEMPLATE.format(
             title=doc["title"],
             desc=doc["desc"],
-            html_name=doc["html_name"],
+            href=doc.get("href", "publish/{}".format(doc["html_name"])),
             btn_text=doc["btn_text"],
             date=date_str,
             tag=doc["tag"]

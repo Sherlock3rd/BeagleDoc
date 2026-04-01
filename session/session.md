@@ -33,6 +33,8 @@
 - 2026-04-01：CP-A 纠偏同步：协作峰值锚定 Day4，Day5-7 改为“外圆 GvG 与内圆 GVE 多轮轮转”；移除“GvG 强化窗口/强化验证窗”等歧义术语，并同步 HTML、Markdown 与 cp-a 时间轴图
 - 2026-04-01：术语统一同步：CP-B“熟人→生人”描述由“强化跨队协同”改为“形成跨队协同”，并在发布页与源文档保持一致
 - 2026-04-01：收到“可以发布文档”指令后完成发布确认：同步更新 docs/map/sevenday_social_progression.md 与 publish/sevenday_social_progression.html 的发布状态描述，并更新 index.html 与 PUBLISHED_DOCS.md 索引信息
+- 2026-04-01：发布流程修正：补齐 scripts/update_hub.py 的 DOCUMENTS 配置，纳入 sevenday_social_progression.html，避免后续自动生成 index.html 时丢失该文档入口
+- 2026-04-01：Hub 回归修复：定位到 scripts/update_hub.py 仅保留 7 条配置导致重生成 index 时文档卡片缩减；已恢复并扩展为 14 条（含登录流程），并新增 docs/* 与 publish/* 混合链接支持，重新生成 index.html
 
 ## 5. 注意事项
 - 设计相关变更需事先书面确认；文档/脚手架类工作可直接执行，但必须在本文件记录
