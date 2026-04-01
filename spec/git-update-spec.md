@@ -64,11 +64,23 @@
 
 ## 9. 密钥与权限管理（强制规范）
 - 禁止：将任何密钥（如 GitHub PAT、OAuth Token）写入仓库、提交历史或 PR 内容
-- 本地使用：通过环境变量（如 $Env:GITHUB_TOKEN）临时注入；使用后立即清除
+- 本地使用：通过环境变量（如 `$Env:GITHUB_TOKEN`）临时注入；使用后立即清除
+- 远程地址固化免密（推荐方案）：若不想每次输入密码，应使用 `git remote set-url origin https://<username>:<PAT>@github.com/<repo>.git` 一次性固化本地配置，而**绝对不要**在提交流程（如 `push.bat` / `push.py`）中硬编码 PAT。
 - 远程与自动化：在 GitHub 仓库设置中配置 Secrets（如 ACTIONS 用途）；按最小权限原则分配
 - 审计与轮换：定期轮换密钥；若怀疑泄漏，立即撤销并追踪影响范围
 
-## 10. 故障与回滚流程
+## 10. IDE 终端环境排坑与防呆总结 (Troubleshooting)
+- IDE 拦截陷阱：在 Trae/VSCode 的终端中执行 `git push` 时，可能会触发内置的 `askpass.sh` 脚本失败（找不到可执行文件），导致退回匿名访问并报错 `No anonymous write access`。
+  - 解决方案：直接修改本地 `.git/config` 绑定带 PAT 的 remote url（即第 9 节的免密方案）。
+- 批处理 (.bat) 乱码与截断：AI 生成的包含中文注释的 `.bat` 文件，在未指定 `chcp 65001` 或存在 CRLF 换行符错乱时，极易发生命令解析截断（将半截网址当作命令执行），导致严重混乱。
+  - 解决方案：尽量避免使用 `.bat` 执行长串复杂命令，改用 PowerShell 终端直接复制粘贴，或使用 Python 脚本作为工具。
+- Python 脚本执行坑：
+  - 老版本环境：如果本地默认环境是 Python 2，遇到包含中文的脚本会报 `SyntaxError: Non-ASCII character`，必须在文件首行显式声明 `# -*- coding: utf-8 -*-`。同时 Python 2 的 `open()` 函数不支持 `encoding` 参数，需使用 `codecs` 或做 fallback 处理。
+  - IDE 终端拦截吞输出：在部分 IDE 环境下，后台调用终端执行的 `python` 脚本或 `powershell -Command` 的日志可能被完全静默拦截。当涉及环境敏感操作时，必须让用户亲自在可见终端敲回车执行。
+- GitHub Push Protection（敏感信息拦截）：如果不慎将包含明文 PAT 的测试辅助文件（如 `force_push.py`）通过 `git add .` 提交到暂存区并试图 push，GitHub 服务端会直接拒绝该次提交。
+  - 补救方案：使用 `git reset --soft HEAD~1` 回退提交，再使用 `git rm --cached <危险文件>` 彻底从 Git 历史和暂存区移除，最后重新 commit 干净内容再推。
+
+## 11. 故障与回滚流程
 - 提交前失败：在本地修复，自检通过后再提交
 - 合并后发现问题：
   - 紧急修复：创建 fix 分支，修复后走标准 PR

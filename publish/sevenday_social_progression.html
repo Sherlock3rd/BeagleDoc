@@ -221,9 +221,9 @@ const md = `# 七日版本社交渐进与地图玩法 CP 文档
   - 地块连接：连接到常规 PVE 地块（安全主干道与周边探索）。
 
 ## 3. CP 方案总览（按改动 Scope 重新划分）
-- CP1（最大 Scope）：完整 7 日规划 + 新增城镇争夺型 GvG + 联盟进程规划，重点观测 7 留与 SLG 元素参与率。
-- CP2（中等 Scope）：在现有内容上增加“联盟攻城”强协作玩法，提前验证联盟强社交生态。
-- CP3（最小 Scope）：保持现有内容并做节奏拆分（原 CP-B），重点观测分段递进对 SLG 参与率的拉升效果。
+- CP1（最大 Scope）：把目前的 GVE 玩法降级为一个纯粹的 GVE 玩法，作为后面新增的正式 GvG 玩法的前置渐进。
+- CP2（中等 Scope）：保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，但是在前一步增加一个新的 GVE 玩法做渐进。
+- CP3（最小 Scope）：保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，只是分割内外圈开启时间来实现社交协作峰值的渐进。
 - 统一约束：CP1 与 CP2 都不拆分已有 GVE 地块玩法解锁。
 - 对标口径：CP 内“城镇 PVE/城镇 PVP”主要对标《三谋》的城镇玩法；仅 CP1 中 GvG 地块的扩展争夺玩法可参考 RoK/CoD 的领土争夺模块。
 
@@ -260,6 +260,8 @@ const md = `# 七日版本社交渐进与地图玩法 CP 文档
   - Day4 合作行动（GVE 继续推进，为后续 GvG 积累资源与阵地）
   - Day5-7 城镇争夺 GvG 开启（维持高位强社交）
 
+> **设计注释**：把目前的 GVE 玩法降级为一个纯粹的 GVE 玩法，作为后面新增的正式 GvG 玩法的前置渐进。
+
 ### 4.5 方案优缺点评估
   | 评估维度 | 具体表现 |
   | :--- | :--- |
@@ -282,9 +284,8 @@ const md = `# 七日版本社交渐进与地图玩法 CP 文档
 <blockquote class="highlight-box">
 <p><strong>新增玩法模块</strong></p>
 <ul>
-<li>新增“联盟攻城玩法”：同联盟协作攻城后方可占领城市并迁城。</li>
-<li>新增“攻城成功→城市占领→迁城”链路的状态反馈与权限结算。</li>
-<li>对标参考：城镇攻防与迁城相关链路主要对标参考《三谋》。</li>
+<li>新增前置 GVE 玩法模块：例如 <span style="color:red; font-weight:bold;">联盟攻城、温泉战斗、联盟 Boss</span> 等。</li>
+<li>对标参考：前置 GVE 玩法主要参考 RoK、WOS 等游戏中的联盟玩法；城镇攻防相关可参考《三谋》。</li>
 </ul>
 <p><strong>已有内容修改</strong></p>
 <ul>
@@ -296,10 +297,12 @@ const md = `# 七日版本社交渐进与地图玩法 CP 文档
 ### 5.4 渐进体验轴（时间轴）
   - Day1-2 个人探索
   - Day2 晚 进入联盟
-  - Day3 攻城筹备
-  - Day4 城镇占领（联盟协作组织，对抗强度中等）
+  - Day3 GVE 玩法筹备
+  - Day4 GVE 玩法（联盟协作组织，对抗强度中等）
   - Day5 外圈 GvG 开启（强对抗，验证 GvG 接受度）
   - Day6-7 内圈 GVE 开启（达到社交协作峰值）
+
+> **设计注释**：保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，但是在前一步增加一个新的 GVE 玩法做渐进。
 
 ### 5.5 方案优缺点评估
   | 评估维度 | 具体表现 |
@@ -339,6 +342,8 @@ const md = `# 七日版本社交渐进与地图玩法 CP 文档
   - Day3 L1/L2 练习
   - Day4 外圆 GvG 准入
   - Day5 内圆 GVE 爆发
+
+> **设计注释**：保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，只是分割内外圈开启时间来实现社交协作峰值的渐进。
 
 ### 6.5 方案优缺点评估
   | 评估维度 | 具体表现 |
@@ -489,9 +494,9 @@ function insertAxisByCpSection(cpKey, imgSrc, altText, noteText) {
   insertVisualAfter(anchor, imgSrc, altText, noteText);
 }
 
-insertAxisByCpSection('CP1', '../docs/assets/sevenday/cp-a-timeline-v2.svg?v=cp1-20260401', 'CP1 渐进体验轴', '');
-insertAxisByCpSection('CP2', '../docs/assets/sevenday/cp-c-timeline-v2.svg?v=cp2-20260401', 'CP2 渐进体验轴', '');
-insertAxisByCpSection('CP3', '../docs/assets/sevenday/cp-b-timeline-v2.svg?v=cp3-20260401', 'CP3 渐进体验轴', '');
+insertAxisByCpSection('CP1', '../docs/assets/sevenday/cp-a-timeline-v2.svg?v=cp1-20260401', 'CP1 渐进体验轴', '把目前的 GVE 玩法降级为一个纯粹的 GVE 玩法，作为后面新增的正式 GvG 玩法的前置渐进。');
+insertAxisByCpSection('CP2', '../docs/assets/sevenday/cp-c-timeline-v2.svg?v=cp2-20260401', 'CP2 渐进体验轴', '保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，但是在前一步增加一个新的 GVE 玩法做渐进。');
+insertAxisByCpSection('CP3', '../docs/assets/sevenday/cp-b-timeline-v2.svg?v=cp3-20260401', 'CP3 渐进体验轴', '保留目前 GVE 地块中外圈的 GvG 属性，并将其作为核心验证，只是分割内外圈开启时间来实现社交协作峰值的渐进。');
 </script>
 </body>
 </html>

@@ -41,6 +41,7 @@
 - 2026-04-01 | 3b81c22 | docs: publish - update cp2/cp3 scope and cp2 timeline curve | 更新 CP2/CP3 Scope，重绘 CP2 时间轴，精简冗余文本
 - 2026-04-01 | [已推送] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD | 根据反馈重构七日社交方案、精简时间轴并更新图示
 - 2026-04-01 | [已推送] | chore: clean up temp files and sensitive scripts from root directory | 删除根目录下临时生成的调试脚本、PAT 记录及冗余的垃圾文件
+- 2026-04-01 | [待推送] | docs(sevenday): add CP one-line comments, update CP2 GVE examples and highlight in red | 补充CP注释，替换CP2的玩法模块并在MD和HTML中加红标粗
 
 ## 5. 运行规则（会话继承）
 - 新对话启动时，先读取本文件的“文档状态总览 + 提交记录总账”
@@ -59,6 +60,7 @@
 - 2026-04-01：rules 新增“执行优先级 Top 5”，将门禁、设计确认、三同步、提交二次确认、会话继承前置为最高优先级
 - 2026-04-01：新增 spec/feedback-revision-spec.md，并在 rules 接入关键词“针对反馈进行一些修改”作为既有文档反馈修改流程入口
 - 2026-04-01：更新 HTML 生成过滤规范，在 `scripts/md_to_spec_html.py` 及 `rules/rules.md` 中规定生成对外展示页时需移除内部管理章节（如第 8、9、10 章节）。
+- 2026-04-01：明确反馈修改流程中，HTML必须与MD同步手动修改，绝对不准从MD重新生成，以免覆盖自定义或发布时特有的代码。
 
 ## 7. 注意事项
 - 设计相关变更需事先书面确认；文档/脚手架类工作可直接执行，但必须记录

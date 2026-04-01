@@ -60,6 +60,7 @@
 - 2026-04-01：CP2 结构与时间轴修正：重新明确 CP2 的 GVE 地块保留内外圈分割，且外圈具备 GvG 属性并先于内圈开启以验证对抗；将城镇玩法降级为前置协作组织，其对抗峰值低于外圈 GvG。同步调整时间轴为 Day4 城镇占领、Day5 外圈 GvG 开启、Day6 内圈 GVE 开启（峰值：Day6 > Day5 > Day4），并重绘了 cp-c-timeline-v2.svg。
 - 2026-04-01：依据用户反馈再次修正 CP2/CP3：调整 CP2 时间轴图片峰值高度（使 Day7 明确回落至低于 Day6 且高于 Day4），重写 CP2/CP3 的“已有内容修改”为“内外圈拆分分批次开启，外圈 GvG 先开启，并且外圈场地需要承载 GvG 属性”，并彻底删除了“流程前置要求”与“体验优化”等冗余内容。
 - 2026-04-01：CP3 “已有内容修改”补充：增加“PVP L2 地块要增加联盟对抗的动机，需要修改并调整投放内容”。
+- 2026-04-01：依据反馈为各个 CP 补充“一句话注释”并在 HTML 节奏图下方展示；替换 CP 方案总览描述；将 CP2 新增模块示例修改为“联盟攻城、温泉战斗、联盟 Boss”并使用红色加粗标识，对应修改 SVG 文本为“GVE玩法”及“GVE玩法筹备”。
 
 ## 5. 提交记录
 - b809cba | docs: publish - finalize sevenday social progression release sync
@@ -67,6 +68,7 @@
 - 31d5cd2 | fix: publish - add missing sevenday svg assets for remote rendering
 - 3b81c22 | docs: publish - update cp2/cp3 scope and cp2 timeline curve
 - [已推送] | docs(sevenday): update CP1/CP2/CP3 scope, timeline SVG, and sync HTML/MD
+- [待推送] | docs(sevenday): add CP one-line comments, update CP2 GVE examples and highlight in red
 
 ## 6. 后续维护清单
 - 文案改动后，同步更新 docs 与 publish，并更新本文件“需求级变更记录”
