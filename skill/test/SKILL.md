@@ -1,0 +1,128 @@
+---
+name: generate-visual-report-assets
+description: Build visual sections for reports, HTML pages, and pitch decks using generated images, open-licensed assets, and safe render patterns. Use when the user asks for infographic-style visuals, loop diagrams, card-based image layouts, report illustrations, or image-heavy executive presentation pages.
+---
+
+# Generate Visual Report Assets
+
+## Purpose
+Turn abstract system explanations into presentation-ready visual sections inside HTML or markdown-driven report pages.
+
+## Default Workflow
+1. Identify the visual goal:
+   - `single hero infographic`
+   - `comparison of multiple visual options`
+   - `card/grid visual section`
+   - `loop/cycle explanation`
+2. Pick the asset strategy:
+   - `generated image` for unified style
+   - `open-licensed assets` for fast collage/mockup
+   - `hybrid` for strongest presentation result
+3. Put referenced image files inside the repo when the HTML must load them reliably.
+4. If an image was generated outside the repo or saved by a tool in another workspace location, copy it into a stable repo path before writing the final HTML or markdown reference.
+5. Use relative asset paths in HTML, not temporary absolute paths.
+6. For non-English labels, especially Chinese, do not trust generated image text for important wording. Prefer a text-free base image plus HTML/CSS labels.
+7. If the page is markdown-driven, inject complex HTML blocks after markdown rendering instead of pasting large raw HTML blocks into markdown.
+8. Add a short figure note for every non-decorative image, explaining what the image proves or why it is being shown.
+9. When the user asks to improve an existing image, prefer `annotate the original image` or `overlay labels on top of it` before replacing it with a new card layout or a completely different visual structure.
+10. If labels become dense, switch from large centered overlays to `note-style callouts` placed in whitespace or at the image perimeter.
+11. For flow or loop diagrams, validate that every intended step connection is visually explicit; if the base image does not show the connection clearly enough, add connector lines or arrows in HTML/SVG.
+12. Validate the rendered result:
+   - no overlapping cards
+   - consistent illustration style
+   - image paths resolve
+   - labels are readable
+   - generated image contains no critical text errors
+   - mobile layout does not collapse awkwardly
+
+## Required Asset Pipeline
+Use this exact order whenever a report references a newly generated or newly copied image:
+1. Finalize the image file.
+2. Copy it into a repo-owned path such as `assets/...`.
+3. Confirm the file now exists in the repo.
+4. Only then write the HTML or markdown reference.
+5. Re-check the reference from the final rendered file location.
+
+Never treat a generated image as ready just because it exists somewhere on disk. It is only ready after it exists at the exact repo path used by the final page.
+
+## Layout Defaults
+
+### For mixed external assets
+Prefer grid/card layouts over absolute positioning.
+
+Use this structure:
+- top: primary scene card
+- middle: resource/output card
+- bottom: 3 cards for branches
+- footer: 3 summary chips
+
+### For generated infographic images
+Prefer a single polished image when:
+- the user wants stronger art direction
+- multiple cards look visually inconsistent
+- the section is for executive review
+
+If the image needs exact wording:
+- generate a `text-free` or `minimal-text` visual base
+- place final wording in HTML, not inside the image
+- if the concept is a gameplay loop, prefer letting `roads`, `paths`, `rings`, or `scene flow` inside the art carry the main sense of circulation before adding overlay arrows
+
+### For evidence screenshots inside long documents
+- treat them as `supporting evidence`, not `hero visuals`
+- cap width to a readable range, typically `360px-480px`
+- center them and keep enough whitespace around them
+- only let screenshots use full content width when tiny UI details would otherwise be unreadable
+
+### For conceptual system differences
+- if a mermaid or box graph feels too schematic, convert it into a comparison infographic
+- use one image to show structural contrast, then add a short table below for exact wording
+- especially use this for comparisons like `distributed lines` vs `converged lines`, or `multi-object growth` vs `single-core growth`
+- if there is already a strong base image, prefer enhancing that image with callouts, captions, and overlay labels rather than replacing it with a separate block-based visualization
+
+## Rendering Rules
+- Prefer repo-local paths like `assets/foo.png`
+- Avoid `file:///...` paths in final report HTML
+- Avoid depending on temp folders
+- Never reference a generated image by assumption; verify the repo-local file exists first
+- Every meaningful image in the final report should have a nearby caption or figure note
+- Avoid embedding large HTML blocks directly in markdown source that is later parsed by `marked`
+- For complex blocks, use a placeholder like `<div id="slot"></div>` and replace it with JS after `marked.parse(...)`
+- Prefer text-free generated images when the report needs precise Chinese labels
+- When reusing image references between markdown files and root HTML files, recalculate relative paths. Do not assume a markdown-relative path will still work from the HTML file location.
+- Constrain support screenshots with dedicated selectors or wrapper classes instead of relying only on the global `img` rule.
+- For dense explanatory visuals, prefer short note boxes and connector lines over wide badges placed directly on top of icons or character art.
+- Keep labels off primary iconography whenever possible. Use nearby whitespace first, then side/bottom legend cards if whitespace is insufficient.
+- If a loop can be communicated by the scene itself, prefer `environmental flow` over cross-image connector lines. Use callout pointers for explanation, not heavy path overlays.
+
+## Validation Checklist
+- [ ] Image file exists in the repo
+- [ ] Image was copied into the repo before writing the final reference
+- [ ] Path used by HTML matches the actual repo path
+- [ ] No broken image icon appears
+- [ ] Every key image has a short figure note or caption
+- [ ] No overlapping cards or labels
+- [ ] Labels do not obscure the main icons, characters, or focal art
+- [ ] Visual style is coherent
+- [ ] Chinese labels remain readable at presentation scale
+- [ ] Important Chinese labels are HTML text, not only pixels inside the generated image
+- [ ] Relative path is validated from the final rendered file location, not only from the source markdown location
+- [ ] Generated image was not left only in Cursor temp/workspace asset storage
+- [ ] Supporting screenshots do not visually overpower the surrounding text
+- [ ] Loop/flow connections are all visually explicit; no intended step appears disconnected
+
+## Failure Recovery
+If a visual fails:
+1. Check whether the asset path is broken.
+2. Check whether the image was ever copied into the repo path used by the page.
+3. Check whether markdown parsing escaped or code-blocked the HTML.
+4. If the user asked for an existing image to be improved, check whether the implementation accidentally replaced the image instead of annotating it.
+5. Replace absolute-position layout with grid/flex layout if cards overlap.
+6. If generated text is incorrect, regenerate a no-text image and move wording into HTML.
+7. If mixed-source art feels inconsistent, generate a unified replacement image.
+8. Recheck final rendering after each fix.
+9. If a console warning appears, separate `warning noise` from the actual broken asset path before changing implementation.
+10. If labels are blocking icon readability, shorten the text, move labels to whitespace, and convert them into callouts with connector lines instead of stacking larger overlays on the art.
+
+## Additional Resources
+- Troubleshooting notes: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+- Example patterns: [EXAMPLES.md](EXAMPLES.md)
