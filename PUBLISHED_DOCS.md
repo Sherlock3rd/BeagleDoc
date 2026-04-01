@@ -16,6 +16,7 @@
 | **联盟系统设计** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/design_alliance.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/design_alliance.html) | 联盟结构、管理权限及核心功能的详细设计文档 |
 | **合线方案CP** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/branching_design_spec.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/branching_design_spec.html) | 关于文档分支管理与版本控制的规范说明 |
 | **PVP 地块玩法详细设计** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/pvp_tile_detailed_design.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/pvp_tile_detailed_design.html) | 定义了 7日版本的 PVP 地块分级体系、搜打拿核心循环与地图落位原则 |
+| **七日社交渐进与地图玩法 CP** | [点击阅读](https://sherlock3rd.github.io/BeagleDoc/publish/sevenday_social_progression.html) | [源码](https://github.com/Sherlock3rd/BeagleDoc/blob/master/publish/sevenday_social_progression.html) | 已于 2026-04-01 确认发布；包含 CP-A/CP-B/CP-C 时间轴与环状 GVE 结构示意，强调“熟人/生人、渗透/隔离”的体验主轴 |
 
 ---
 

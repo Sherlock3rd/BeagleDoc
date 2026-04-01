@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>七日版本社交渐进与地图玩法 CP 文档</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    :root {
+      --primary-color: #2c3e50;
+      --accent-color: #3498db;
+      --bg-color: #fdfbf7;
+      --text-color: #333;
+      --heading-font: 'Patrick Hand', cursive, sans-serif;
+      --body-font: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    body {
+      font-family: var(--body-font);
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-color);
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 40px;
+      background-image: radial-gradient(#e5e5e5 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: white;
+      padding: 60px;
+      border-radius: 4px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-family: var(--heading-font);
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      color: white;
+      padding: 40px 20px;
+      margin: -60px -60px 48px -60px;
+      border-radius: 4px 4px 0 0;
+      font-size: 3.2em;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      font-family: var(--heading-font);
+      margin-top: 64px;
+      color: #1a202c;
+      background-color: #f1f5f9;
+      border-left: 8px solid var(--accent-color);
+      padding: 16px 24px 16px 52px;
+      margin-left: -60px;
+      font-size: 2.8em;
+      margin-bottom: 32px;
+      border-radius: 0 8px 8px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    h3 {
+      font-family: var(--heading-font);
+      color: var(--primary-color);
+      margin-top: 48px;
+      font-size: 2.2em;
+      margin-bottom: 20px;
+      border-bottom: 2px dashed #e2e8f0;
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    h3::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background-color: var(--accent-color);
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+    h4 {
+      font-family: var(--body-font);
+      color: #2c3e50;
+      font-weight: 700;
+      margin-top: 32px;
+      font-size: 1.3em;
+      margin-bottom: 16px;
+    }
+    p { margin-bottom: 1.2em; color: #4a5568; }
+    ul, ol { margin-bottom: 1.2em; padding-left: 24px; }
+    li { margin-bottom: 8px; color: #4a5568; }
+    blockquote {
+      background-color: #e3f2fd;
+      border-left: 6px solid #2196f3;
+      margin: 24px 0;
+      padding: 16px 24px;
+      color: #0d47a1;
+      border-radius: 4px;
+      font-style: italic;
+    }
+    .highlight-box {
+      background-color: #f0f7ff;
+      border: 1px solid #bbdefb;
+      padding: 24px;
+      border-radius: 8px;
+      margin: 24px 0;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 24px 0;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--body-font);
+      font-size: 0.95em;
+      background: white;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 16px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background-color: #f8f9fa;
+      color: #2d3748;
+      font-weight: 700;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+    td { color: #4a5568; }
+    tr:hover { background-color: #f7fafc !important; }
+    .visual-scene {
+      width: 100%;
+      background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+      border: 1px solid #dbe7f3;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 24px 0 12px 0;
+      padding: 12px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+    .visual-image { display: block; width: 100%; height: auto; border-radius: 12px; }
+    .figure-note {
+      margin: 8px 0 24px 0;
+      padding: 10px 14px;
+      border-left: 4px solid #93c5fd;
+      background: #f8fbff;
+      color: #475569;
+      font-size: 0.95em;
+    }
+    .sketch-line { fill: none; stroke: #333; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-fill { stroke: #333; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-text { font-family: 'Patrick Hand', cursive, sans-serif; font-size: 16px; fill: #333; text-anchor: middle; }
+    .sketch-title { font-family: 'Patrick Hand', cursive, sans-serif; font-size: 18px; font-weight: bold; fill: #333; text-anchor: middle; }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-weight: 600; margin-right: 6px; border: 1px solid #e0e0e0; }
+    .tag-orange { background: #fff3e0; color: #ef6c00; }
+    .tag-blue { background: #e3f2fd; color: #1565c0; }
+    .tag-red { background: #ffebee; color: #c62828; }
+    .tag-p0 { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+    .tag-p1 { background-color: #fff3e0; color: #ef6c00; border: 1px solid #ffe0b2; }
+    .tag-p2 { background-color: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+    @media (max-width: 768px) {
+      .container { padding: 24px; }
+      h1 { margin: -24px -24px 32px -24px; font-size: 2.2em; padding: 24px 16px; }
+      h2 { margin-left: -24px; padding-left: 16px; font-size: 2.2em; } /* 24px - 8px border = 16px padding */
+      h3 { font-size: 1.8em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>七日版本社交渐进与地图玩法 CP 文档</h1>
+
+    <h2>1. 设计背景与现状</h2>
+    <ul>
+      <li>背景：统一联盟关系的渐进方式（小队→联盟），避免从渗透社交到强对抗的断层；验证 SLG 用户转化率与接受度。</li>
+      <li>现状：Day1-2 安全 PVE 与小队探索；Day2 晚解锁联盟；Day1 解锁五人小队副本与异步助战；Day3 开启 L1/L2 PVP。</li>
+    </ul>
+
+    <h2>2. 设计目的</h2>
+    <ul>
+      <li>明确地图玩法的渐进框架，以联盟为友军集合，建立“环外对抗热度→环内合作峰值”的节奏。</li>
+      <li>以 L1/L2 分层承接公共 PVP，避免过早引入领土政治与高惩罚。</li>
+      <li>在 7 日周期内逐步建立组织化协作认知，形成稳定的联盟社交闭环。</li>
+    </ul>
+
+    <h2>3. 地块定义与结构（共识）</h2>
+    <ul>
+      <li>PVE 地块：安全探索与资源产出；自由进出。</li>
+      <li>PVP 地块（联盟单位，小中规模）：AllianceID 友军免伤、跨盟红名；分层 L1/L2；不涉领土政治，侧重热度与规则演练。</li>
+      <li>GvG 地块（联盟单位，中大规模，独立场景）：独立规则集，强调组织化与占点/旗帜/评分/整点；早期以预演为主。</li>
+      <li>GVE 地块（环状）：仅内外双圈；外圆为 GvG 战斗，内圆为 GVE 协作；外圆连接周边 PVE 地块。</li>
+    </ul>
+
+    <div class="visual-scene">
+      <img class="visual-image" src="../docs/assets/sevenday/gve-ring-structure-v2.svg" alt="GVE 环状地块结构图（重制）">
+    </div>
+    <div class="figure-note">图示把“外圆 GvG—内圆 GVE”与“外围 PVE 连接”分开标注，强调 GVE 地块本体是双圈结构。</div>
+
+    <h2>4. CP-A 快转（Day3 快转启动，Day4 协作峰值）</h2>
+    <h3>目标与验证点</h3>
+    <ul>
+      <li>目标：Day3 形成“联盟组织化 + 对抗热度”，并在 Day4 形成协作峰值，Day5-7 持续外圆 GvG 与内圆 GVE 轮转验证。</li>
+      <li>验证：联盟活跃曲线、整点到场率、内圆 GVE 到场/完成率、对抗→协作转换率、回流率、次日留存。</li>
+    </ul>
+    <h3>时间线与落位</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>时间节点</th>
+            <th>开启玩法与系统</th>
+            <th>落位与体验说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Day3</strong></td>
+            <td>L1 常驻 + L2 整点；GVE 外圆开放</td>
+            <td>外圆连接 PVE 并承载 GvG 准入战。先做组织化与准入筛选，不在 Day3 完成内圆协作峰值。</td>
+          </tr>
+          <tr>
+            <td><strong>Day4</strong></td>
+            <td>开放内圆 GVE 首轮窗口</td>
+            <td>Day4 进入“外圆 GvG → 内圆 GVE”主链路，并形成协作峰值。</td>
+          </tr>
+          <tr>
+            <td><strong>Day5-7</strong></td>
+            <td>夜间 L2 高压窗 + 日间内圆 GVE 多轮</td>
+            <td>不做独立 GvG；Day5-7 持续进行外圆 GvG 与内圆 GVE 多轮轮转，承接 Day4 峰值并验证对抗→协作转换。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>玩家体验与社交渐进</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>社交维度</th>
+            <th>体验演进说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>熟人 → 生人</strong></td>
+            <td>Day3 起在外圆 GvG 与 Day4 后的内圆 GVE 中进行混合协作。</td>
+          </tr>
+          <tr>
+            <td><strong>渗透 → 隔离</strong></td>
+            <td>公共 PVP 采用联盟单位隔离判定；内圆 GVE 熟人协作，外圆以隔离保障秩序。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>渐进体验轴（时间轴）</h3>
+    <div class="visual-scene">
+      <img class="visual-image" src="../docs/assets/sevenday/cp-a-timeline-v2.svg?v=20260331a" alt="CP-A 时间轴（重制）">
+    </div>
+    <div class="figure-note">CP-A 现在把 Day3 定义为“快转启动”而非“终局完成”，并把协作峰值明确锚定在 Day4，避免 Day3 直接打穿全部内容。</div>
+    <h3>SLG 过渡要素（RoK 参考）</h3>
+    <ul>
+      <li><span class="tag tag-red">Rally Boss</span> Day3 联盟 Boss 集结（外圆 GvG 外侧集合，奖励荣誉/装饰）。</li>
+      <li><span class="tag tag-orange">联盟活动</span> 每日/周联盟任务与建设进度，绑定 GVE 完成与频道参与。</li>
+    </ul>
+    <h3>对标参考与分享</h3>
+    <ul>
+      <li>Albion Online（早期公会协作+ZvZ）、Call of Dragons（联盟 Rally 与大型事件双峰）、World of Warcraft（副本/战场并行）、Rise of Kingdoms（联盟 Boss Rally 与活动过渡）。</li>
+      <li>注：为部分映射，不存在完整 7 日并发的 1:1 对标。</li>
+    </ul>
+    <h3>指标与观测</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>指标维度</th>
+            <th>观测内容</th>
+            <th>核心目的</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>参与度</strong></td>
+            <td>PVP/GVE 到场率、完成率</td>
+            <td>评估高压强协作玩法的直接吸引力。</td>
+          </tr>
+          <tr>
+            <td><strong>社交生态</strong></td>
+            <td>频道活跃与跨小队协作比、团队分工稳定度</td>
+            <td>验证从熟人渗透到生人隔离的社交网络健康度。</td>
+          </tr>
+          <tr>
+            <td><strong>留存反馈</strong></td>
+            <td>留存率与回流率</td>
+            <td>观测高压对抗环境下的泛用户承压极限。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>风险与保护/区域参数</h3>
+    <ul>
+      <li>安全主干道、近点回流、快速复活；KR 降低 L2 频率与奖励强度；US 区按建议频率。</li>
+    </ul>
+    <div class="highlight-box">
+      <h3>渐进保护分段（Progress Consistency）</h3>
+      <ul>
+        <li><strong>核心矛盾</strong>：公共 PVP/GVE 的强节奏与泛用户承压冲突。</li>
+        <li><strong>解决方案</strong>：保持进度一致性（整点广播/入口引导），将协作峰值放在对抗热度之后。</li>
+        <li><strong>新手保护</strong>：主干道安全+近点复活+频道“集合与退出”指引。</li>
+        <li><strong>渗透→隔离</strong>：外圆采用联盟单位隔离判定，内圆以熟人协作为主。</li>
+        <li><strong>追赶机制</strong>：落后玩家通过“环外资源/助战”在两日内追至 90% 体验进度。</li>
+      </ul>
+    </div>
+    <h3>优缺点评估</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th>具体表现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span style="color:#27ae60;">优势 (Pros)</span></strong></td>
+            <td>尽早检验强协作与阵营接受度；快速形成活动高峰节奏。</td>
+          </tr>
+          <tr>
+            <td><strong><span style="color:#c0392b;">劣势 (Cons)</span></strong></td>
+            <td>泛用户承压较大，容易产生流失，需强依赖引导与保护机制。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>5. CP-B 慢转（Day3 以 L1/L2 为主，Day4 开外圆，Day5 开内圆）</h2>
+    <h3>目标与验证点</h3>
+    <ul>
+      <li>目标：以自发组织为核心，Day4 验证外圆 GvG 组织能力，Day5 验证内圆 GVE 协作接受度。</li>
+      <li>验证：频道活跃与跨小队协作、L1/L2 完成率、Day4 外圆 GvG 到场率、Day5 内圆 GVE 完成率与留存。</li>
+    </ul>
+    <h3>时间线与落位</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>时间节点</th>
+            <th>开启玩法与系统</th>
+            <th>落位与体验说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Day3</strong></td>
+            <td>L1/L2 常驻与整点</td>
+            <td>以公共 PVP 地块体验为主，形成联盟组队与基础对抗节奏；GVE 区域不开放。</td>
+          </tr>
+          <tr>
+            <td><strong>Day4</strong></td>
+            <td>开放 GVE 外圆 GvG 场地</td>
+            <td>先在外圆完成联盟对抗与准入筛选，验证组织度与集结效率。</td>
+          </tr>
+          <tr>
+            <td><strong>Day5</strong></td>
+            <td>开放 GVE 内圆玩法 + 独立 GvG 预演</td>
+            <td>在外圆对抗基础上进入内圆协作，形成“先对抗后协作”的主峰体验。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>玩家体验与社交渐进</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>社交维度</th>
+            <th>体验演进说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>熟人 → 生人</strong></td>
+            <td>Day3 先在 L1/L2 完成频道聚拢；Day4 在外圆 GvG 形成跨队协同；Day5 内圆 GVE 达成协作峰值。</td>
+          </tr>
+          <tr>
+            <td><strong>渗透 → 隔离</strong></td>
+            <td>Day4 起在外圆 GvG 引入更强隔离；Day5 内圆 GVE 固化分工；外圆连接 PVE 保证回流安全。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>渐进体验轴（时间轴）</h3>
+    <div class="visual-scene">
+      <img class="visual-image" src="../docs/assets/sevenday/cp-b-timeline-v2.svg" alt="CP-B 时间轴（重制）">
+    </div>
+    <div class="figure-note">CP-B 的图把 Day3 作为 L1/L2 练习段、Day4 作为外圆 GvG 准入段、Day5 作为内圆 GVE 爆发段，体现分段递进。</div>
+    <h3>SLG 过渡要素（RoK 参考）</h3>
+    <ul>
+      <li><span class="tag tag-red">Rally Boss</span> Day4 联盟 Boss 集结，提升联盟荣誉与目标热度。</li>
+      <li><span class="tag tag-orange">联盟周任务</span> 绑定 Day4 外圆 GvG 与 Day5 内圆 GVE，到场与完成计入联盟进度。</li>
+    </ul>
+    <h3>对标参考与分享</h3>
+    <ul>
+      <li>Albion Online（黄/红区渐进冲突，自发组织明显）、燕云十六声（主世界状态与阶段性活动）、Rise of Kingdoms（联盟 Boss Rally 与活动过渡）。</li>
+      <li>注：Day3 仅 L1/L2、Day4 外圆 GvG、Day5 内圆 GVE 的三段式节奏少有直接对标，属递进协作组合。</li>
+    </ul>
+    <h3>指标与观测</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>指标维度</th>
+            <th>观测内容</th>
+            <th>核心目的</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>组织能力</strong></td>
+            <td>自发组织指数（非系统邀约的集合度）</td>
+            <td>验证慢转节奏下玩家自主建立协作网络的能力。</td>
+          </tr>
+          <tr>
+            <td><strong>参与度</strong></td>
+            <td>Day4 外圆到场率、Day5 内圆完成率、协作参与比</td>
+            <td>评估分段开启后玩家的实际参与意愿。</td>
+          </tr>
+          <tr>
+            <td><strong>留存反馈</strong></td>
+            <td>转折日（Day5）回流率与留存变化</td>
+            <td>观测节奏突变时泛用户的流失情况。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>风险与保护/区域参数</h3>
+    <ul>
+      <li>泛用户保护优先级更高；KR 进一步降低 L2 奖励强度；US 区保持节奏。</li>
+    </ul>
+    <div class="highlight-box">
+      <h3>渐进保护分段（Progress Consistency）</h3>
+      <ul>
+        <li><strong>核心矛盾</strong>：自发组织形成速度与活动高峰的匹配问题。</li>
+        <li><strong>解决方案</strong>：在 Day5 统一引导协作峰值，保持前期公共 PVP 的练习与筛选作用。</li>
+        <li><strong>新手保护</strong>：环外通路与低压练习场，提供“退出不惩罚/返回主干道”提示。</li>
+        <li><strong>渗透→隔离</strong>：Day5 起强化联盟单位隔离；频道将生人引导为熟人协作。</li>
+        <li><strong>追赶机制</strong>：在转折日开放“补给与助战”，保障落后玩家两日内追上主要体验节点。</li>
+      </ul>
+    </div>
+    <h3>优缺点评估</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th>具体表现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span style="color:#27ae60;">优势 (Pros)</span></strong></td>
+            <td>自组织自然，压力递进；更贴近弱社交的大盘。</td>
+          </tr>
+          <tr>
+            <td><strong><span style="color:#c0392b;">劣势 (Cons)</span></strong></td>
+            <td>协作峰值成形晚，早期热度可能不足。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. CP-C 特别慢佛系转（Day6 同步开内外圆，前置禁入+迷雾）</h2>
+    <h3>目标与验证点</h3>
+    <ul>
+      <li>目标：最大化保护泛用户与佛系用户，在低压节奏中验证协作接受度与留存。</li>
+      <li>验证：低压留存、协作参与、到场与完成、情绪反馈。</li>
+    </ul>
+    <h3>时间线与落位</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>时间节点</th>
+            <th>开启玩法与系统</th>
+            <th>落位与体验说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Day3-5</strong></td>
+            <td>L1/L2 低频 + GVE 区域禁入</td>
+            <td>GVE 内外圆全部关闭并加迷雾遮挡，不提供进入与观战；仅保留低压公共玩法。</td>
+          </tr>
+          <tr>
+            <td><strong>Day6</strong></td>
+            <td>GVE 内外圆同步开放</td>
+            <td>外圆 GvG 与内圆 GVE 同时开启，不做前后层级区分，集中验证晚开强协作接受度。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>玩家体验与社交渐进</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>社交维度</th>
+            <th>体验演进说明</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>熟人 → 生人</strong></td>
+            <td>前 5 天以熟人小队与轻量生人协作为主；Day6 同步开内外圆后快速进入团队协作。</td>
+          </tr>
+          <tr>
+            <td><strong>渗透 → 隔离</strong></td>
+            <td>前期保持渗透社交；Day6 同步开放后一次性引入隔离规则，外圆连接 PVE 保障回流安全。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>渐进体验轴（时间轴）</h3>
+    <div class="visual-scene">
+      <img class="visual-image" src="../docs/assets/sevenday/cp-c-timeline-v2.svg" alt="CP-C 时间轴（重制）">
+    </div>
+    <div class="figure-note">CP-C 通过把 Day6 节点单独做大，直观传达“前面禁入+迷雾保护，Day6 才同步开放内外圆”的核心差异。</div>
+    <h3>SLG 过渡要素（RoK 参考）</h3>
+    <ul>
+      <li><span class="tag tag-red">Rally Boss</span> Day6 低压版，可选参与，奖励适中。</li>
+      <li><span class="tag tag-orange">联盟活动</span> 以社交参与与轻任务为主，不引入强惩罚。</li>
+    </ul>
+    <h3>对标参考与分享</h3>
+    <ul>
+      <li>Sky 光·遇（低压社交协作）、Pokemon GO（社区日弱社交与低压参与）、Rise of Kingdoms（联盟 Boss Rally 与活动过渡）。</li>
+      <li>注：Day6 才同步开放内外圆的节奏无直接对标，样本可能不足，需要以迷雾揭示与奖励可见性保障到场与完成。</li>
+    </ul>
+    <h3>指标与观测</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>指标维度</th>
+            <th>观测内容</th>
+            <th>核心目的</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>留存反馈</strong></td>
+            <td>低压留存、情绪反馈（弃游原因采样）</td>
+            <td>验证最佛系节奏下的大盘留存与用户核心痛点。</td>
+          </tr>
+          <tr>
+            <td><strong>参与度</strong></td>
+            <td>协作参与比、到场与完成率</td>
+            <td>观测极度滞后的强协作玩法是否仍具吸引力。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>风险与保护/区域参数</h3>
+    <ul>
+      <li>强化保护策略；KR 进一步降低 L2 频率；US 区维持中性节奏。</li>
+    </ul>
+    <div class="highlight-box">
+      <h3>渐进保护分段（Progress Consistency）</h3>
+      <ul>
+        <li><strong>核心矛盾</strong>：强协作节奏延后导致样本不足与验证滞后。</li>
+        <li><strong>解决方案</strong>：Day6 以“迷雾揭示 + 内外圆同步开放”拉升到场与完成。</li>
+        <li><strong>新手保护</strong>：弱风险 L1/L2 低频，频道提供“轻协作任务”引导与退出提示。</li>
+        <li><strong>渗透→隔离</strong>：保持渗透社交为主，Day6 同步开放后一次性引入隔离以保障秩序。</li>
+        <li><strong>追赶机制</strong>：以“展示性奖励 + 频道集结”提升回流与补课体验。</li>
+      </ul>
+    </div>
+    <h3>优缺点评估</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>评估维度</th>
+            <th>具体表现</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong><span style="color:#27ae60;">优势 (Pros)</span></strong></td>
+            <td>最低压验证，提升好感与泛用户留存。</td>
+          </tr>
+          <tr>
+            <td><strong><span style="color:#c0392b;">劣势 (Cons)</span></strong></td>
+            <td>强协作与阵营接受度样本不足，验证滞后。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>7. 对比与总结</h2>
+    <ul>
+      <li>局部 PVP vs 联盟单位 GvG：局部 PVP 在环外承载“筛选/热度/规则演练”，GvG 独立地块承载“政治/领土/荣誉”。</li>
+      <li>渐进一致性：自 Day3 起持续灌输联盟友军规则，减少从渗透社交到更强对抗的认知断层。</li>
+      <li>归纳：三条路径覆盖强压并行、递进、低压延后验证，满足 SLG 转化率与接受度多角度抽样需求。</li>
+    </ul>
+    <h3>规则总结表（对比）</h3>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>路径</th>
+            <th>判定公式</th>
+            <th>匹配对象范围</th>
+            <th>核心体验目标</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>CP-A 快转</strong></td>
+            <td>Day3 启 L1/L2 + 外圆 GvG；Day4 启内圆 GVE；Day5-7 外圆/内圆多轮轮转</td>
+            <td>公共 PVP（L1/L2/外圆 GvG）+ Day4 起内圆 GVE（无独立 GvG）</td>
+            <td>强节奏并行，形成“对抗热度 → 协作峰值”的双峰</td>
+          </tr>
+          <tr>
+            <td><strong>CP-B 慢转</strong></td>
+            <td>Day3 启 L1/L2；Day4 启外圆 GvG；Day5 启内圆 GVE + 独立 GvG 预演</td>
+            <td>公共 PVP（L1/L2）→ 外圆 GvG（Day4）→ 内圆 GVE（Day5）</td>
+            <td>递进节奏，自发组织转化为协作峰值，承压可控</td>
+          </tr>
+          <tr>
+            <td><strong>CP-C 佛系转</strong></td>
+            <td>Day3-5 低频 L1/L2 + GVE 禁入迷雾；Day6 启内外圆同步开放</td>
+            <td>公共 PVP（低频）+ Day6 外圆 GvG/内圆 GVE 同步开放（不启独立 GvG）</td>
+            <td>低压验证，保障好感与留存，样本延后形成</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>8. CP 发散方法总结（补充规范）</h2>
+    <ul>
+      <li>体验维度：以“转化速度”为轴，至少给出快转/慢转/佛系转三条完整路径。</li>
+      <li>风险与承受：明确风险分层与泛用户保护策略。</li>
+      <li>组织化入口：从自发组织到频道分工的转化节点（广播、入口提示、轻协作任务）。</li>
+      <li>指标闭环：设定 SLG 接受度指标（到场率、完成率、协作参与度、留存/回流）。</li>
+      <li>区域差异：对 KR/US 等区域设定参数化窗口（L2 频率、奖励强度）。</li>
+    </ul>
+
+    <h2>9. 后续规划</h2>
+    <ul>
+      <li>会议结论登记：已确认并执行“生成文档”发布流程（2026-04-01），发布页为 publish/sevenday_social_progression.html。</li>
+      <li>下一步计划：确认 GVE 首开坐标与广播具体语句；细化轻协作任务的触发条件与奖励。</li>
+      <li>索引与发布：已同步更新根目录 index.html 与 PUBLISHED_DOCS.md。</li>
+    </ul>
+
+    <h2>10. 引用与索引</h2>
+    <ul>
+      <li>PVP 分级与 7 日计划：publish/pvp_tile_detailed_design.html</li>
+      <li>PVE/GVE/GVG 金字塔与路线：publish/beagle_map_gameplay_design.html</li>
+      <li>术语索引：docs/beagle_glossary.md</li>
+    </ul>
+  </div>
+</body>
+</html>
