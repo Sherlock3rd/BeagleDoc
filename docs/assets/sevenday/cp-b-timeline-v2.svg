@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="620" viewBox="0 0 1600 620" role="img" aria-labelledby="title desc">
+  <title id="title">CP-B 慢转时间轴效果示意图</title>
+  <desc id="desc">组织先蓄水再分段爆发：Day3 练习、Day4 外圆 GvG、Day5 内圆 GVE 主峰</desc>
+  <defs>
+    <linearGradient id="bgB" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1208"/>
+      <stop offset="100%" stop-color="#2a1d0a"/>
+    </linearGradient>
+    <linearGradient id="lineB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a8a29e"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="curveB" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="glowB" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#f59e0b" flood-opacity="0.52"/>
+    </filter>
+  </defs>
+  <rect x="20" y="20" width="1560" height="580" rx="30" fill="url(#bgB)"/>
+  <rect x="20" y="20" width="1560" height="580" rx="30" fill="none" stroke="#3f3f46" stroke-width="2"/>
+  <rect x="62" y="54" width="274" height="62" rx="31" fill="#f59e0b" fill-opacity="0.20" stroke="#fcd34d" stroke-width="2"/>
+  <text x="199" y="96" fill="#fde68a" font-size="33" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">CP-B 慢转</text>
+  <text x="800" y="96" fill="#f8fafc" font-size="39" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day3 练习 → Day4 外圆 GvG → Day5 内圆 GVE 峰值</text>
+
+  <line x1="170" y1="350" x2="1430" y2="350" stroke="url(#lineB)" stroke-width="12" stroke-linecap="round" opacity="0.9"/>
+  <path d="M210 350 C350 346 505 326 570 300 C645 268 705 248 750 234 C810 212 874 196 930 188 C1000 180 1110 230 1290 292"
+        fill="none" stroke="url(#curveB)" stroke-width="8" stroke-linecap="round" filter="url(#glowB)"/>
+  <path d="M210 350 C350 346 505 326 570 300 C645 268 705 248 750 234 C810 212 874 196 930 188 C1000 180 1110 230 1290 292 L1290 350 L210 350 Z"
+        fill="#f59e0b" fill-opacity="0.18"/>
+
+  <circle cx="210" cy="350" r="20" fill="#a1a1aa"/>
+  <circle cx="390" cy="344" r="20" fill="#a8a29e"/>
+  <circle cx="570" cy="300" r="26" fill="#fbbf24"/>
+  <circle cx="750" cy="234" r="28" fill="#f59e0b"/>
+  <circle cx="930" cy="188" r="34" fill="#d97706" filter="url(#glowB)"/>
+  <circle cx="1110" cy="230" r="24" fill="#fbbf24"/>
+  <circle cx="1290" cy="292" r="22" fill="#fde68a"/>
+
+  <rect x="476" y="390" width="188" height="62" rx="14" fill="#292524" fill-opacity="0.75" stroke="#fcd34d" stroke-width="2"/>
+  <text x="570" y="431" fill="#fde68a" font-size="24" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day3 练习场</text>
+  <line x1="570" y1="390" x2="570" y2="304" stroke="#f59e0b" stroke-width="3"/>
+
+  <rect x="838" y="114" width="188" height="62" rx="14" fill="#292524" fill-opacity="0.78" stroke="#f59e0b" stroke-width="2"/>
+  <text x="932" y="155" fill="#fdba74" font-size="24" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day5 协作峰值</text>
+  <line x1="932" y1="176" x2="930" y2="190" stroke="#f59e0b" stroke-width="3"/>
+
+  <rect x="656" y="146" width="188" height="62" rx="14" fill="#292524" fill-opacity="0.75" stroke="#fbbf24" stroke-width="2"/>
+  <text x="750" y="187" fill="#fde68a" font-size="24" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day4 外圆 GvG</text>
+  <line x1="750" y1="208" x2="750" y2="232" stroke="#fbbf24" stroke-width="3"/>
+
+  <text x="210" y="405" fill="#a1a1aa" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">Day1</text>
+  <text x="390" y="405" fill="#a1a1aa" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">Day2</text>
+  <text x="570" y="405" fill="#fde68a" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day3</text>
+  <text x="750" y="405" fill="#fde68a" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day4</text>
+  <text x="930" y="405" fill="#fdba74" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">Day5</text>
+  <text x="1110" y="405" fill="#a1a1aa" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">Day6</text>
+  <text x="1290" y="405" fill="#a1a1aa" font-size="22" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">Day7</text>
+
+  <text x="210" y="456" fill="#d6d3d1" font-size="21" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">个人探索</text>
+  <text x="390" y="456" fill="#d6d3d1" font-size="21" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">联盟组队</text>
+  <text x="660" y="456" fill="#fde68a" font-size="21" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">组织能力成长</text>
+  <text x="930" y="456" fill="#fdba74" font-size="21" font-family="Inter,Segoe UI,Arial,sans-serif" font-weight="700" text-anchor="middle">内圆 GVE 主峰释放</text>
+
+  <rect x="1090" y="468" width="403" height="88" rx="16" fill="#292524" fill-opacity="0.70" stroke="#57534e" stroke-width="2"/>
+  <text x="1291" y="522" fill="#fcd34d" font-size="24" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">节奏特征：先 L1/L2，再外圆 GvG，最后内圆 GVE</text>
+</svg>

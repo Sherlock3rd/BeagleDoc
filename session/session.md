@@ -35,6 +35,7 @@
 - 2026-04-01：收到“可以发布文档”指令后完成发布确认：同步更新 docs/map/sevenday_social_progression.md 与 publish/sevenday_social_progression.html 的发布状态描述，并更新 index.html 与 PUBLISHED_DOCS.md 索引信息
 - 2026-04-01：发布流程修正：补齐 scripts/update_hub.py 的 DOCUMENTS 配置，纳入 sevenday_social_progression.html，避免后续自动生成 index.html 时丢失该文档入口
 - 2026-04-01：Hub 回归修复：定位到 scripts/update_hub.py 仅保留 7 条配置导致重生成 index 时文档卡片缩减；已恢复并扩展为 14 条（含登录流程），并新增 docs/* 与 publish/* 混合链接支持，重新生成 index.html
+- 2026-04-01：远端图片缺失修复：定位到 docs/assets/sevenday/ 四张 SVG（环状结构图与 CP-A/B/C 时间轴）未纳入 Git；补齐提交并推送，恢复发布页图片加载
 
 ## 5. 注意事项
 - 设计相关变更需事先书面确认；文档/脚手架类工作可直接执行，但必须在本文件记录
